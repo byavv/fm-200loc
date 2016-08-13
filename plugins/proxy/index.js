@@ -1,27 +1,40 @@
 /*jslint node: true */
 "use strict";
-const debug = require('debug')('proxy'),
+const debug = require('debug')('plugins:proxy'),
     httpProxy = require('http-proxy'),
-    errors = require('../../lib/errors')
+    errors = require('../../lib/errors'),
+    logger = require('../../lib/logger')
     ;
 
-var Plugin = function (params, pipeGlobal) {
-    const proxy = httpProxy.createProxyServer({});
-    return function (req, res, next) {
-        if (params.target) {
-            proxy.web(req, res, {
-                target: params.target + (params.withPath || '/')
+module.exports = (function () {
+
+    let cls = function (app, settings) {
+        let _settings = settings;
+        this.app = app;
+
+        this.getSettings = function (key) {
+            return _settings[key];
+        }
+    };
+
+    cls.prototype.init = function () {
+        this.proxy = httpProxy.createProxyServer({});
+    };
+    cls.prototype.handler = function (req, res, next) {
+        if (this.getSettings('target')) {
+            this.proxy.web(req, res, {
+                target: this.getSettings('target') + (this.getSettings('withPath') || '/')
             }, (err) => {
                 return next(err);
             });
-            debug(`${req.method}: ${req.originalUrl} \u2192 ${params.target}${params.withPath}`);
+            debug(`${req.method}: ${req.originalUrl} \u2192 ${this.getSettings('target')}${this.getSettings('withPath')}`);
         } else {
+            logger.error(new Error('Configuration error. Traget for request not set'))
             return next(new errors.err502());
         }
     }
-};
 
-Plugin._name = 'proxy';
-Plugin._description = 'proxy';
-
-module.exports = Plugin;
+    cls._name = 'proxy';
+    cls._description = 'Simple proxying requests';
+    return cls;
+})()

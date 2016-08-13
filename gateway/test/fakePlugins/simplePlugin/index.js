@@ -1,13 +1,26 @@
-'use strict';
+/*jslint node: true */
+"use strict";
 var ErrorX = require("../../errorX");
 
-var Plugin = function (params, pipeGlobal) {
-    return function (req, res, next) { 
-        return params.dynamic
-        ? res.status(200).send({respond: params.dynamic})
-        : res.status(200).send({respond: params.env})
+module.exports = (function () {
+
+    let cls = function (app, settings) {
+        let _settings = settings;
+        this.app = app;
+        this.getSettings = function () {
+            return _settings;
+        }
+    };
+
+    cls.prototype.init = function () {
+    };
+    cls.prototype.handler = function (req, res, next) {
+        return this.getSettings().dynamic
+            ? res.status(200).send({ respond: this.getSettings().dynamic })
+            : res.status(200).send({ respond: this.getSettings().env })
     }
-}
-Plugin._name = "simplePlugin";
-Plugin._description = "test plugin";
-module.exports = Plugin;
+
+    cls._name = 'simplePlugin';
+    cls._description = 'test plugin';
+    return cls;
+})()

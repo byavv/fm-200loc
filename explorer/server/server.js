@@ -1,16 +1,16 @@
 "use strtict"
 const boot = require('loopback-boot')
     , http = require('http')
-    , path = require('path')
+    , path = require('path')  
     , loopback = require('loopback');
 
 const app = loopback();
+const logger = require('../../lib/logger');
+
 const mongo_host = process.env.DBSOURCE_HOST || '127.0.0.1';
 
 app.set("mongo_host", mongo_host);
-
 app.use('/static', loopback.static(path.join(__dirname, '../build')));
-
 app.start = (port) => {
     const httpServer = http
         .createServer(app)
@@ -21,7 +21,7 @@ app.start = (port) => {
                 app.removeAllListeners('loaded');
                 httpServer.close(cb);
             };
-            console.log(`Api explorer started on port ${port}`);
+            logger.info(`Api explorer started on port ${port}`)
         });
     return httpServer;
 };

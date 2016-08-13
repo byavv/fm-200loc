@@ -6,18 +6,21 @@ const loopback = require('loopback'),
     sinon = require('sinon'),
     expect = chai.expect,
     request = require('supertest'),
-    plugin = require('./')
+    ProxyPlugin = require('./'),
+    Pipe = require('../../gateway/src/components/route/pipe')
     ;
 
 describe('PROXY PLUGIN TESTS', function () {
     var app = loopback();
     var fakeServer = loopback();
-    var global = {}
+    var pipe = new Pipe({})
     var params = { target: 'http://localhost:3234', withPath: '/' }
-    var pluginHandler = plugin(params, global);
-    app.use(pluginHandler)
+
     var httpServer;
     before((done) => {
+        var plugin = new ProxyPlugin(app, params, pipe);
+        plugin.init()
+        app.use(plugin.handler.bind(plugin))
         httpServer = http
             .createServer(app)
             .listen(3232, done);

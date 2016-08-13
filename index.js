@@ -3,7 +3,7 @@
 const http = require('http'),
     path = require('path'),
     debug = require('debug')('gateway'),
-    minimist = require('minimist')    
+    minimist = require('minimist')
     ;
 
 const defaults = {

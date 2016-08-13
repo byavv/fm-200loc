@@ -14,9 +14,9 @@ $ cd fm-200loc
 $ npm install
 $ typings install
 
-# build for production/development
-$ npm run build     
+# build for development/production
 $ gulp build
+$ npm run build 
 
 # run development/production
 $ npm run dev  

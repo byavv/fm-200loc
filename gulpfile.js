@@ -15,11 +15,13 @@ const gulp = require('gulp'),
 var defaults = {
     string: ['env'],
     default: {
-        env: process.env.NODE_ENV || 'development'
+        env: process.env.NODE_ENV || 'development',
+        log: process.env.LOG_LEVEL || 'error',
     }
 };
 var options = minimist(process.argv.slice(2), defaults);
 process.env.NODE_ENV = options.env;
+process.env.LOG_LEVEL = options.log;
 
 /**
  * Compile explorer app and run nodemon

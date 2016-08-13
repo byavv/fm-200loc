@@ -1,5 +1,5 @@
 var fakeData = require('./fakeEntries');
-var loader = require('../../lib/pluginLoader')();
+var loader = require('../../lib/loader')();
 var path = require('path');
 
 module.exports = function (done) {

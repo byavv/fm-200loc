@@ -1,7 +1,7 @@
 {
     "env": {
         "NODE_ENV": "development",
-        "DEBUG": "proxy, discovery, explorer",
+        "DEBUG": "gateway, plugins:*, explorer",
         "ETCD_HOST": "192.168.1.99"
     },
     "ext": "js",

@@ -35,7 +35,7 @@
   "routes": {},
   "proxies": {},
   "final": {
-    "loopback#urlNotFound": {}
+    "loopback#urlNotFound": {}   
   },
   "final:after": {
     "loopback#errorHandler": {}

@@ -1,6 +1,8 @@
 'use strict';
 /*jslint node: true */
-const debug = require('debug')('plugins:authentication');
+const debug = require('debug')('plugins:authentication'),
+    async = require('async'),
+    logger = require('../../lib/logger');
 
 module.exports = (function () {
 
@@ -8,24 +10,32 @@ module.exports = (function () {
         let _settings = settings;
         this.app = app;
         this.getSettings = function (key) {
+            if (!key) return _settings;
             return _settings[key];
         }
     };
-   
+
     cls.prototype.init = function () {
-         return new Promise((resolve, reject) => {          
+        return new Promise((resolve, reject) => {
             resolve();
         })
     }
     cls.prototype.handler = function (req, res, next) {
-        if (this.getSettings('grant') === '*') {
+
+        const grant = this.getSettings('grant')
+        if (grant === '*') {
             return next(null);
-        } else {
-            if (!!req.accessToken && Array.isArray(this.getSettings('grant'))) {
+        } else {           
+            if (!!req.accessToken) {
                 let Role = req.app.models.role;
                 let ACL = req.app.models.ACL;
+
+                const permissions = grant.split(/\s*,\s*/);
+              
+                debug(`Required permissions for route: ${req.originalUrl}: [${permissions}]`);
+
                 Role.find({
-                    where: { can: { inq: this.getSettings('grant') } },
+                    where: { can: { inq: permissions } },
                     fields: { 'name': true, 'id': false }
                 }, (err, roles) => {
                     if (err) throw err;
@@ -39,13 +49,14 @@ module.exports = (function () {
                         }, callback);
                     }, (err, result) => {
                         if (err) throw err;
+                        // propogate for inner usage
+                        req.headers["X-PRINCIPLE"] = req.accessToken.userId;
                         // user is not in any appropriate role, which contains required permisison
                         return !result ? res.status(401).send("User authorized, but doesn't have required permission. Verify that sufficient permissions have been granted") : next();
                     });
                 });
             } else {
-                let url = URL.parse(req.url);
-                debug(`Authorization failed for ${req.method} request on ${url.path}`);
+                debug(`Authorization failed for ${req.method} request on ${req.originalUrl}, access token is not defined`);
                 return res.status(401).send(`Not authorized`);
             }
         }

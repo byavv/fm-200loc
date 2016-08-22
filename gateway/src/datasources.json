@@ -4,7 +4,12 @@
     "port": 27017,
     "database": "profile-db",
     "name": "dbAuth",
-    "connector": "mongodb"
+    "connector": "mongodb",
+    "server": {
+      "auto_reconnect": true,
+      "reconnectTries": 100,
+      "reconnectInterval": 2000
+    }
   },
   "db": {
     "name": "db",

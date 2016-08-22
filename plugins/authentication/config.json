@@ -2,7 +2,7 @@
     "grant": {
         "default": "*",
         "required": true,
-        "label": "Grant",
+        "label": "Grant (read, write, etc..)",
         "help": "Grant access for roles, which has this permissions"
     }   
 }

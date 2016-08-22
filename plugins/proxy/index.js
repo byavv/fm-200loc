@@ -18,7 +18,7 @@ module.exports = (function () {
     };
 
     cls.prototype.init = function () {
-        this.proxy = httpProxy.createProxyServer({});
+        this.proxy = httpProxy.createProxyServer({});       
     };
     cls.prototype.handler = function (req, res, next) {
         if (this.getSettings('target')) {
@@ -27,7 +27,7 @@ module.exports = (function () {
             }, (err) => {
                 return next(err);
             });
-            debug(`${req.method}: ${req.originalUrl} \u2192 ${this.getSettings('target')}${this.getSettings('withPath')}`);
+            debug(`Proxy ${req.method}: ${req.originalUrl} \u2192 ${this.getSettings('target')}${this.getSettings('withPath')}`);
         } else {
             logger.error(new Error('Configuration error. Traget for request not set'))
             return next(new errors.err502());

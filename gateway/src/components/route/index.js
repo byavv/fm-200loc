@@ -74,7 +74,7 @@ const async = require("async"),
                     });
 
                     const initP = pluginsArray.map(plugin => {
-                        if (typeof plugin.init === "function") {
+                        if (_.isFunction(plugin.init)) {
                             return plugin.init();
                         }
                     });

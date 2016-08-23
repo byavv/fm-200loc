@@ -5,7 +5,8 @@ const async = require("async"),
     uuid = require('node-uuid'),
     _ = require('lodash'),
     logger = require('../../../../lib/logger'),
-    Pipe = require('./pipe')
+    Pipe = require('./pipe'),
+    comparator = require('./routeOrder')
     ;
 {
     let superMiddlewareFactory = (options = {}) => {
@@ -33,73 +34,76 @@ const async = require("async"),
 
         ApiConfig.find((err, apiConfigs) => {
             if (err) throw err;
-            (apiConfigs || []).forEach(apiConfig => {
-                try {
-                    const pipe = new Pipe(Object.assign({}, defaults, {/* defaults for this route*/ }))
-                    const pluginsArray = [];
-                    (apiConfig.plugins || []).forEach((plugin) => {
-                        const settings = Object.assign({}, plugin.settings);
+            (apiConfigs || [])
+                .sort(comparator)
+                .forEach(apiConfig => {
+                    try {
+                        const pipe = new Pipe(Object.assign({}, defaults, {/* defaults for this route*/ }))
+                        const pluginsArray = [];
+                        (apiConfig.plugins || []).forEach((plugin) => {
+                            const settings = Object.assign({}, plugin.settings);
 
-                        // find all dynamic parameters and provide getting values from global pipe object or environment
-                        Object.keys(settings).forEach((paramKey) => {
-                            const matchDyn = settings[paramKey] && _.isString(settings[paramKey])
-                                ? settings[paramKey].match(DYNAMIC_CONFIG_PARAM)
-                                : false;
-                            const matchEnv = settings[paramKey] && _.isString(settings[paramKey])
-                                ? settings[paramKey].match(ENV_CONFIG_PARAM)
-                                : false;
-                            if (matchDyn) {
-                                Object.defineProperty(settings, paramKey, {
-                                    get: function () {
-                                        return pipe.get(matchDyn[1]);
-                                    }
-                                });
-                            }
-                            if (matchEnv) {
-                                Object.defineProperty(settings, paramKey, {
-                                    get: function () {
-                                        return process.env[matchEnv[1]];
-                                    }
-                                });
-                            }
-                        });
+                            // find all dynamic parameters and provide getting values from global pipe object or environment
+                            Object.keys(settings).forEach((paramKey) => {
+                                const matchDyn = settings[paramKey] && _.isString(settings[paramKey])
+                                    ? settings[paramKey].match(DYNAMIC_CONFIG_PARAM)
+                                    : false;
+                                const matchEnv = settings[paramKey] && _.isString(settings[paramKey])
+                                    ? settings[paramKey].match(ENV_CONFIG_PARAM)
+                                    : false;
+                                if (matchDyn) {
+                                    Object.defineProperty(settings, paramKey, {
+                                        get: function () {
+                                            return pipe.get(matchDyn[1]);
+                                        }
+                                    });
+                                }
+                                if (matchEnv) {
+                                    Object.defineProperty(settings, paramKey, {
+                                        get: function () {
+                                            return process.env[matchEnv[1]];
+                                        }
+                                    });
+                                }
+                            });
 
-                        let Plugin = app.plugins.find((p) => p._name === plugin.name);
-                        if (!Plugin) {
-                            pluginsArray.push(require('./defaultPlugin')(plugin.name));
-                        } else {
-                            let plugin = new Plugin(app, settings, pipe);
-                            pluginsArray.push(plugin);
-                        }
-                    });
-
-                    const initP = pluginsArray.map(plugin => {
-                        if (_.isFunction(plugin.init)) {
-                            return plugin.init();
-                        }
-                    });
-
-                    Promise.all(initP).then(() => {
-                        app.middlewareFromConfig(superMiddlewareFactory, {
-                            enabled: true,
-                            phase: 'routes',
-                            methods: apiConfig.methods,
-                            paths: [apiConfig.entry],
-                            params: {
-                                plugins: pluginsArray,
-                                routeName: apiConfig.name
+                            let Plugin = app.plugins.find((p) => p._name === plugin.name);
+                            if (!Plugin) {
+                                pluginsArray.push(require('./defaultPlugin')(plugin.name));
+                            } else {
+                                let plugin = new Plugin(app, settings, pipe);
+                                pluginsArray.push(plugin);
                             }
                         });
 
-                        debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
-                    }).catch(err => {
-                        throw err;
-                    });
-                } catch (error) {
-                    logger.error(error);
-                    throw error;
-                }
-            });
+
+                        const initP = pluginsArray.map(plugin => {
+                            if (_.isFunction(plugin.init)) {
+                                return plugin.init();
+                            }
+                        });
+
+                        Promise.all(initP).then(() => {
+                            app.middlewareFromConfig(superMiddlewareFactory, {
+                                enabled: true,
+                                phase: 'routes',
+                                methods: apiConfig.methods,
+                                paths: [apiConfig.entry],
+                                params: {
+                                    plugins: pluginsArray,
+                                    routeName: apiConfig.name
+                                }
+                            });
+
+                            debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
+                        }).catch(err => {
+                            throw err;
+                        });
+                    } catch (error) {
+                        logger.error(error);
+                        throw error;
+                    }
+                });
         })
     };
 }

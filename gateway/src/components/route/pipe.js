@@ -3,8 +3,8 @@
 const logger = require('../../../../lib/logger');
 
 module.exports = (function () {
-    let cls = function (defaults = {}) {
-        let data = new Map();
+    const cls = function (defaults = {}) {
+        const data = new Map();
         Object.keys(defaults).forEach(key => {
             data.set(key, defaults[key]);
         });
@@ -17,10 +17,15 @@ module.exports = (function () {
         return this.value.get(key);
     }
 
-    cls.prototype.clean = function () {
-        for (var key of this.value.keys()) {
-            this.value.delete(key)
+    cls.prototype.clean = function (pipeItemKey) {
+        if (!pipeItemKey) {
+            for (var key of this.value.keys()) {
+                this.value.delete(key)
+            }
+        } else {
+            this.value.delete(pipeItemKey)
         }
+
         return this.value;
     }
 

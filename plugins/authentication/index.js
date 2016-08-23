@@ -25,19 +25,16 @@ module.exports = (function () {
         const grant = this.getSettings('grant')
         if (grant === '*') {
             return next(null);
-        } else {           
+        } else {
             if (!!req.accessToken) {
-                let Role = req.app.models.role;
-                let ACL = req.app.models.ACL;
-
+                const Role = req.app.models.role;
+                const ACL = req.app.models.ACL;
                 const permissions = grant.split(/\s*,\s*/);
-              
                 debug(`Required permissions for route: ${req.originalUrl}: [${permissions}]`);
-
                 Role.find({
                     where: { can: { inq: permissions } },
                     fields: { 'name': true, 'id': false }
-                }, (err, roles) => {
+                }, (err, roles) => {                   
                     if (err) throw err;
                     if (!roles || roles.length === 0) {
                         return res.status(401).send("Permission can't be granted");

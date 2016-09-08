@@ -1,4 +1,8 @@
-import { Component, Self, EventEmitter, Output, ViewChild, Input, Optional } from '@angular/core';
+import {
+    Component, Self,
+    EventEmitter, Output,
+    ViewChild, Input, Optional
+} from '@angular/core';
 import { NgControl, NgModel, ControlValueAccessor } from '@angular/forms';
 
 @Component({
@@ -8,12 +12,12 @@ import { NgControl, NgModel, ControlValueAccessor } from '@angular/forms';
 })
 
 export class ToggleGroup implements ControlValueAccessor {
-    private _selectedOptions = [];   
+    private _selectedOptions = [];
 
     private _options: Array<any> = [];
     @Input()
     set options(op) {
-        this._options = op;       
+        this._options = op;
     }
     get options(): any {
         return this._options;

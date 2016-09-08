@@ -6,7 +6,7 @@ const DefinePlugin = require('webpack/lib/DefinePlugin'),
   UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin'),
   CompressionPlugin = require('compression-webpack-plugin'),
   ExtractTextPlugin = require('extract-text-webpack-plugin'),
-  PurifyCssPlugin = require("purifycss-webpack-plugin")
+ // PurifyCssPlugin = require("purifycss-webpack-plugin")
   ;
 
 module.exports = webpackMerge(commonConfig, {
@@ -28,11 +28,11 @@ module.exports = webpackMerge(commonConfig, {
       threshold: 2 * 1024
     }),
     new ExtractTextPlugin('assets/styles/[name].[chunkhash:7].css'),
-    new PurifyCssPlugin({
-      paths: [
-        __root("../client/app/**/*.html")
-      ]
-    })
+  //  new PurifyCssPlugin({
+ //     paths: [
+  //      __root("../client/app/**/*.html")
+  //    ]
+  //  })
   ],
   htmlLoader: {
     minimize: true,

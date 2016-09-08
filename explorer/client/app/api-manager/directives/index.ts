@@ -6,4 +6,9 @@ export * from './showError';
 export * from './uiTabs';
 export * from './restSize';
 
-export var API_MANAGER_DIRECTIVES = [ShowError, UiPane, UiTabs, RestSize];
+export var API_MANAGER_DIRECTIVES = [
+    ShowError,
+    UiPane,
+    UiTabs,
+    RestSize
+];

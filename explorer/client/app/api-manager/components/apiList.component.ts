@@ -1,15 +1,13 @@
 import { Component, OnInit, OnDestroy, trigger, state, transition, style, animate } from '@angular/core';
 import { AppController, BackEnd } from '../../shared/services';
 import { LoaderComponent } from '../../shared/components';
-import { ROUTER_DIRECTIVES, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'api-list',
-  directives: [ROUTER_DIRECTIVES, LoaderComponent],
   template: require('./templates/apiList.template.html'),
-  styles: [require('./styles/apiList.scss')],
-  providers: []
+  styles: [require('./styles/apiList.scss')] 
 })
 
 export class ApiListComponent implements OnInit, OnDestroy {

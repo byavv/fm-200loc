@@ -1,5 +1,4 @@
-import {Inject, OpaqueToken, provide} from '@angular/core';
-import {getDOM, DomAdapter} from '@angular/platform-browser/src/dom/dom_adapter';
+import { Inject, OpaqueToken } from '@angular/core';
 
 export const localStorageBackend = new OpaqueToken('localStorageBackend');
 
@@ -12,9 +11,9 @@ export interface IStorageBackend {
 
 export class Storage {
     storageBackend: IStorageBackend;
-    
+
     constructor( @Inject(localStorageBackend) storageBackend: IStorageBackend) {
-        this.storageBackend = storageBackend;     
+        this.storageBackend = storageBackend;
     }
 
     getItem(key) {
@@ -34,14 +33,12 @@ export class Storage {
 }
 
 export const STORAGE_PROVIDERS = [
-    Storage,
-    provide(localStorageBackend, {
-        useFactory() {           
-            return getDOM().getGlobalEventTarget('window').localStorage || {
-                getItem: (key) => { return null },
-                setItem: (key, value) => { return null },
-                removeItem: (key) => { return null }
-            }
+    {
+        provide: Storage,
+        useFactory: () => window.localStorage || {
+            getItem: (key) => { return null },
+            setItem: (key, value) => { return null },
+            removeItem: (key) => { return null }
         }
-    })
+    }
 ];

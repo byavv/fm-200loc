@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'plugin-details',
-  directives: [],
+  selector: 'plugin-details',  
   template: `
     <div>
       Plugin details
@@ -13,7 +12,5 @@ import { Component, OnInit } from '@angular/core';
 
 export class PluginsDetailComponent {
 
-  constructor() {
-
-  }
+  constructor() {}
 }

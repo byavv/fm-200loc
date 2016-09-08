@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'auth-login',
-    directives: [],
+    selector: 'auth-login',   
     template: `
     <div>
       LOGIn

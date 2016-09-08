@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
-import { ROUTER_DIRECTIVES, Router } from '@angular/router';
-import { APP_SERVICES_PROVIDERS, Identity, AppController, Storage } from './shared/services'
-import { SHARED_COMPONENTS } from './shared/components';
+import { Router } from '@angular/router';
+import { Identity, AppController, Storage } from './shared/services'
 
 import '../assets/styles/main.scss';
 
 @Component({
-    selector: 'app',
-    directives: [ROUTER_DIRECTIVES, ...SHARED_COMPONENTS],
+    selector: 'app',   
     template: `
     <div class="page-wrap">
        <loader [active]='loading' [async]='appController.init$'></loader>      
@@ -17,11 +15,10 @@ import '../assets/styles/main.scss';
                 <router-outlet>
                 </router-outlet>
             </div>
-        </div>        
+        </div>   
    </div> 
    <app-footer></app-footer>
-  `,
-    providers: [APP_SERVICES_PROVIDERS]
+  `   
 })
 
 export class App {

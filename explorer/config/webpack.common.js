@@ -12,21 +12,9 @@ const webpack = require('webpack'),
 module.exports = {
   target: 'web',
   entry: {
-    main: [__root('../client/bootstrap.ts')],
-    polyfills: [
-      'core-js/shim',
-      'core-js/es6',
-      'core-js/es7/reflect',
-      'zone.js/dist/zone'
-    ],
-    vendor: [
-      '@angular/common',
-      '@angular/core',
-      '@angular/http',
-      '@angular/platform-browser-dynamic',
-      '@angular/router',
-      'rxjs/Rx'
-    ]
+    main: [__root('../client/app/main.ts')],
+    polyfills: [__root('../client/app/polyfills.ts')],
+    vendor: [__root('../client/app/vendors.ts')],
   },
   output: {
     path: __root('../build'),
@@ -37,7 +25,8 @@ module.exports = {
   resolve: {
     root: [__root("node_modules")],
     extensions: ['', '.ts', '.js', '.scss'],
-    cache: true
+    cache: true,
+    modulesDirectories: ['node_modules'],
   },
   module: {
     loaders: [
@@ -45,29 +34,28 @@ module.exports = {
       {
         test: /\.css$/,
         include: __root("../client/assets"),
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap!postcss')
+        loader: ExtractTextPlugin.extract(['css', 'postcss'])
       },
       { test: /\.css$/, include: __root('../client/app'), loader: 'raw!postcss' },
       {
         test: /\.scss$/,
         include: __root("../client/assets"),
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap!postcss!sass')
+        loader: ExtractTextPlugin.extract(['css', 'postcss', 'sass'])
       },
-      { test: /\.scss$/, include: __root('../client/app'), loader: 'raw!postcss!sass' },
+      { test: /\.scss$/, include: __root('../client/app'), loader: 'raw!postcss!sass' },       
       {
-        test: /\.ts$/, loader: 'ts', exclude: [/node_modules/], ignoreDiagnostics: [
-          2403, // 2403 -> Subsequent variable declarations
-          2300, // 2300 -> Duplicate identifier
-          2374, // 2374 -> Duplicate number index signature
-          2375, // 2375 -> Duplicate string index signature
-          2502  // 2502 -> Referenced directly or indirectly
-        ]
-      }
+        test: /\.ts$/,
+        loaders: [
+          'awesome-typescript-loader'        
+        ],
+        exclude: [/\.(spec|e2e)\.ts$/]
+      }     
     ]
   },
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(true),
-    new webpack.optimize.CommonsChunkPlugin({ name: ['vendor', 'polyfills'] }),
+  plugins: [    
+     new webpack.optimize.CommonsChunkPlugin({
+      name: ['polyfills', 'vendor'].reverse()
+    }),
     new HtmlWebpackPlugin({
       template: __root('../client/index.html'),
       chunksSortMode: 'dependency'

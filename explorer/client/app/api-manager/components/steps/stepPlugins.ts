@@ -2,20 +2,17 @@ import { Component, OnInit, Output, Input, EventEmitter, OnDestroy, Host, ViewCh
 import { Router, ActivatedRoute } from "@angular/router";
 import { ShowError } from '../../directives';
 import { DynamicForm } from '../../controls';
-import { FormGroup, REACTIVE_FORM_DIRECTIVES, FormBuilder, Validators } from '@angular/forms';
-import { RegExpWrapper, print, isPresent, isFunction } from '@angular/compiler/src/facade/lang';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Config, Plugin } from '../../../shared/models';
 import { BackEnd, AppController } from '../../../shared/services';
 import { MasterController } from '../../services/masterController';
 import { Observable } from 'rxjs';
-import { MODAL_DIRECTIVES, BS_VIEW_PROVIDERS } from 'ng2-bootstrap/ng2-bootstrap';
+
 import { Subject } from 'rxjs';
 
 @Component({
     selector: 'step-plugins',
     template: require("./templates/stepPlugins.html"),
-    directives: [REACTIVE_FORM_DIRECTIVES, ShowError, DynamicForm, MODAL_DIRECTIVES],
-    viewProviders: [BS_VIEW_PROVIDERS],
     styles: [require('./styles/stepPlugins.scss'),
         `
      :host {

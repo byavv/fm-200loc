@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {Response} from '@angular/http';
-import {ExtHttp} from './extHttp';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Response } from '@angular/http';
+import { ExtHttp } from './extHttp';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthApi {

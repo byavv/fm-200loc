@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {ExtHttp} from './extHttp';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ExtHttp } from './extHttp';
 
 @Injectable()
 export class BackEnd {
@@ -21,15 +21,15 @@ export class BackEnd {
     return this._http
       .get(`/api/config/${id}`)
       .map(res => res.json());
-  }  
+  }
 
-  public createOrUpdate(data: any, id?: string) {    
+  public createOrUpdate(data: any, id?: string) {
     return this._http
       .post(`/api/config/${id}`, JSON.stringify(data))
       .map(res => res.json());
   }
-  public deleteApiConfig(id){
-     return this._http
+  public deleteApiConfig(id) {
+    return this._http
       .delete(`/api/config/${id}`)
       .map(res => res.json());
   }

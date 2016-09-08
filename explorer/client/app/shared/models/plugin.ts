@@ -5,8 +5,8 @@ export class Plugin {
     description: string;
     order: number;
     active: boolean = false;
-    settings: any = {};    
-    form: FormGroup;   
+    settings: any = {};
+    form: FormGroup;
     value: any;
     constructor(name?: string, description?: string, order?: number, settings?: any, value?: any) {
         this.name = name;
@@ -15,7 +15,7 @@ export class Plugin {
         this.settings = settings;
         this.value = value;
     }
-    get valid() {      
+    get valid() {
         return this.form ? this.form.valid : false;
     }
 }

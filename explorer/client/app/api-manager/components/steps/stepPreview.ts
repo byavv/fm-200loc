@@ -1,22 +1,17 @@
-import {Component, OnInit, Output, Input, EventEmitter, OnDestroy, Host, Optional} from '@angular/core';
-import {Router, ActivatedRoute} from "@angular/router";
-//import {FORM_DIRECTIVES, ControlGroup, Validators, FormBuilder, Control} from '@angular/common';
-import {ShowError} from '../../directives/showError';
-import { FormGroup, REACTIVE_FORM_DIRECTIVES, FormBuilder, Validators } from '@angular/forms';
-import {RegExpWrapper, print, isPresent, isFunction} from '@angular/compiler/src/facade/lang';
-
+import { Component, OnInit, Output, Input, EventEmitter, OnDestroy, Host, Optional } from '@angular/core';
+import { Router, ActivatedRoute} from "@angular/router";
+import { ShowError } from '../../directives/showError';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Config } from '../../../shared/models';
-import {BackEnd, AppController} from '../../../shared/services';
-
-import {MasterController} from '../../services/masterController';
-import {Observable} from 'rxjs';
+import {BackEnd, AppController } from '../../../shared/services';
+import {MasterController } from '../../services/masterController';
+import {Observable } from 'rxjs';
 
 @Component({
     selector: 'step-preview',
     template: require("./templates/stepPreview.html"),
-    directives: [REACTIVE_FORM_DIRECTIVES, ShowError],
     styles: [require('./styles/stepPreview.scss'),
-     `
+        `
      :host {
         flex:1;
         display: flex;

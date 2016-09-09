@@ -5,8 +5,8 @@ const DefinePlugin = require('webpack/lib/DefinePlugin'),
   DedupePlugin = require('webpack/lib/optimize/DedupePlugin'),
   UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin'),
   CompressionPlugin = require('compression-webpack-plugin'),
-  ExtractTextPlugin = require('extract-text-webpack-plugin'),
-  PurifyCssPlugin = require("purifycss-webpack-plugin")
+  ExtractTextPlugin = require('extract-text-webpack-plugin')
+ // PurifyCssPlugin = require("purifycss-webpack-plugin")
   ;
 
 module.exports = webpackMerge(commonConfig, {
@@ -16,7 +16,7 @@ module.exports = webpackMerge(commonConfig, {
     chunkFilename: '[id].[chunkhash:7].js'
   },
   plugins: [
-    new DedupePlugin(),
+  //  new DedupePlugin(),
     new UglifyJsPlugin({
       beautify: false,
       mangle: { screw_ie8: true },
@@ -28,11 +28,11 @@ module.exports = webpackMerge(commonConfig, {
       threshold: 2 * 1024
     }),
     new ExtractTextPlugin('assets/styles/[name].[chunkhash:7].css'),
-    new PurifyCssPlugin({
-      paths: [
-        __root("../client/app/**/*.html")
-      ]
-    })
+  //  new PurifyCssPlugin({
+ //     paths: [
+  //      __root("../client/app/**/*.html")
+  //    ]
+  //  })
   ],
   htmlLoader: {
     minimize: true,

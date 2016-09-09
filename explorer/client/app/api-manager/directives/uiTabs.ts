@@ -1,4 +1,4 @@
-import {Component, Input, QueryList, Query, AfterContentInit, HostBinding,
+import {Component, Input, QueryList, AfterContentInit, HostBinding,
     ViewContainerRef, TemplateRef, ContentChildren, ViewRef} from '@angular/core';
 import { RestSize } from './restSize';
 @Component({
@@ -69,9 +69,7 @@ export class UiPane {
             display: none;
         }
         `
-    ],
-    directives: [RestSize]
-
+    ]
 })
 export class UiTabs {
     @ContentChildren(UiPane) panes: QueryList<UiPane>;

@@ -14,11 +14,11 @@ export * from './appController';
 export * from './authBackEndApi';
 export * from './storage';
 
-export var APP_SERVICES_PROVIDERS: Array<any> = [
+export var SHARED_SERVICES: Array<any> = [
     ExtHttp,
-    Identity,    
+    Identity,
     BackEnd,
-    ResponseHandler,    
+    ResponseHandler,
     AppController,
     AuthApi,
     ...STORAGE_PROVIDERS

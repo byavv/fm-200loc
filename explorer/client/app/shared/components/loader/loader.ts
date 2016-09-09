@@ -1,5 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import {Observable, Subscription} from 'rxjs';
+import {
+    Component, OnInit, Input,
+    Output, EventEmitter, OnDestroy
+} from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+
 @Component({
     selector: 'loader',
     template: `

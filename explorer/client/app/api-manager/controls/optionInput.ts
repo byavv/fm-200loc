@@ -1,14 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { FirstUpPipe } from '../pipes';
 import { ShowError } from '../directives';
 @Component({
   selector: 'option-input',
-  template: require('./templates/optionInput.html'),
-  directives: [REACTIVE_FORM_DIRECTIVES, ShowError],
-  pipes: [FirstUpPipe]
+  template: require('./templates/optionInput.html')
 })
-export class DynamicFormOption {
+export class OptionInput {
   @Input() field: any;
   @Input() form: FormGroup;
 

@@ -1,28 +1,9 @@
-import { RouterConfig } from '@angular/router';
+import { Routes } from '@angular/router';
 import { PluginsDetailComponent, PluginsBaseComponent, PluginsListComponent } from './';
 
-export const PluginsRoutes: RouterConfig = [
-  /* {
-     path: 'plugins',
-     component: PluginsBaseComponent,
-     children: [
-       {
-         path: ':name',
-         component: PluginsDetailComponent
-       },
-       {
-         path: '',
-         component: PluginsListComponent
-       }
-     ]
-     //see https://github.com/angular/vladivostok/issues/48
-   },*/
+export const PluginsRoutes: Routes = [
   {
     path: 'plugins',
-    component: PluginsListComponent,
-  },
-  /*{
-    path: 'plugin',
     component: PluginsBaseComponent,
-  }*/
+  }
 ];

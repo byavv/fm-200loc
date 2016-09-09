@@ -12,7 +12,6 @@ $ cd fm-200loc
 
 # install 
 $ npm install
-$ typings install
 
 # build for development/production
 $ gulp build
@@ -26,8 +25,8 @@ $ npm start
 $ gulp
 
 # run tests
-$ gulp test
-$ gulp test:coverage
+$ npm test
+$ npm test-cov
 
 ```
 

@@ -2,8 +2,7 @@ import { Component, OnInit, Output, Input, EventEmitter, OnDestroy, Host, Option
 import { Router, ActivatedRoute } from "@angular/router";
 import { ShowError } from '../../directives/showError';
 import { ToggleGroup } from '../../controls';
-import { FormGroup, REACTIVE_FORM_DIRECTIVES, FORM_DIRECTIVES, FormBuilder, Validators } from '@angular/forms';
-import { RegExpWrapper, print, isPresent, isFunction } from '@angular/compiler/src/facade/lang';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Config } from '../../../shared/models';
 import { BackEnd, AppController } from '../../../shared/services';
@@ -13,8 +12,7 @@ import { Observable } from 'rxjs';
 
 @Component({
     selector: 'step-general',
-    template: require("./templates/stepGeneral.html"),
-    directives: [REACTIVE_FORM_DIRECTIVES, ShowError, ToggleGroup, LoaderComponent],   
+    template: require("./templates/stepGeneral.html"),    
     styles: [require('./styles/stepGeneral.scss'),
         `
      :host {

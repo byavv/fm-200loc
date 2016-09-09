@@ -88,7 +88,7 @@ const async = require("async"),
                                 enabled: true,
                                 phase: 'routes',
                                 methods: apiConfig.methods,
-                                paths: [apiConfig.entry],
+                                paths: [apiConfig.entry.toLowerCase()],
                                 params: {
                                     plugins: pluginsArray,
                                     routeName: apiConfig.name

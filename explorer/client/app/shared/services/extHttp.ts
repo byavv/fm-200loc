@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {Http, Headers, RequestOptions, RequestOptionsArgs, Response, RequestMethod, Request} from '@angular/http';
-import {Subject, Observable, Observer} from 'rxjs';
-import {Identity} from "./identity";
-import {ResponseHandler} from "./responseHandler";
+import { Injectable } from '@angular/core';
+import { Http, Headers, RequestOptions, RequestOptionsArgs, Response, RequestMethod, Request } from '@angular/http';
+import { Subject, Observable, Observer } from 'rxjs';
+import { Identity } from "./identity";
+import { ResponseHandler } from "./responseHandler";
 export enum Action { QueryStart, QueryStop };
 
 @Injectable()
@@ -73,5 +73,5 @@ export class ExtHttp {
                     }
                 })
         })
-    }  
+    }
 }

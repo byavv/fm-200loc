@@ -12,14 +12,12 @@
  */
 
 import { Component, Input, Output, OnInit, EventEmitter }  from '@angular/core';
-import { FormGroup, Validators, FormBuilder, REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
-import { DynamicFormOption } from "./optionInput";
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Plugin } from '../../shared/models';
 
 @Component({
     selector: 'dynamic-form',
-    template: require('./templates/dynamicForm.html'),
-    directives: [REACTIVE_FORM_DIRECTIVES, DynamicFormOption]
+    template: require('./templates/dynamicForm.html')
 })
 export class DynamicForm {
     fields: Array<any> = []
@@ -28,7 +26,7 @@ export class DynamicForm {
     @Output()
     changed: EventEmitter<any> = new EventEmitter();
     @Input()
-    set plugin(plugin: Plugin) {        
+    set plugin(plugin: Plugin) {
         let group = {};
         if (plugin) {
             this.fields.splice(0, this.fields.length);

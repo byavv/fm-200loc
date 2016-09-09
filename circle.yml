@@ -1,6 +1,35 @@
 machine:
-  node:
-    version: 6.2.0
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - sudo pip install docker-compose       
+    - docker-compose -v
+    - docker -v
+  override:
+    - docker info
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - docker build -t aksenchyk/fm-200loc:build .
+
 test:
-  post:
-    - bash <(curl -s https://codecov.io/bash)
+  pre:
+    - git grep --color TODO | cat 
+  override:
+    - docker-compose -f test_compose.yml up gateway_test 
+  post:  
+    - docker-compose -f test_compose.yml stop
+
+deployment:
+  hub_latest:
+    branch: master
+    commands:     
+      - docker tag aksenchyk/fm-200loc:build aksenchyk/fm-200loc:latest   
+      - docker push aksenchyk/fm-200loc:latest
+  hub_release:    
+    tag: /.*/ 
+    commands:     
+      - docker tag aksenchyk/fm-200loc:build aksenchyk/fm-200loc:$CIRCLE_TAG    
+      - docker push aksenchyk/fm-200loc:$CIRCLE_TAG   

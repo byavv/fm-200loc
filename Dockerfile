@@ -7,20 +7,17 @@ MAINTAINER Aksenchyk V. <aksenchyk.v@gmail.com>
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# Install pm2
-RUN npm install -g pm2 typings
 
 # Copy app source
 COPY . /usr/src/app
 
 # Install dependencies and build client
 RUN \ 
-    npm install \ 
-    && typings install \
+    npm install \   
     && npm run build
 
 # Make server and client available
 EXPOSE 3001
 EXPOSE 5601
 
-CMD [ "npm", "run", "pm2" ]
+CMD [ "npm", "start"]

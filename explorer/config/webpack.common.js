@@ -14,7 +14,7 @@ module.exports = {
   entry: {
     main: [__root('../client/app/main.ts')],
     polyfills: [__root('../client/app/polyfills.ts')],
-    vendor: [__root('../client/app/vendors.ts')],
+    vendors: [__root('../client/app/vendors.ts')],
   },
   output: {
     path: __root('../build'),
@@ -54,7 +54,7 @@ module.exports = {
   },
   plugins: [    
      new webpack.optimize.CommonsChunkPlugin({
-      name: ['polyfills', 'vendor'].reverse()
+      name: ['polyfills', 'vendors'].reverse()
     }),
     new HtmlWebpackPlugin({
       template: __root('../client/index.html'),

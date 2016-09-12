@@ -1,0 +1,22 @@
+{
+    "config": {
+        "etcd_host": {
+            "default": "localhost",
+            "required": true,
+            "label": "Host",
+            "help": "Your etcd server host"
+        },
+        "etcd_port": {
+            "default": "4001",
+            "required": true,
+            "label": "Port",
+            "help": "Your etcd server port"
+        },
+        "heartbeat_interval": {
+            "default": "15",
+            "required": true,
+            "label": "Heartbeat interval",
+            "help": "Etcd storage key update time (s)"
+        }
+    }
+}

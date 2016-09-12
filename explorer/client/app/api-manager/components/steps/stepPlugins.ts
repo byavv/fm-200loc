@@ -125,7 +125,7 @@ export class StepPlugins implements OnInit {
             this.appliedPlugins.forEach(p => {
                 const temp = Object.assign({}, p);
                 delete temp.form;
-                plugins.push(temp)
+                plugins.push(temp);
             })
             this.master.config.plugins = plugins;
         } else {
@@ -140,8 +140,7 @@ export class StepPlugins implements OnInit {
         plugin.active = true;
         this.activePlugin = plugin;
     }
-    //#
-
+  
     //# manage plugin pipe item
     pluginUp(plugin: Plugin) {
         this.selectPipeItem(plugin);

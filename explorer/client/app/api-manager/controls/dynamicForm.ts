@@ -29,7 +29,7 @@ export class DynamicForm {
     set plugin(plugin: Plugin) {
         let group = {};
         if (plugin) {
-            this.fields.splice(0, this.fields.length);
+            this.fields.slice(0, this.fields.length);
             let settings = plugin.settings || {};
             Object.keys(settings).forEach((key: any) => {
                 group[key] = settings[key].required

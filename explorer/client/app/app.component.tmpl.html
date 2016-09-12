@@ -1,0 +1,31 @@
+<div class="page-wrap">
+    <loader [active]='loading' [async]='appController.init$'></loader>
+    <app-header></app-header>
+    <div [hidden]='loading' class='container-fluid'>
+        <div class='row content-area'>
+            <div class="col-sm-12 col-md-2">
+                <div class="navbar navbar-default col-xs-3 col-sm-2" id="sidebarLeft" role="navigation">
+                    <div class="container-fluid">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation" class="active" routerLinkActive="active" tabindex="-1">
+                                <a id="brandHuckel" [routerLink]="['/']"  role="menuitem" tabindex="-1" href="#">
+                                    <i class="fa fa-arrows"></i> Api
+                                </a>
+                            </li>
+                            <li role="presentation" tabindex="-1" routerLinkActive="active">
+                                <a id="move" [routerLink]="['/drivers']" role="menuitem" tabindex="-1" href="#">
+                                    <i class="fa fa-arrows"></i> Drivers
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-10">
+                <router-outlet>
+                </router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

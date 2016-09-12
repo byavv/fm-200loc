@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'api-list',
   template: require('./templates/apiList.template.html'),
-  styles: [require('./styles/apiList.scss')] 
+  styles: [require('./styles/apiList.scss')]
 })
 
 export class ApiListComponent implements OnInit, OnDestroy {

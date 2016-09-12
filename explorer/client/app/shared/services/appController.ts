@@ -16,7 +16,9 @@ export class AppController {
     start() {
         this._ngZone.runOutsideAngular(() => {
             this._loadAppDefaults((defaults) => {
-                this._ngZone.run(() => { this.init$.next(Object.assign(this.config, defaults)); });
+                this._ngZone.run(() => {
+                    this.init$.next(Object.assign(this.config, defaults));
+                });
                 console.log("APPLICATION STARTED");
             })
         });

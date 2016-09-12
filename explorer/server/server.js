@@ -27,8 +27,10 @@ app.start = (port) => {
 };
 
 module.exports = {
-    init: function init(plugins) {
+    init: function init(plugins, drivers) {
         app.plugins = plugins;
+        console.log(drivers)
+        app.drivers = drivers;
         return new Promise((resolve, reject) => {
             boot(app, __dirname, (err) => {
                 if (err) reject(err)

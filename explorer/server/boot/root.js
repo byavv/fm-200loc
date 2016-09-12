@@ -7,6 +7,7 @@ const path = require("path"),
 module.exports = function (app) {
     var router = app.loopback.Router();
     var ApiConfig = app.models.ApiConfig;
+    var Driver = app.models.Driver;
 
     router.get('/api/configs', (req, res) => {
         ApiConfig.find((err, configs) => {
@@ -47,7 +48,47 @@ module.exports = function (app) {
             if (err) return res.sendStatus(500);
             return res.send(result);
         });
-    })
+    });
+
+    router.get('/api/drivers', (req, res) => {
+        return res.send((req.app.drivers || []).map(driver => {
+            return {
+                name: driver._name,
+                description: driver._description,
+                settings: driver.config
+            };
+        }));
+    });
+    router.get('/api/driver/config/:name', (req, res) => {
+        console.log(req.app.drivers)
+        let driver = (req.app.drivers || [])
+            .find((d) => d._name == req.params['name']);
+        return res.send({
+            name: driver._name,
+            description: driver._description,
+            settings: driver.config
+        });
+    });
+
+    router.get('/api/drivers/:name', (req, res) => {
+        Driver.find({ where: { name: req.params['name'] } }, (err, drivers) => {
+            if (err) return res.sendStatus(500);
+            return res.send(drivers);
+        });
+    });
+
+    router.post('/api/driver/:id', (req, res) => {
+        console.log(req.body)
+        Driver.findOrCreate({ where: { id: req.params.id } }, req.body, (err, driverConfig) => {
+            if (err) {
+                return res.status(err.statusCode).send(err.message);
+            }
+            driverConfig.updateAttributes(req.body, (err, cf) => {
+                if (err) return res.sendStatus(500);
+                return res.status(200).send(cf);
+            });
+        });
+    });
 
     router.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../../build/index.html'));

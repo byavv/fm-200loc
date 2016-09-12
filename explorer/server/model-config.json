@@ -16,5 +16,9 @@
   "ApiConfig": {
     "dataSource": "db",
     "public": false
+  },
+  "Driver": {
+    "dataSource": "db",
+    "public": false
   }
 }

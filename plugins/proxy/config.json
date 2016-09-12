@@ -1,14 +1,17 @@
 {
-    "target": {
-        "default": "localhost",
-        "required": true,
-        "label": "Target",
-        "help": "Proxy target"
+    "config": {
+        "target": {
+            "default": "localhost",
+            "required": true,
+            "label": "Target",
+            "help": "Proxy target"
+        },
+        "withPath": {
+            "default": "/",
+            "required": true,
+            "label": "Path",
+            "help": "Path to be added to target api url"
+        }
     },
-    "withPath": {
-        "default": "/",
-        "required": true,
-        "label": "Path",
-        "help": "Path to be added to target api url"
-    }
+    "require": []
 }

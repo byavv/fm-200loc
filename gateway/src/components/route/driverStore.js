@@ -2,7 +2,7 @@
 "use strict";
 
 module.exports = (function () {
-    const cls = function (defaults = {}) {
+    const cls = function (drivers = {}) {
         const data = new Map();
         Object.keys(defaults).forEach(key => {
             data.set(key, defaults[key]);

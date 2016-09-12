@@ -4,7 +4,7 @@
       "loopback/common/models",
       "loopback/server/models",
       "../../common/models",
-      "./models"     
+      "./models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -41,6 +41,10 @@
     "public": false
   },
   "ApiConfig": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Driver": {
     "dataSource": "db",
     "public": false
   }

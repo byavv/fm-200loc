@@ -5,20 +5,8 @@ import { Identity, AppController, Storage } from './shared/services'
 import '../assets/styles/main.scss';
 
 @Component({
-    selector: 'app',   
-    template: `
-    <div class="page-wrap">
-       <loader [active]='loading' [async]='appController.init$'></loader>      
-       <app-header></app-header>
-       <div [hidden]='loading' class='container-fluid'>
-            <div class='content-area'> 
-                <router-outlet>
-                </router-outlet>
-            </div>
-        </div>   
-   </div> 
-   <app-footer></app-footer>
-  `   
+    selector: 'app',
+    template: require('./app.component.tmpl.html')
 })
 
 export class App {

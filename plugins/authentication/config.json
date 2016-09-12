@@ -1,8 +1,11 @@
 {
-    "grant": {
-        "default": "*",
-        "required": true,
-        "label": "Grant (read, write, etc..)",
-        "help": "Grant access for roles, which has this permissions"
-    }   
+    "config": {
+        "grant": {
+            "default": "*",
+            "required": true,
+            "label": "Grant (read, write, etc..)",
+            "help": "Grant access for roles, which has this permissions"
+        }
+    },
+    "require": []
 }

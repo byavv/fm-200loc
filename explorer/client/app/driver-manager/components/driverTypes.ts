@@ -4,7 +4,8 @@ import { BackEnd } from '../../shared/services';
 
 
 @Component({
-    template: require('./templates/driverTypes.tmpl.html')
+    template: require('./templates/driverTypes.tmpl.html'),
+    styles:[require('./styles/driverTypes.scss')]
 })
 export class DriverTypesComponent implements OnInit {
     drivers: Array<any> = [];

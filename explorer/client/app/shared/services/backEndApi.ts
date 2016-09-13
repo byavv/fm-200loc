@@ -58,4 +58,9 @@ export class BackEnd {
       .delete(`/api/config/${id}`)
       .map(res => res.json());
   }
+  public getDriverConfig(id) {
+    return this._http
+      .get(`/api/driver/${id}`)
+      .map(res => res.json());
+  }
 }

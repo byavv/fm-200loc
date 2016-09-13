@@ -1,8 +1,7 @@
 /*jslint node: true */
 'use strict';
 const path = require("path"),
-    async = require('async')
-    ;
+    async = require('async');
 
 module.exports = function (app) {
     var router = app.loopback.Router();
@@ -74,6 +73,15 @@ module.exports = function (app) {
         Driver.find({ where: { name: req.params['name'] } }, (err, drivers) => {
             if (err) return res.sendStatus(500);
             return res.send(drivers);
+        });
+    });
+
+
+    router.get('/api/driver/:id', (req, res) => {
+        Driver.findById(req.params['id'], (err, driver) => {
+            //  Driver.findOne({ where: { name: req.params['name'] } }, (err, drivers) => {
+            if (err) return res.sendStatus(500);
+            return res.send(driver);
         });
     });
 

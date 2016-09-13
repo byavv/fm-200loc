@@ -10,27 +10,12 @@
             </div>
         </div>
         <div class="widget-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Entry</th>
-                        <th>Description</th>                      
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor='let driver of drivers'>
-                        <td><a [routerLink]="['/drivers/list']" [queryParams]='{ id: driver.id }'>~{{ driver.entry }}</a></td>
-                        <td>{{ driver.description }}</td>                       
-                        <td class="width-150" style="position: relative;">
-                            <div class="api-item-controls">
-                                <button type="button" class="btn btn-success btn-sm" (click)="getDriverConfigs(driver)">
-                                        <i class="fa fa-plus"></i>
-                                </button>                               
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="driver-container">
+                <a *ngFor='let driver of drivers' [routerLink]="['/drivers/config']" [queryParams]='{ name: driver.name }' title="{{ driver.description }}">
+                    <i class="fa fa-cog" aria-hidden="true"></i>
+                    <span>{{ driver.name | uppercase }}</span>
+                </a>
+            </div>
         </div>
     </section>
 </div>

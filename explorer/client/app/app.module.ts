@@ -14,6 +14,11 @@ import { AUTHENTICATION_COMPONENTS } from './authentication';
 
 import { SharedModule } from "./shared";
 
+import {
+  LocationStrategy,
+  HashLocationStrategy
+} from '@angular/common';
+
 enableProdMode();
 /**
  * `AppModule` is the main entry point into Angular2's bootstraping process
@@ -34,6 +39,7 @@ enableProdMode();
     SharedModule
   ],
   providers: [
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
   ]
 })
 export class AppModule {

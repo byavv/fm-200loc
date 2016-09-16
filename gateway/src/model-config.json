@@ -44,7 +44,7 @@
     "dataSource": "db",
     "public": false
   },
-  "Driver": {
+  "DriverConfig": {
     "dataSource": "db",
     "public": false
   }

@@ -1,9 +1,12 @@
-
-
-import { Component, Input, Output, OnInit, EventEmitter, forwardRef } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-
-
+import {
+    Component, Input,
+    Output, OnInit,
+    EventEmitter, forwardRef
+} from '@angular/core';
+import {
+    FormGroup,
+    Validators, FormBuilder
+} from '@angular/forms';
 import {
     NgControl, NgModel,
     ControlValueAccessor, NG_VALUE_ACCESSOR
@@ -12,6 +15,7 @@ import {
 @Component({
     selector: 'dynamic-form2',
     template: require('./templates/dynamicForm.html'),
+    exportAs: 'dynForm',
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
@@ -21,10 +25,7 @@ import {
     ]
 })
 export class DynamicForm2 implements ControlValueAccessor {
-    //  fields: Array<any> = []
     private _fields = [];
-
-
     @Input()
     set fields(value: any) {
         let group = {};
@@ -48,8 +49,7 @@ export class DynamicForm2 implements ControlValueAccessor {
             this.form = this._builder.group(group);
             this.form.valueChanges
                 .subscribe(value => {
-                    this.onChange.next(value)
-                    //  this.changed.emit(value);
+                    this.onChange.next(value);
                 });
         }
     }
@@ -60,12 +60,17 @@ export class DynamicForm2 implements ControlValueAccessor {
     get fields() {
         return this._fields;
     }
+    get valid(){
+        return this.form? this.form.valid: false;
+    }
 
+    /**
+     * ControlValueAccessor members
+     */
     onTouched = () => {
     };
     @Output()
     onChange: EventEmitter<any> = new EventEmitter();
-
     writeValue(value) {
         if (value !== undefined) {
             for (const key in value) {

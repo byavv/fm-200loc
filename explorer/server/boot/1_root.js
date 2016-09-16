@@ -6,7 +6,7 @@ const path = require("path"),
 module.exports = function (app) {
     var router = app.loopback.Router();
     var ApiConfig = app.models.ApiConfig;
-    var Driver = app.models.Driver;
+    var DriverConfig = app.models.DriverConfig;
 
     router.get('/api/configs', (req, res) => {
         ApiConfig.find((err, configs) => {
@@ -48,7 +48,9 @@ module.exports = function (app) {
             return res.send(result);
         });
     });
-
+    /**
+     * Get all installed drivers
+     */
     router.get('/api/drivers', (req, res) => {
         return res.send((req.app.drivers || []).map(driver => {
             return {
@@ -58,8 +60,10 @@ module.exports = function (app) {
             };
         }));
     });
+    /**
+     * Get driver template by it's name'
+     */
     router.get('/api/driver/config/:name', (req, res) => {
-        console.log(req.app.drivers)
         let driver = (req.app.drivers || [])
             .find((d) => d._name == req.params['name']);
         return res.send({
@@ -68,39 +72,43 @@ module.exports = function (app) {
             settings: driver.config
         });
     });
-
-    router.get('/api/drivers/:name', (req, res) => {
-        Driver.find({ where: { name: req.params['name'] } }, (err, drivers) => {
+    /**
+     * 
+     */
+  /*  router.get('/api/driver/:name', (req, res) => {
+        DriverConfig.find({ where: { driverId: req.params['name'] } }, (err, driverConfigs) => {
             if (err) return res.sendStatus(500);
-            return res.send(drivers);
+            return res.send(driverConfigs);
         });
     });
 
 
     router.get('/api/driver/:id', (req, res) => {
-        Driver.findById(req.params['id'], (err, driver) => {
-            //  Driver.findOne({ where: { name: req.params['name'] } }, (err, drivers) => {
+        DriverConfig.findById(req.params['id'], (err, driverConfig) => {
+            //  DriverConfig.findOne({ where: { name: req.params['name'] } }, (err, driverConfigs) => {
             if (err) return res.sendStatus(500);
-            return res.send(driver);
+            return res.send(driverConfig);
         });
-    });
+    });*/
 
-    router.post('/api/driver/:id', (req, res) => {
+   /* router.post('/api/driver/:id', (req, res) => {
         console.log(req.body)
-        Driver.findOrCreate({ where: { id: req.params.id } }, req.body, (err, driverConfig) => {
+        DriverConfig.findOrCreate({ where: { id: req.params.id } }, req.body, (err, driverConfigConfig) => {
             if (err) {
                 return res.status(err.statusCode).send(err.message);
             }
-            driverConfig.updateAttributes(req.body, (err, cf) => {
+            driverConfigConfig.updateAttributes(req.body, (err, cf) => {
                 if (err) return res.sendStatus(500);
                 return res.status(200).send(cf);
             });
         });
     });
-
-    router.get('*', (req, res) => {
+*/
+   /* router.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../../build/index.html'));
-    });
+    });*/
 
-    app.use(router)
+    app.use(router);
+    console.log('root')
+    
 };

@@ -28,11 +28,12 @@
                 "etcd"
             ]
         },
-        "$require": {
-            "driver": "etcd",
-            "default": "",
-            "required": true,
-            "label": "Etcd configuration"
-        }
+        "$require": [
+            {
+                "driverId": "etcd",                
+                "required": true,
+                "label": "Etcd configuration"
+            }
+        ]
     }
 }

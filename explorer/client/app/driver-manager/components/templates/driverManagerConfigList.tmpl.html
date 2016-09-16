@@ -1,8 +1,8 @@
-<div>
+
     <section class="widget" style="position: relative; min-height: 500px;">
         <loader [active]='loading'></loader>
         <div class="widget-header">
-            <span class="title">Configurations for {{ plugin?.name }}</span>
+            <span class="title">Configurations for {{ driverName }}</span>
             <div class="pull-xs-right" style="position: relative;">
                 <a href='' (click)="showModal()" class="nav-link" role="button" aria-expanded="false">
                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -44,15 +44,47 @@
                     <h4 class="modal-title">Configure</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input type="test" [(ngModel)]='currentDriver.name' />
-                    </div>
-                    <dynamic-form2 [fields]="plugin?.settings" [(ngModel)]='currentSettings' (changed)='applyValidation()'></dynamic-form2>
+                    <form #configForm="ngForm">
+                        <div class="form-group">
+                            <label for='configName'>Name</label>
+                            <input 
+                                id='configName' 
+                                type="text" 
+                                class='form-control' 
+                                name="name" 
+                                #name='ngModel' 
+                                [(ngModel)]='currentDriver.name' 
+                                required/>
+                            <show-error 
+                                *ngIf='!name.valid' 
+                                [control]="'name'" 
+                                [errors]="{'required': 'Name is required'}">
+                            </show-error>
+                        </div>
+                        <div class="form-group">
+                            <label for='description'>Description</label>
+                            <input id='description' 
+                                type="text" 
+                                class='form-control' 
+                                name="description" 
+                                #description='ngModel' 
+                                [(ngModel)]='currentDriver.description'
+                                required/>
+                            <show-error 
+                                *ngIf='!description.valid' 
+                                [control]="'description'" 
+                                [errors]="{'required': 'Description is required'}">
+                            </show-error>
+                        </div>
+                    </form>
+                    <dynamic-form2 [fields]="driverTemplate?.settings" #optionsForm=dynForm [(ngModel)]='currentSettings' (changed)='applyValidation()'></dynamic-form2>
                     <div>
-                        <button type="button" class="btn btn-large btn-block btn-default" (click)="addOrUpdate(); hideModal()">Add</button>
+                        <button type="button" 
+                        [disabled]='!configForm.valid || !optionsForm.valid' 
+                        class="btn btn-large btn-block btn-default" 
+                        (click)="addOrUpdate(); modal.hide()">Add</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

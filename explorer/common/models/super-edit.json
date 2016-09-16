@@ -1,5 +1,6 @@
 {
-  "name": "Driver",
+  "name": "SuperEdit",
+  "plural": "se",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -8,13 +9,11 @@
   "properties": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "super"
     },
     "description": {
       "type": "string"
-    },
-    "settings": {
-      "type": "object"
     }
   },
   "validations": [],

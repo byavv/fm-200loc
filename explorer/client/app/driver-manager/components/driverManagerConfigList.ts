@@ -1,52 +1,65 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BackEnd } from '../../shared/services';
-import { Plugin } from '../../shared/models';
+import { DriverConfigApi, BackEnd } from '../../shared/services';
+import { DriverConfig } from '../../shared/models';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
+import { Observable } from 'rxjs';
 
 @Component({
     template: require('./templates/driverManagerConfigList.tmpl.html')
 })
 export class DriverManagerConfigComponent {
-    plugin: Plugin;
+    driverName: string;
+    driverTemplate: any;
     driverConfigs: Array<any> = [];
     currentSettings = {};
-    currentDriver = {};
+    currentDriver: any = {};
     @ViewChild('lgModal') modal: ModalDirective;
+
     constructor(
         private activeRoute: ActivatedRoute,
-        private backEnd: BackEnd
+        private driverConfigApi: DriverConfigApi,
+        private moduleApi: BackEnd
     ) { }
 
     ngOnInit() {
-        this.backEnd
-            .getDriverConfigByName(this.activeRoute.snapshot.queryParams['name'])
-            .subscribe(driverConfigs => {
-                console.log(driverConfigs)
-                this.driverConfigs = driverConfigs;
+        this.driverName = this.activeRoute.snapshot.queryParams['name'];
+        Observable.zip(
+            // find configurations of current driver
+            this._updateDriverConfigList(),
+            // find driver's template to fill form fields
+            this.moduleApi
+                .getDriverTemplateByName(this.driverName), (v1, v2) => [v1, v2])
+            .subscribe(result => {
+                this.driverConfigs = result[0];
+                this.driverTemplate = result[1];
             })
-        this.backEnd
-            .getDriverTemplateByName(this.activeRoute.snapshot.queryParams['name'])
-            .subscribe((pl) => {
-                this.plugin = new Plugin(pl.name, pl.description, 0, pl.settings, {});
-            });
+        this.modal.onHidden.subscribe(() => {
+            this.currentSettings = {};
+            this.currentDriver = {};
+        })
+    }
+    private _updateDriverConfigList() {
+        return this.driverConfigApi
+            .find({ where: { driverId: this.driverName } })
     }
 
     applyValidation() { }
 
     addOrUpdate() {
-        let temp = Object.assign({}, this.plugin);
-        temp.settings = this.currentSettings;
-        delete this.plugin.form;
-        this.backEnd
-            .createOrUpdateDriver(temp)
-            .subscribe((result) => {
-                console.log(result)
-            });
-
+        this.currentDriver.settings = this.currentSettings;
+        this.currentDriver.driverId = this.driverName;
+        this.driverConfigApi
+            .upsert(this.currentDriver)
+            .subscribe(result => {
+                this.modal.hide();
+                this._updateDriverConfigList().subscribe((result) => {
+                    this.driverConfigs = result
+                })
+            })
     }
+
     editConfig(config) {
-        //config.id
         console.log(config)
     }
     deleteConfig(config) {
@@ -54,24 +67,26 @@ export class DriverManagerConfigComponent {
     }
     showModal(id?: string) {
         if (id) {
-            this.backEnd
-                .getDriverConfig(id)
+            this.driverConfigApi.findById(id)
                 .subscribe((driver) => {
                     this.currentSettings = driver.settings;
+                    this.currentDriver = Object.assign({}, driver);
+                    this.modal.show();
                 });
 
-            this.modal.show();
         } else {
-            var temp = {}
-            for (const key in this.plugin.settings) {
-                temp[key] = this.plugin.settings[key].default || ''
+            let temp = {}
+            for (const key in this.driverTemplate.settings) {
+                temp[key] = this.driverTemplate.settings[key].default || '';
             }
+            this.currentDriver = new DriverConfig();
             this.currentSettings = temp;
-            this.modal.show();
+            try {
+                this.modal.show();
+            } catch (error) {
+                console.log(error)
+            }
+
         }
-    }
-    hideModal() {
-        this.modal.hide();
-        this.currentSettings = {};
     }
 }

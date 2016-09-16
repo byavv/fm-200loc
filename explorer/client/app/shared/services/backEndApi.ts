@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ExtHttp } from './extHttp';
+import { Http } from '@angular/http';
 
 @Injectable()
 export class BackEnd {
 
-  constructor(private _http: ExtHttp) { }
+  constructor(private _http: Http) { }
 
   public getPlugins(): Observable<any> {
     return this._http
@@ -23,7 +23,7 @@ export class BackEnd {
       .get("/api/drivers")
       .map(res => res.json());
   }
-  public getDriverConfigByName(name): Observable<any> {
+  public getDriverConfigurations(name): Observable<any> {
     return this._http
       .get(`/api/drivers/${name}`)
       .map(res => res.json());
@@ -47,11 +47,12 @@ export class BackEnd {
       .map(res => res.json());
   }
 
-  public createOrUpdateDriver(data: any, id?: string) {
+  public createOrUpdateDriver(driver: any) {
     return this._http
-      .post(`/api/driver/${id}`, JSON.stringify(data))
+      .post(`/api/driver/${driver.id ? driver.id : ''}`, JSON.stringify(driver))
       .map(res => res.json());
   }
+
 
   public deleteApiConfig(id) {
     return this._http

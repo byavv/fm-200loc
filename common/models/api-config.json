@@ -32,7 +32,7 @@
     },
     "plugins": {
       "type": "object"
-    }   
+    }
   },
   "validations": [],
   "relations": {},

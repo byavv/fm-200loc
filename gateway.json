@@ -1,7 +1,8 @@
 {
   "ids": {
     "ApiConfig": 2,
-    "Driver": 13
+    "Driver": 14,
+    "DriverConfig": 4
   },
   "models": {
     "ApiConfig": {
@@ -17,11 +18,14 @@
       "36": "{\"name\":\"api/profiles\",\"public\":true,\"description\":\"profiles api\",\"entry\":\"/private/api/profiles/\",\"methods\":[\"GET\",\"POST\"],\"plugins\":[{\"active\":false,\"settings\":{\"grant\":\"read\"},\"name\":\"authentication\",\"description\":\"Loopback-based authentication middleware\",\"order\":1,\"value\":{\"grant\":\"read\"}},{\"active\":false,\"settings\":{\"etcd_host\":\"env{ETCD_HOST}\",\"etcd_port\":\"4001\",\"mapTo\":\"profile\",\"storage\":\"etcd\"},\"name\":\"discovery\",\"description\":\"Etcd discovery plugin, search service url in the etcd registry by key\",\"order\":2,\"value\":{\"etcd_host\":\"env{ETCD_HOST}\",\"etcd_port\":\"4001\",\"mapTo\":\"profile\",\"storage\":\"etcd\"}},{\"active\":true,\"settings\":{\"target\":\"${target}\",\"withPath\":\"/api/profiles\"},\"name\":\"proxy\",\"description\":\"Simple proxying requests\",\"order\":3,\"value\":{\"target\":\"${target}\",\"withPath\":\"/api/profiles\"}}],\"id\":36}",
       "37": "{\"name\":\"private users api\",\"public\":true,\"description\":\"getting user information, crud\",\"entry\":\"/private/api/users\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"DELETE\"],\"plugins\":[{\"active\":false,\"settings\":{\"grant\":\"read\"},\"name\":\"authentication\",\"description\":\"Loopback-based authentication middleware\",\"order\":1,\"value\":{}},{\"active\":false,\"settings\":{\"etcd_host\":\"env{ETCD_HOST}\",\"etcd_port\":\"4001\",\"mapTo\":\"profile\",\"storage\":\"etcd\"},\"name\":\"discovery\",\"description\":\"Etcd discovery plugin, search service url in the etcd registry by key\",\"order\":2,\"value\":{}},{\"active\":true,\"settings\":{\"target\":\"${target}\",\"withPath\":\"/api/users\"},\"name\":\"proxy\",\"description\":\"Simple proxying requests\",\"order\":3,\"value\":{}}],\"id\":37}"
     },
-    "Driver": {
+    "DriverConfig": {
+      "1": "{\"name\":\"ewrwe\",\"description\":\"erwwer\",\"settings\":{\"etcd_host\":\"localhost111\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"id\":1}",
+      "2": "{\"name\":\"111\",\"description\":\"222\",\"settings\":{\"etcd_host\":\"localhost111\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":2}",
+      "3": "{\"name\":\"config1\",\"description\":\"3333333\",\"settings\":{\"etcd_host\":\"localhost\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"30\"},\"driverId\":\"etcd\",\"id\":3}",
       "9": "{\"name\":\"etcd\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost1\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":9}",
       "10": "{\"name\":\"etcd\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost11\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":10}",
-      "11": "{\"name\":\"etcd\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost12\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":11}",
-      "12": "{\"name\":\"etcd\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost14444\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":12}"
+      "11": "{\"name\":\"etcd2222\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost12\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":11}",
+      "12": "{\"name\":\"etcd222\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost14444333333333333\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":12}"
     }
   }
 }

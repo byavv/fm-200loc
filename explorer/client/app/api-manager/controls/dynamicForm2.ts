@@ -1,17 +1,32 @@
 import {
     Component, Input,
-    Output, OnInit,
+    Output, OnInit, Optional, Host,
     EventEmitter, forwardRef
 } from '@angular/core';
 import {
     FormGroup,
-    Validators, FormBuilder
+    Validators,
+    FormBuilder,
+    NG_VALIDATORS, FormControl
 } from '@angular/forms';
 import {
     NgControl, NgModel,
     ControlValueAccessor, NG_VALUE_ACCESSOR
 } from '@angular/forms';
 
+
+/**
+ * Component for dynamic forms, which can be definen by json data
+ * Ex.: 
+ *     "field_1": {
+            "default": "42",
+            "required": true,
+            "label": "Answer",
+            "help": "The answer to life, universe and everything",
+            "type": "string"
+        },
+ * 
+ */
 @Component({
     selector: 'dynamic-form2',
     template: require('./templates/dynamicForm.html'),
@@ -31,7 +46,6 @@ export class DynamicForm2 implements ControlValueAccessor {
         let group = {};
         if (value) {
             this._fields.slice(0, this._fields.length);
-
             Object.keys(value).forEach((key: any) => {
                 group[key] = value[key].required
                     ? ['', Validators.required]
@@ -48,8 +62,8 @@ export class DynamicForm2 implements ControlValueAccessor {
 
             this.form = this._builder.group(group);
             this.form.valueChanges
-                .subscribe(value => {
-                    this.onChange.next(value);
+                .subscribe(value => {                    
+                    this.onChange.next(value);                  
                 });
         }
     }
@@ -60,8 +74,8 @@ export class DynamicForm2 implements ControlValueAccessor {
     get fields() {
         return this._fields;
     }
-    get valid(){
-        return this.form? this.form.valid: false;
+    get valid() {
+        return this.form ? this.form.valid : false;
     }
 
     /**

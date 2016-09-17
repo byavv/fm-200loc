@@ -33,6 +33,7 @@ export class DriverManagerConfigComponent {
             .subscribe(result => {
                 this.driverConfigs = result[0];
                 this.driverTemplate = result[1];
+                console.log(this.driverTemplate)
             })
         this.modal.onHidden.subscribe(() => {
             this.currentSettings = {};
@@ -58,12 +59,13 @@ export class DriverManagerConfigComponent {
                 })
             })
     }
-
-    editConfig(config) {
-        console.log(config)
-    }
     deleteConfig(config) {
-
+        this.driverConfigApi
+            .deleteById(config.id)
+            .flatMap(() => this._updateDriverConfigList())
+            .subscribe(result => {
+                this.driverConfigs = result;
+            })
     }
     showModal(id?: string) {
         if (id) {
@@ -73,7 +75,6 @@ export class DriverManagerConfigComponent {
                     this.currentDriver = Object.assign({}, driver);
                     this.modal.show();
                 });
-
         } else {
             let temp = {}
             for (const key in this.driverTemplate.settings) {
@@ -86,7 +87,6 @@ export class DriverManagerConfigComponent {
             } catch (error) {
                 console.log(error)
             }
-
         }
     }
 }

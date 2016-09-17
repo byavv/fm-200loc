@@ -62,7 +62,7 @@
         </div>
         <div class="col-md-7 col-sm-12">
             <div class="plugin-props" *ngFor="let plugin of appliedPlugins" [hidden]="!plugin.active">
-               <!-- <dynamic-form [plugin]="plugin" (changed)='applyValidation()'></dynamic-form> -->
+                <plugin-form [plugin]="plugin" (changed)='applyValidation()'></plugin-form>
             </div>
         </div>
     </div>

@@ -32,6 +32,11 @@
     },
     "plugins": {
       "type": "object"
+    },
+    "dependencies": {
+      "type": [
+        "string"
+      ]
     }
   },
   "validations": [],

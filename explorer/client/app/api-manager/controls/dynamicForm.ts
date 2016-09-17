@@ -45,7 +45,7 @@ export class DynamicForm {
                 });
             });
 
-            this.form = plugin.form = this._builder.group(group);
+         //   this.form = plugin.form = this._builder.group(group);
             this.form.valueChanges
                 .subscribe(value => {
                     plugin.settings = value;

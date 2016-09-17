@@ -31,13 +31,17 @@ module.exports = function (app) {
             });
         });
     });
-
+    /**
+     * Get all installed plugins
+     */
     router.get('/api/plugins', (req, res) => {
         return res.send((req.app.plugins || []).map(plugin => {
             return {
                 name: plugin._name,
                 description: plugin._description,
-                settings: plugin.config
+                settingsTemplate: plugin.config,
+                dependenciesTemplate: plugin.dependencies,
+                value: {}
             };
         }));
     });
@@ -72,43 +76,5 @@ module.exports = function (app) {
             settings: driver.config
         });
     });
-    /**
-     * 
-     */
-  /*  router.get('/api/driver/:name', (req, res) => {
-        DriverConfig.find({ where: { driverId: req.params['name'] } }, (err, driverConfigs) => {
-            if (err) return res.sendStatus(500);
-            return res.send(driverConfigs);
-        });
-    });
-
-
-    router.get('/api/driver/:id', (req, res) => {
-        DriverConfig.findById(req.params['id'], (err, driverConfig) => {
-            //  DriverConfig.findOne({ where: { name: req.params['name'] } }, (err, driverConfigs) => {
-            if (err) return res.sendStatus(500);
-            return res.send(driverConfig);
-        });
-    });*/
-
-   /* router.post('/api/driver/:id', (req, res) => {
-        console.log(req.body)
-        DriverConfig.findOrCreate({ where: { id: req.params.id } }, req.body, (err, driverConfigConfig) => {
-            if (err) {
-                return res.status(err.statusCode).send(err.message);
-            }
-            driverConfigConfig.updateAttributes(req.body, (err, cf) => {
-                if (err) return res.sendStatus(500);
-                return res.status(200).send(cf);
-            });
-        });
-    });
-*/
-   /* router.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../../build/index.html'));
-    });*/
-
     app.use(router);
-    console.log('root')
-    
 };

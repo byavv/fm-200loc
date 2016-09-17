@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, Input, EventEmitter, OnDestroy, Host, ViewChildren, QueryList, ViewContainerRef } from '@angular/core';
 import { Router, ActivatedRoute } from "@angular/router";
 import { ShowError } from '../../directives';
-import { DynamicForm } from '../../controls';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Config, Plugin } from '../../../shared/models';
 import { BackEnd, AppController } from '../../../shared/services';
@@ -32,7 +31,6 @@ export class StepPlugins implements OnInit {
     loading: boolean;
     submitted: boolean = false;
     selectedPlugin: Plugin;
-    plugins_valid = false;
     showError: boolean = false;
 
     constructor(
@@ -56,16 +54,21 @@ export class StepPlugins implements OnInit {
                 (apiConfig.plugins || []).forEach((cp) => {
                     const plugin = this.plugins.find(plugin => plugin.name === cp.name);
                     if (plugin)
-                        this.addNewPlugin(plugin, cp.settings, false);
+                        this.addNewPlugin(plugin, {// value
+                            settings: cp.settings,
+                            dependencies: cp.dependencies
+                        }, false);
                 });
                 this.applyPlugins(apiConfig.plugins);
                 this.applyValidation();
             });
     }
-
+    /**
+     * Add new or configured plugin into list
+     */
     addNewPlugin(plugin: Plugin, value: any = {}, apply: boolean = true) {
         var pl = Object.assign({}, plugin);
-        let pluginInst = new Plugin(pl.name, pl.description, this._lastOrder + 1, pl.settings, value);
+        let pluginInst = new Plugin(pl, this._lastOrder + 1, value);
         this.appliedPlugins.push(pluginInst);
         this.selectPipeItem(pluginInst);
         if (apply) {
@@ -110,7 +113,6 @@ export class StepPlugins implements OnInit {
         })
         plugin.active = true;
     }
-    //#
 
     //# plugin management methods
     applyValidation() {
@@ -119,18 +121,18 @@ export class StepPlugins implements OnInit {
             : this.master.setValidity('plugins', false);
     }
 
-    applyPlugins(value?: Array<Plugin>) {
-        if (!value) {
-            const plugins = [];
-            this.appliedPlugins.forEach(p => {
-                const temp = Object.assign({}, p);
-                delete temp.form;
-                plugins.push(temp);
+    applyPlugins(plugins?: Array<any>) {
+        if (!plugins) {
+            plugins = this.appliedPlugins.map(p => {
+                return {
+                    name: p.name,
+                    description: p.description,
+                    settings: p.value.settings,
+                    dependencies: p.value.dependencies
+                }
             })
-            this.master.config.plugins = plugins;
-        } else {
-            this.master.config.plugins = value;
         }
+        this.master.config.plugins = plugins;
     }
 
     selectPipeItem(plugin: Plugin) {
@@ -140,7 +142,7 @@ export class StepPlugins implements OnInit {
         plugin.active = true;
         this.activePlugin = plugin;
     }
-  
+
     //# manage plugin pipe item
     pluginUp(plugin: Plugin) {
         this.selectPipeItem(plugin);
@@ -169,7 +171,6 @@ export class StepPlugins implements OnInit {
         if (this.appliedPlugins[0])
             this._setActive(this.appliedPlugins[0]);
     }
-    //#
 
     isLast(plugin): boolean {
         return (plugin === this.appliedPlugins
@@ -194,7 +195,8 @@ export class StepPlugins implements OnInit {
     }
 
     isValid(plugin: Plugin) {
-        return plugin.valid;
+        //  return plugin.valid;
+        return false;
     }
 
     onSubmit() {

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AppController } from './shared/services'
 
 import '../assets/styles/main.scss';
-
+import { LoopBackConfig } from './app.config';
 @Component({
     selector: 'app',
     template: require('./app.component.tmpl.html')
@@ -12,7 +12,7 @@ import '../assets/styles/main.scss';
 export class App {
     loading = true;
     constructor(private appController: AppController,
-        public viewContainerRef: ViewContainerRef) {
+        public viewContainerRef: ViewContainerRef) {   
         this.appController.init$.subscribe(() => {
             this.loading = false;
         })

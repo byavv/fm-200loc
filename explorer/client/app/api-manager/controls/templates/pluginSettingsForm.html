@@ -1,1 +1,14 @@
- <dynamic-form2 [plugin]="plugin" (changed)='applyValidation()'></dynamic-form2>
+<div [formGroup]='form'>
+    <dynamic-form2 
+        [fields]="pluginTemplate" 
+        #settingsForm='dynForm' 
+        [(ngModel)]='settingsValue' 
+        formControlName='settings'>
+    </dynamic-form2>
+    <dynamic-form2 
+        [fields]="dependenciesTemplate" 
+        #dependenciesForm='dynForm' 
+        [(ngModel)]='dependenciesValue' 
+        formControlName='dependencies'>
+    </dynamic-form2>
+</div>

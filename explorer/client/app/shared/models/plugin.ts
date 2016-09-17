@@ -1,21 +1,20 @@
-import { FormGroup } from "@angular/forms";
+/* tslint:disable */
+
 export class Plugin {
-    id: string;
     name: string;
     description: string;
+
+    dependenciesTemplate: any;
+    settingsTemplate: any = {};
+
     order: number;
     active: boolean = false;
-    settings: any = {};
-    form: FormGroup;
     value: any;
-    constructor(name?: string, description?: string, order?: number, settings?: any, value?: any) {
-        this.name = name;
-        this.description = description;
+    valid: boolean = false;
+
+    constructor(instance?: Plugin, order?: number, value?: any) {
+        Object.assign(this, instance);
         this.order = order;
-        this.settings = settings;
         this.value = value;
-    }
-    get valid() {
-        return this.form ? this.form.valid : false;
     }
 }

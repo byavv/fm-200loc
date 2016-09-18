@@ -1,16 +1,10 @@
 {
     "config": {
-        "etcd_host": {
-            "default": "localhost",
+        "connection_string": {
+            "default": "localhost:4001",
             "required": true,
-            "label": "Host",
+            "label": "Connection string",
             "help": "Your etcd server host"
-        },
-        "etcd_port": {
-            "default": "4001",
-            "required": true,
-            "label": "Port",
-            "help": "Your etcd server port"
         },
         "heartbeat_interval": {
             "default": "15",

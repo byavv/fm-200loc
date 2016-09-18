@@ -1,8 +1,8 @@
 {
     "env": {
         "NODE_ENV": "development",
-        "DEBUG": "gateway, plugins:*, explorer",
-        "ETCD_HOST": "localhost"
+        "DEBUG": "gateway, plugins:*, drivers:*, explorer",
+        "ETCD_HOST": "localhost:4001"
     },
     "ext": "js",
     "restartable": "rs",

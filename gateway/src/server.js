@@ -8,6 +8,7 @@ const app = loopback();
 const mongo_host = process.env.DBSOURCE_HOST || "localhost";
 const etcd_host = process.env.ETCD_HOST || "localhost";
 const logger = require('../../lib/logger');
+const global = require('./global');
 
 app.set("mongo_host", mongo_host);
 app.set("etcd_host", etcd_host);
@@ -30,8 +31,8 @@ app.start = (port) => {
 
 module.exports = {
     init: function init(plugins, drivers) {
-        app.plugins = plugins;
-        app.drivers = drivers;
+        global.plugins = plugins;
+        global.drivers = drivers;
         return new Promise((resolve, reject) => {
             boot(app, __dirname, (err) => {
                 if (err) reject(err)

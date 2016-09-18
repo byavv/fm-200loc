@@ -19,17 +19,7 @@
       "37": "{\"name\":\"private users api\",\"public\":true,\"description\":\"getting user information, crud\",\"entry\":\"/private/api/users\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"DELETE\"],\"plugins\":[{\"name\":\"authentication\",\"description\":\"Loopback-based authentication middleware\",\"settings\":{\"grant\":\"read\"}},{\"name\":\"discovery\",\"description\":\"Etcd discovery plugin, search service url in the etcd registry by key\",\"settings\":{\"mapTo\":\"profile\"},\"dependencies\":{\"etcd\":\"7\"}},{\"name\":\"proxy\",\"description\":\"Simple proxying requests\",\"settings\":{\"target\":\"${target}\",\"withPath\":\"/api/users\"}}],\"id\":37}"
     },
     "DriverConfig": {
-      "1": "{\"name\":\"ewrwe\",\"description\":\"erwwer\",\"settings\":{\"etcd_host\":\"localhost111\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"id\":1}",
-      "2": "{\"name\":\"111\",\"description\":\"222\",\"settings\":{\"etcd_host\":\"localhost111\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":2}",
-      "3": "{\"name\":\"config1\",\"description\":\"3333333\",\"settings\":{\"etcd_host\":\"localhost\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"30\"},\"driverId\":\"etcd\",\"id\":3}",
-      "4": "{\"name\":\"eqwe\",\"description\":\"eqweqwe\",\"settings\":{\"etcd_host\":\"localhost\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":4}",
-      "5": "{\"name\":\"12121\",\"description\":\"1212\",\"settings\":{\"etcd_host\":\"localhost\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":5}",
-      "6": "{\"name\":\"3333\",\"description\":\"333\",\"settings\":{\"etcd_host\":\"localhost\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":6}",
-      "7": "{\"name\":\"etcd\",\"description\":\"funny market etcd storage config\",\"settings\":{\"connection_string\":\"localhost:4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":7}",
-      "9": "{\"name\":\"etcd\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost1\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":9}",
-      "10": "{\"name\":\"etcd\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost11\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":10}",
-      "11": "{\"name\":\"etcd2222\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost12\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":11}",
-      "12": "{\"name\":\"etcd222\",\"description\":\"Etcd server driver, provides methods to work with etcd key-storage\",\"settings\":{\"etcd_host\":\"localhost14444333333333333\",\"etcd_port\":\"4001\",\"heartbeat_interval\":\"154\"},\"active\":false,\"order\":0,\"value\":{},\"id\":12}"
+      "7": "{\"name\":\"etcd cluster client\",\"description\":\"funny market etcd storage config\",\"settings\":{\"connection_string\":\"localhost:4001\",\"heartbeat_interval\":\"15\"},\"driverId\":\"etcd\",\"id\":7}"
     }
   }
 }

@@ -32,8 +32,7 @@ export class DriverManagerConfigComponent {
                 .getDriverTemplateByName(this.driverName), (v1, v2) => [v1, v2])
             .subscribe(result => {
                 this.driverConfigs = result[0];
-                this.driverTemplate = result[1];
-                console.log(this.driverTemplate)
+                this.driverTemplate = result[1];              
             })
         this.modal.onHidden.subscribe(() => {
             this.currentSettings = {};
@@ -59,9 +58,9 @@ export class DriverManagerConfigComponent {
                 })
             })
     }
-    deleteConfig(config) {
+    deleteConfig(id) {
         this.driverConfigApi
-            .deleteById(config.id)
+            .deleteById(id)
             .flatMap(() => this._updateDriverConfigList())
             .subscribe(result => {
                 this.driverConfigs = result;
@@ -85,7 +84,7 @@ export class DriverManagerConfigComponent {
             try {
                 this.modal.show();
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
     }

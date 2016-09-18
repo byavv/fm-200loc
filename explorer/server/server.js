@@ -11,10 +11,6 @@ const mongo_host = process.env.DBSOURCE_HOST || '127.0.0.1';
 
 app.set("mongo_host", mongo_host);
 app.start = function (port) {
- 
-   // app.all('*', (req, res) => {
-   //     res.sendFile(path.join(__dirname, '../build/index.html'));
-  //  });
     return app.listen(port, () => {
         app.emit('started');
         app.close = (cb) => {

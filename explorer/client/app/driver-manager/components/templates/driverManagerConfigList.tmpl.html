@@ -18,13 +18,13 @@
                 </thead>
                 <tbody>
                     <tr *ngFor='let config of driverConfigs'>
-                        <td><a href=''>{{ config.name }}</a></td>
+                        <td><span>{{ config.name }}</span></td>
                         <td class="width-150" style="position: relative;">
                             <div class="table-controls">
                                 <button type="button" class="btn btn-success btn-sm" (click)="showModal(config.id)">
                                     <i class="fa fa-pencil-square-o"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm" (click)="deleteConfig(config)">
+                                <button type="button" class="btn btn-danger btn-sm" (click)="deleteConfig(config.id)">
                                     <i class="fa fa-times"></i>
                                 </button>
                             </div>

@@ -18,6 +18,6 @@ services:
       - ./test_.env
     depends_on:      
       - test_db    
-    entrypoint: ./wait-for-it.sh test_db:27017 -s -- npm test-cov    
+    entrypoint: ./wait-for-it.sh test_db:27017 -s -- npm run test-cov    
   test_db:    
     image: mongo:latest 

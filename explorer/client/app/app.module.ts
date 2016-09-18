@@ -8,10 +8,16 @@ import { CommonModule } from '@angular/common';
 import { routes } from './app.routes';
 import { App } from './app.component';
 import { API_MNGR_COMPONENTS } from './api-manager';
+import { DRIVER_MNGR_COMPONENTS } from './driver-manager';
 import { PLUGINS_COMPONENTS } from './plugin-manager';
 import { AUTHENTICATION_COMPONENTS } from './authentication';
 
 import { SharedModule } from "./shared";
+
+import {
+  LocationStrategy,
+  HashLocationStrategy
+} from '@angular/common';
 
 enableProdMode();
 /**
@@ -22,6 +28,7 @@ enableProdMode();
   declarations: [
     App,
     ...API_MNGR_COMPONENTS,
+    ...DRIVER_MNGR_COMPONENTS,
     ...PLUGINS_COMPONENTS,
     ...AUTHENTICATION_COMPONENTS
   ],
@@ -32,6 +39,7 @@ enableProdMode();
     SharedModule
   ],
   providers: [
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
   ]
 })
 export class AppModule {

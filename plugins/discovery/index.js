@@ -7,7 +7,7 @@ let registry = require('etcd-registry'),
     ;
 
 module.exports = (function () {
-    let cls = function (app, settings, pipe) {
+    let cls = function (app, settings, pipe, dependencies) {
         let _settings = settings;
         let _pipe = pipe;
         this.getSettings = function (key) {
@@ -16,20 +16,53 @@ module.exports = (function () {
         this.getPipe = function () {
             return _pipe;
         }
-        this.app = app;
+        this.etcdInst = dependencies[0];
     };
 
+    // cls.prototype.init = function () {
+    //     this.services = registry(`http://${this.getSettings('etcd_host')}:${this.getSettings('etcd_port')}`)
+    // }
     cls.prototype.init = function () {
-        this.services = registry(`http://${this.getSettings('etcd_host')}:${this.getSettings('etcd_port')}`)
+
     }
     cls.prototype.handler = function (req, res, next) {
+        /* if (this.getSettings('mapTo')) {
+             new Promise((resolve, reject) => {
+                 debug(`Try to discover service: ${this.getSettings('mapTo')} on http://${this.getSettings('etcd_host')}:${this.getSettings('etcd_port')}`);
+                 try {
+                     this.services.lookup(this.getSettings('mapTo'), (err, service) => {
+                         if (err) {
+                             reject(new errors.err502(`Service ${this.getSettings('mapTo')} discovery error`))
+                         } else {
+                             if (!service) {
+                                 reject(new errors.err404(`Service ${this.getSettings('mapTo')} is not found`));
+                             } else {
+                                 resolve(service);
+                             }
+                         }
+                     });
+                 } catch (error) {
+                     reject(error)
+                 }
+             }).then(service => {
+                 this.getPipe().set('target', service.url);
+                 debug(`Service ${this.getSettings('mapTo')} found on: ${service.url}`);
+                 debug('Target set', this.getPipe().get())
+                 return next();
+             }).catch((err) => {
+                 return next(err);
+             });
+         } else {
+             return next(new errors.err404('Service is not found'));
+         }*/
+
         if (this.getSettings('mapTo')) {
             new Promise((resolve, reject) => {
-                debug(`Try to discover service: ${this.getSettings('mapTo')} on http://${this.getSettings('etcd_host')}:${this.getSettings('etcd_port')}`);
+                debug(`Try to discover service: ${this.getSettings('mapTo')}`);
                 try {
-                    this.services.lookup(this.getSettings('mapTo'), (err, service) => {
-                        if (err) {
-                            reject(new errors.err502(`Service ${this.getSettings('mapTo')} discovery error`))
+                    this.etcdInst.findServiceByKey(this.getSettings('mapTo'), (err, service) => {
+                        if (err) {                           
+                            reject(new errors.err502(err))
                         } else {
                             if (!service) {
                                 reject(new errors.err404(`Service ${this.getSettings('mapTo')} is not found`));
@@ -50,8 +83,8 @@ module.exports = (function () {
                 return next(err);
             });
         } else {
-            return next(new errors.err404('Service is not found'));
-        }
+            return next(new errors.err501('Target service is not defined'));
+        }       
     };
     cls._name = 'discovery';
     cls._description = 'Etcd discovery plugin, search service url in the etcd registry by key';

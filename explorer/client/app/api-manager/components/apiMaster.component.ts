@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, QueryList } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MASTER_STEPS_COMPONENTS } from "./steps";
 import { MasterController } from "../services/masterController";
-import { BackEnd } from "../../shared/services";
+import { ApiConfigApi } from "../../shared/services";
 import { Config } from "../../shared/models"
 import { UiTabs, UiPane, RestSize } from '../directives';
 import { Observable, Subscription } from "rxjs";
@@ -40,13 +40,13 @@ export class ApiMasterComponent {
     private router: Router,
     private route: ActivatedRoute,
     private master: MasterController,
-    private userBackEnd: BackEnd) {
+    private apiConfigApi: ApiConfigApi) {
     this.queryRouteSub = this.route
       .queryParams
       .flatMap((params) => {
         this.id = params["id"];
         return this.id
-          ? this.userBackEnd.getConfig(this.id)
+          ? this.apiConfigApi.findById(this.id)
           : Observable.of(new Config());
       })
       .subscribe((config) => {
@@ -61,7 +61,7 @@ export class ApiMasterComponent {
     this.master
       .validate()
       .do(() => { this.loading = true; })
-      .flatMap(() => this.userBackEnd.createOrUpdate(this.master.config, this.id))
+      .flatMap(() => this.apiConfigApi.upsert(this.master.config))
       .subscribe((result) => {
         this.router.navigate(['/']);
       }, (err) => {

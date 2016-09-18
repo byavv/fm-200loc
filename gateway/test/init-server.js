@@ -4,7 +4,7 @@ var path = require('path');
 
 module.exports = function (done) {
   loader
-    .loadPlugins(path.resolve(__dirname, './fakePlugins'))
+    .loadComponents(path.resolve(__dirname, './fakePlugins'))
     .then((plugins) => {
       const gateway = require('../src/server');
       gateway.init(plugins).then(app => {

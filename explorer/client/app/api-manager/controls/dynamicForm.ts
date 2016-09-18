@@ -29,7 +29,7 @@ export class DynamicForm {
     set plugin(plugin: Plugin) {
         let group = {};
         if (plugin) {
-            this.fields.splice(0, this.fields.length);
+            this.fields.slice(0, this.fields.length);
             let settings = plugin.settings || {};
             Object.keys(settings).forEach((key: any) => {
                 group[key] = settings[key].required
@@ -45,7 +45,7 @@ export class DynamicForm {
                 });
             });
 
-            this.form = plugin.form = this._builder.group(group);
+         //   this.form = plugin.form = this._builder.group(group);
             this.form.valueChanges
                 .subscribe(value => {
                     plugin.settings = value;
@@ -60,3 +60,4 @@ export class DynamicForm {
     form: FormGroup = this._builder.group({});
     constructor(private _builder: FormBuilder) { }
 }
+

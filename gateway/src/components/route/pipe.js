@@ -1,6 +1,5 @@
 /*jslint node: true */
 "use strict";
-const logger = require('../../../../lib/logger');
 
 module.exports = (function () {
     const cls = function (defaults = {}) {
@@ -32,6 +31,5 @@ module.exports = (function () {
     cls.prototype.set = function (key, value) {
         this.value.set(key, value);
     }
-
     return cls;
 })();

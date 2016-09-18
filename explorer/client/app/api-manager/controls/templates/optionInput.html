@@ -9,7 +9,7 @@
             *ngSwitchCase="'array'" 
             [(ngModel)]='field.value' 
             [formControlName]="field.key">
-             <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+             <option *ngFor="let opt of field.options" [value]="opt.id">{{ opt.name }}</option>
         </select>
         <show-error *ngIf="f.control.controls[field.key].dirty" 
             [control]="field.key" 

@@ -1,0 +1,95 @@
+
+    <section class="widget" style="position: relative; min-height: 500px;">
+        <loader [active]='loading'></loader>
+        <div class="widget-header">
+            <span class="title">Configurations for {{ driverName }}</span>
+            <div class="pull-xs-right" style="position: relative;">
+                <a href='' (click)="showModal()" class="nav-link" role="button" aria-expanded="false">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        <div class="widget-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let config of driverConfigs'>
+                        <td><span>{{ config.name }}</span></td>
+                        <td class="width-150" style="position: relative;">
+                            <div class="table-controls">
+                                <button type="button" class="btn btn-success btn-sm" (click)="showModal(config.id)">
+                                    <i class="fa fa-pencil-square-o"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" (click)="deleteConfig(config.id)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-bg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" (click)="lgModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                    <h4 class="modal-title">Configure</h4>
+                </div>
+                <div class="modal-body">
+                    <form #configForm="ngForm">
+                        <div class="form-group">
+                            <label for='configName'>Name</label>
+                            <input 
+                                id='configName' 
+                                type="text" 
+                                class='form-control' 
+                                name="name" 
+                                #name='ngModel' 
+                                [(ngModel)]='currentDriver.name' 
+                                required/>
+                            <show-error 
+                                *ngIf='!name.valid' 
+                                [control]="'name'" 
+                                [errors]="{'required': 'Name is required'}">
+                            </show-error>
+                        </div>
+                        <div class="form-group">
+                            <label for='description'>Description</label>
+                            <input id='description' 
+                                type="text" 
+                                class='form-control' 
+                                name="description" 
+                                #description='ngModel' 
+                                [(ngModel)]='currentDriver.description'
+                                required/>
+                            <show-error 
+                                *ngIf='!description.valid' 
+                                [control]="'description'" 
+                                [errors]="{'required': 'Description is required'}">
+                            </show-error>
+                        </div>
+                    </form>
+                    <dynamic-form2 
+                        [fields]="driverTemplate?.settings" 
+                        #optionsForm=dynForm 
+                        [(ngModel)]='currentSettings' 
+                        (changed)='applyValidation()'>
+                    </dynamic-form2>
+                    <div>
+                        <button type="button" 
+                        [disabled]='!configForm.valid || !optionsForm.valid' 
+                        class="btn btn-large btn-block btn-default" 
+                        (click)="addOrUpdate(); modal.hide()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

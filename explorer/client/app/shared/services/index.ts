@@ -1,25 +1,18 @@
-import { Identity } from './identity';
-import { ExtHttp } from './extHttp';
 import { BackEnd } from './backEndApi';
-import { AuthApi } from './authBackEndApi';
-import { ResponseHandler } from './responseHandler';
 import { AppController } from './appController';
-import { STORAGE_PROVIDERS } from './storage';
 
-export * from './identity';
-export * from './extHttp';
+import { CORE_SERVICES } from './core/index';
+import { CUSTOM_SERVICES } from './custom/index';
+
 export * from './backEndApi';
-export * from './responseHandler';
 export * from './appController';
-export * from './authBackEndApi';
-export * from './storage';
 
-export var SHARED_SERVICES: Array<any> = [
-    ExtHttp,
-    Identity,
+export * from './core/index';
+export * from './custom/index';
+
+export var SHARED_SERVICES: Array<any> = [  
     BackEnd,
-    ResponseHandler,
-    AppController,
-    AuthApi,
-    ...STORAGE_PROVIDERS
+    AppController,   
+    ...CORE_SERVICES,
+    ...CUSTOM_SERVICES
 ];

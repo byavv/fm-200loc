@@ -1,6 +1,6 @@
 {
   "name": "200loc-gate",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -25,15 +25,15 @@
     "esversion": 6
   },
   "dependencies": {
-    "@angular/common": "^2.0.0-rc.6",
-    "@angular/compiler": "^2.0.0-rc.6",
-    "@angular/core": "^2.0.0-rc.6",
-    "@angular/forms": "^2.0.0-rc.6",
-    "@angular/http": "^2.0.0-rc.6",
-    "@angular/platform-browser": "^2.0.0-rc.6",
-    "@angular/platform-browser-dynamic": "^2.0.0-rc.6",
-    "@angular/platform-server": "^2.0.0-rc.6",
-    "@angular/router": "3.0.0-rc.2",
+    "@angular/common": "2.0.0",
+    "@angular/compiler": "2.0.0",
+    "@angular/core": "2.0.0",
+    "@angular/forms": "^2.0.0",
+    "@angular/http": "2.0.0",
+    "@angular/platform-browser": "2.0.0",
+    "@angular/platform-browser-dynamic": "2.0.0",
+    "@angular/platform-server": "2.0.0",
+    "@angular/router": "3.0.0",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "compression": "^1.0.3",
@@ -51,13 +51,13 @@
     "loopback-component-explorer": "^2.4.0",
     "loopback-connector-mongodb": "^1.15.2",
     "loopback-datasource-juggler": "^2.39.0",
-    "ng2-bootstrap": "1.1.1",
+    "ng2-bootstrap": "^1.1.5",
     "node-etcd": "^5.0.3",
-    "rxjs": "5.0.0-beta.11",
+    "rxjs": "5.0.0-beta.12",
     "serve-favicon": "^2.0.1",
     "uuid": "^2.0.2",
     "winston": "^2.2.0",
-    "zone.js": "^0.6.17"
+    "zone.js": "^0.6.21"
   },
   "devDependencies": {
     "@mean-expert/loopback-sdk-builder": "^2.0.9",

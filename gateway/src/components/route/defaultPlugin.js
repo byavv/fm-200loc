@@ -1,3 +1,10 @@
+/**
+ * @module Route Component
+ * @author Aksenchyk Viacheslav <https://github.com/byavv>
+ * @description
+ * Default driver to provide error notification
+ **/
+
 'use strict';
 const errors = require("../../../../lib/errors")
 

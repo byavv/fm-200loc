@@ -1,3 +1,9 @@
+/**
+ * @module Route Component
+ * @author Aksenchyk Viacheslav <https://github.com/byavv>
+ * @description
+ * Provides functionality for building drivers instances
+ **/
 const async = require('async')
     , debug = require("debug")("gateway")
     , global = require('../../global');

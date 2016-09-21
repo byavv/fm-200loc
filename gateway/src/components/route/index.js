@@ -1,12 +1,16 @@
-/*jslint node: true */
+/**
+ * @module Route Component
+ * @author Aksenchyk Viacheslav <https://github.com/byavv>
+ * @description
+ * Component provides drivers bootstrap, creating middleware and configuring entryes
+ **/
+
 "use strict";
 const async = require("async"),
     debug = require("debug")("gateway"),
-    uuid = require('node-uuid'),
     _ = require('lodash'),
     logger = require('../../../../lib/logger'),
-    Pipe = require('./pipe'),
-    comparator = require('./routeOrder'),
+    compareFunction = require('./routeCompare'),
     registry = require('etcd-registry'),
     bootstrapDrivers = require('./driversBootstrap'),
     buildPipe = require('./pipeBuilder'),
@@ -41,10 +45,10 @@ module.exports = function (app, componentOptions = {}) {
             ApiConfig.find((err, apiConfigs) => {
                 if (err) throw err;
                 apiConfigs
-                    .sort(comparator)
+                    .sort(compareFunction)
                     .forEach(apiConfig => {
                         try {
-                            let pluginsArray = buildPipe(app, apiConfig.plugins);
+                            let pluginsArray = buildPipe(apiConfig.plugins);
                             const initP = pluginsArray.map(plugin => {
                                 if (_.isFunction(plugin.init)) {
                                     return plugin.init();

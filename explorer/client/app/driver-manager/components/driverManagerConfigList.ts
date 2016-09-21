@@ -32,7 +32,7 @@ export class DriverManagerConfigComponent {
                 .getDriverTemplateByName(this.driverName), (v1, v2) => [v1, v2])
             .subscribe(result => {
                 this.driverConfigs = result[0];
-                this.driverTemplate = result[1];              
+                this.driverTemplate = result[1];
             })
         this.modal.onHidden.subscribe(() => {
             this.currentSettings = {};

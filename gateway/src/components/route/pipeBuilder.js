@@ -1,44 +1,38 @@
+/**
+ * @module Route Component
+ * @author Aksenchyk Viacheslav <https://github.com/byavv>
+ * @description
+ * Provides core functionality to build entry pipe.
+ **/
+
+"use strict";
 const Pipe = require('./pipe')
     , global = require('../../global')
-    , _ = require('lodash')
+    , PluginBase = require('./pluginBase')
     ;
 
+function inherit(cls, superCls) {
+    var construct = function () { };
+    construct.prototype = superCls.prototype;
+    cls.prototype = new construct;
+    cls.prototype.constructor = cls;
+    cls.super = superCls;
+}
+
 /**
- * Builds plugins pipe for route
+ * Builds plugins pipe for entry, creates dependencies for all plugins,
+ * applies pre-configured settings
+ * @method buildPipeFromPlugins
+ * @param {Array} plugins -  plugins to be added into the flow
  */
-module.exports = function (app, plugins, callback) {
-    const DYNAMIC_CONFIG_PARAM = /\$\{(\w+)\}$/;
-    const ENV_CONFIG_PARAM = /\env\{(\w+)\}$/;
-    const pipe = new Pipe({/* defaults for all plugins*/ })
+module.exports = function buildPipeFromPlugins(plugins) {
+    const pipe = new Pipe({/* todo: defaults for all plugins */ })
     const pluginsArray = [];
 
-    plugins.forEach((plugin) => {
-        const settings = Object.assign({}, plugin.settings);
+    plugins.forEach((plugin, index) => {
         const dependencies = Object.assign({}, plugin.dependencies);
+        pipe.insert(plugin.settings, index);
 
-        // find all dynamic parameters and provide getting values from global pipe object or environment
-        Object.keys(settings).forEach((paramKey) => {
-            const matchDyn = settings[paramKey] && _.isString(settings[paramKey])
-                ? settings[paramKey].match(DYNAMIC_CONFIG_PARAM)
-                : false;
-            const matchEnv = settings[paramKey] && _.isString(settings[paramKey])
-                ? settings[paramKey].match(ENV_CONFIG_PARAM)
-                : false;
-            if (matchDyn) {
-                Object.defineProperty(settings, paramKey, {
-                    get: function () {
-                        return pipe.get(matchDyn[1]);
-                    }
-                });
-            }
-            if (matchEnv) {
-                Object.defineProperty(settings, paramKey, {
-                    get: function () {
-                        return process.env[matchEnv[1]];
-                    }
-                });
-            }
-        });
         let deps = [];
         for (let key in dependencies) {
             if (global.driversStore.has(dependencies[key])) {
@@ -51,7 +45,9 @@ module.exports = function (app, plugins, callback) {
         if (!Plugin) {
             pluginsArray.push(require('./defaultPlugin')(plugin.name));
         } else {
-            let plugin = new Plugin(app, settings, pipe, deps);
+            // provides methods to work with pipe and dependencies
+            inherit(Plugin, PluginBase);
+            let plugin = new Plugin(index, pipe, deps);
             pluginsArray.push(plugin);
         }
     });

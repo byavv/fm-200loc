@@ -42,6 +42,7 @@ module.exports = function (app, componentOptions = {}) {
     bootstrapDrivers(app)
         .then(() => {
             debug(`Drivers estableshed: ${global.driversStore.size}`);
+            console.log(`Drivers estableshed: ${global.driversStore.size}`);
             ApiConfig.find((err, apiConfigs) => {
                 if (err) throw err;
                 apiConfigs

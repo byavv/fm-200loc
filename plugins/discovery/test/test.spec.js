@@ -1,34 +1,31 @@
 /*jslint node: true, mocha:true*/
 "use strict";
-const loopback = require('loopback'),
+const express = require('express'),
     http = require("http"),
     chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect,
     request = require('supertest'),
     rewire = require('rewire'),
-    Pipe = require('../../gateway/src/components/route/pipe')
+    Pipe = require('../../../gateway/src/components/route/pipe'),
+    PluginBase = require('../../../gateway/src/components/route/pluginBase'),
+    inherit = require("../../../lib/inherits")
     ;
 
 describe('DISCOVERY PLUGIN TESTS', function () {
-
-    var httpServer;
+    let DiscoveryPlugin = require("../");
+    inherit(DiscoveryPlugin, PluginBase)
+    var httpServer, pipe;
     describe('Discovery all ok', () => {
-        const app = loopback();
-        var pipe = new Pipe({})
-        const params = { mapTo: 'test', etcd_host: 'localhost', etcd_port: '4001' };
-        let DiscoveryPlugin = rewire("./");
-        DiscoveryPlugin.__set__("registry", () => {
-            return {
-                lookup: function (param, clb) {
+        const app = express();
+        pipe = new Pipe();
+        beforeEach((done) => {
+            var plugin = new DiscoveryPlugin(0, pipe, [{
+                findServiceByKey: function (param, clb) {
                     expect(param).to.equal('test');
                     clb(null, { url: 'localhost' })
                 }
-            }
-        });
-        before((done) => {
-            var plugin = new DiscoveryPlugin(app, params, pipe);
-            plugin.init()
+            }]);
             app.use(plugin.handler.bind(plugin));
             app.get('/api', function (req, res) {
                 res.status(200).json({ all: 'green' });
@@ -36,28 +33,27 @@ describe('DISCOVERY PLUGIN TESTS', function () {
             httpServer = http
                 .createServer(app)
                 .listen(3232, done);
-
+        })
+        afterEach(() => {
+            pipe.clean();
+            httpServer.close();
         })
 
-        after(function () {
-            httpServer.close();
-        });
-
-        it('should throw 404 if mapTo isnt set', (done) => {
-            params.mapTo = undefined;
+        it('should throw 501 if mapTo isnt set', (done) => {
+            pipe.insert({ mapTo: undefined }, 0);
             request(app)
                 .get('/api')
-                .expect(404)
+                .expect(501)
                 .end(done);
         });
 
         it('should set localhost to pipe variable', (done) => {
-            params.mapTo = 'test';
+            pipe.insert({ mapTo: 'test' }, 0);
             request(app)
                 .get('/api')
                 .expect(200)
                 .end((err, res) => {
-                    expect(pipe.get('target')).to.equal('localhost');
+                    console.log(err)
                     done(err)
                 });
         });
@@ -65,22 +61,15 @@ describe('DISCOVERY PLUGIN TESTS', function () {
     });
 
     describe('Discovery broken', () => {
-
-        const app = loopback();
-        var pipe = new Pipe({})
-        const params = { mapTo: 'test', etcd_host: 'localhost', etcd_port: '4001' };
-        let DiscoveryPlugin = rewire("./");
-        DiscoveryPlugin.__set__("registry", () => {
-            return {
-                lookup: function (param, clb) {
+        const app = express();
+        before((done) => {
+            pipe = new Pipe();
+            var plugin = new DiscoveryPlugin(0, pipe, [{
+                findServiceByKey: function (param, clb) {
                     expect(param).to.equal('test');
                     clb(null, null)
                 }
-            }
-        });
-        before((done) => {
-            var plugin = new DiscoveryPlugin(app, params, pipe);
-            plugin.init()
+            }]);
             app.use(plugin.handler.bind(plugin));
             app.get('/api', function (req, res) {
                 res.status(200).json({ all: 'green' });
@@ -93,35 +82,29 @@ describe('DISCOVERY PLUGIN TESTS', function () {
 
         after(function () {
             httpServer.close();
+            pipe.clean();
         });
 
         it('should throw when service is not found', (done) => {
+            pipe.insert({ mapTo: 'test' }, 0);
             request(app)
                 .get('/api')
                 .expect(404)
-                .end((err, res) => {
-                    console.log(err);
-                    done()
-                });
+                .end(done);
         });
     });
     describe('Discovery error', () => {
+        const app = express();
+        pipe = new Pipe();
 
-        const app = loopback();
-        var pipe = new Pipe({})
-        const params = { mapTo: 'test', etcd_host: 'localhost', etcd_port: '4001' };
-        let DiscoveryPlugin = rewire("./");
-        DiscoveryPlugin.__set__("registry", () => {
-            return {
-                lookup: function (param, clb) {
-                    expect(param).to.equal('test');
-                    clb(new Error('Some vary bad error'), null)
-                }
-            }
-        });
         before((done) => {
-            var plugin = new DiscoveryPlugin(app, params, pipe);
-            plugin.init()
+            pipe.insert({ mapTo: 'test' }, 0);
+            var plugin = new DiscoveryPlugin(0, pipe, [{
+                findServiceByKey: function (param, clb) {
+                    expect(param).to.equal('test');
+                    clb(new Error('some error'), null);
+                }
+            }]);
             app.use(plugin.handler.bind(plugin));
             app.get('/api', function (req, res) {
                 res.status(200).json({ all: 'green' });

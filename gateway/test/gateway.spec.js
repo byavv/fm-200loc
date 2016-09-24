@@ -22,7 +22,7 @@ describe('GATEWAY TESTS', () => {
     });
 
     it('should load plugins', () => {
-        expect(global.plugins.length).to.be.equal(4);
+        expect(global.plugins.length).to.be.equal(5);
     });
 
     it('throw 500 if plugin is not defined', (done) => {
@@ -88,5 +88,16 @@ describe('GATEWAY TESTS', () => {
                 respond: 'tobi'
             })
             .end(done);
+    });
+
+      it('should use default plugin when no exist', (done) => {
+       
+        request(app)
+            .get('/pluginnotexists')
+           // .expect(500)
+            .end((err)=>{
+                console.log(err);
+                done(err)
+            });
     });
 });

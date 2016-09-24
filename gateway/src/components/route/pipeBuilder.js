@@ -9,19 +9,12 @@
 const Pipe = require('./pipe')
     , global = require('../../global')
     , PluginBase = require('./pluginBase')
+    , inherit = require("../../../../lib/inherits")
     ;
-
-function inherit(cls, superCls) {
-    var construct = function () { };
-    construct.prototype = superCls.prototype;
-    cls.prototype = new construct;
-    cls.prototype.constructor = cls;
-    cls.super = superCls;
-}
 
 /**
  * Builds plugins pipe for entry, creates dependencies for all plugins,
- * applies pre-configured settings
+ * applies pre-configured settings to them.
  * @method buildPipeFromPlugins
  * @param {Array} plugins -  plugins to be added into the flow
  */
@@ -32,7 +25,6 @@ module.exports = function buildPipeFromPlugins(plugins) {
     plugins.forEach((plugin, index) => {
         const dependencies = Object.assign({}, plugin.dependencies);
         pipe.insert(plugin.settings, index);
-
         let deps = [];
         for (let key in dependencies) {
             if (global.driversStore.has(dependencies[key])) {
@@ -43,7 +35,8 @@ module.exports = function buildPipeFromPlugins(plugins) {
         }
         let Plugin = global.plugins.find((p) => p._name === plugin.name);
         if (!Plugin) {
-            pluginsArray.push(require('./defaultPlugin')(plugin.name));
+            const DefaultPlugin = require('./defaultPlugin');
+            pluginsArray.push(new DefaultPlugin(plugin.name));
         } else {
             // provides methods to work with pipe and dependencies
             inherit(Plugin, PluginBase);

@@ -14,6 +14,7 @@ module.exports = (function () {
             })
         }
         this.handler = function (req, res, next) {
+
             const grant = this.getParam('grant');
             if (grant === '*') {
                 return next(null);

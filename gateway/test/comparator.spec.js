@@ -2,7 +2,7 @@
 "use strict";
 const chai = require('chai'),
     expect = chai.expect,
-    comparator = require('../src/components/route/routeOrder');
+    comparator = require('../src/components/route/routeCompare');
 
 describe('ROUTE ORDERING TESTS', () => {
 

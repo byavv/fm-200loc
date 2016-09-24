@@ -19,4 +19,17 @@ module.exports = (function () {
         }
     };
     return cls;
+
+    // var cls = function (args) {
+    //     this.id = args[0];
+    //     this.dependencies = args[2];
+    //     this.getParam = function (key) {
+    //         return args[1]._get(key, this.id)
+    //     }
+    //     this.setParam = function (key, value) {
+    //         return args[1]._set(key, value);
+    //     }
+    // };
+    // return cls;
+
 })();

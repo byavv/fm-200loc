@@ -8,7 +8,7 @@
     "build:dev": "npm run clean:build && ./node_modules/.bin/gulp build --env development",
     "start": "cross-env node . --log info --env production",
     "test": "cross-env NODE_ENV=test DEBUG=test istanbul cover node_modules/mocha/bin/_mocha -- -t 5000 -R spec gateway/test/*.spec.js plugins/**/test/*.spec.js",
-    "test-cov": "cross-env NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec gateway/test/*.spec.js && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
+    "test-cov": "cross-env NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec gateway/test/*.spec.js plugins/**/test/*.spec.js && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
     "dev": "cross-env DEBUG=gateway,plugins:* node . --log debug --env development",
     "pm2": "cross-env pm2 start . --name=200loc -i max --no-daemon --log info --env production",
     "serve": "cross-env ./node_modules/.bin/gulp --env development",

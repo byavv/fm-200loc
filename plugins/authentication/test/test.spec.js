@@ -1,33 +1,39 @@
 /*jslint node: true, mocha:true*/
 "use strict";
-const loopback = require('loopback'),
+const express = require('express'),
     http = require("http"),
     chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect,
     request = require('supertest'),
-    Pipe = require('../../gateway/src/components/route/pipe')
+    Pipe = require('../../../gateway/src/components/route/pipe'),
+    PluginBase = require('../../../gateway/src/components/route/pluginBase'),
+    inherit = require("../../../lib/inherits")
     ;
 
 describe('AUTHENTICATION PLUGIN TESTS', function () {
 
-    var httpServer;
-    const app = loopback();
-    const params = { grant: '*' };
-    let AuthPlugin = require("./");
+    var httpServer, pipe;
+    const app = express();   
+    let AuthPlugin = require("../");
+    inherit(AuthPlugin, PluginBase)
     var accessToken = {
         userId: "1"
     }
 
     var RoleMock = {
-        find: sinon.stub().yields(null, [{ name: 'user' }, { name: 'admin' }]),
-        isInRole: sinon.stub().yields(null, true)
+      //  find: sinon.stub().yields(null, [{ name: 'user' }, { name: 'admin' }]),
+      //  isInRole: sinon.stub().yields(null, true)
+         find: sinon.stub(),//.yields(null, [{ name: 'user' }, { name: 'admin' }]),
+        isInRole: sinon.stub()//.yields(null, true)
     }
-
-    beforeEach((done) => {
+    before(() => {
         app.models = { role: RoleMock, ACL: { USER: 1 } };
-        var plugin = new AuthPlugin(app, params, new Pipe());
-        plugin.init();
+    })
+     pipe = new Pipe();
+    beforeEach((done) => {       
+        var plugin = new AuthPlugin(0, pipe, []);
+
         app.use((req, res, next) => {
             req.app = app;
             req.accessToken = accessToken;
@@ -45,10 +51,11 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
 
     afterEach(function () {
         httpServer.close();
+        pipe.clean()
     });
 
     it('should ignore authentication', (done) => {
-        params.grant = "*";
+        pipe.insert({ grant: '*' }, 0)
         request(app)
             .get('/api')
             .expect(200)
@@ -56,7 +63,9 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
     });
 
     it('authentication should pass', (done) => {
-        params.grant = 'read';
+        RoleMock.find.yields(null, [{ name: 'user' }, { name: 'admin' }])
+        RoleMock.isInRole.yields(null, true);
+        pipe.insert({ grant: 'read' }, 0);
         request(app)
             .get('/api')
             .expect(200)
@@ -66,11 +75,11 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
     });
 
     it('authentication should not pass when user is not in role', (done) => {
-        params.grant = 'read';
+        pipe.insert({ grant: 'read' }, 0);
         accessToken = {
             userId: 2
         };
-        RoleMock.isInRole = sinon.stub().yields(null, false)
+        RoleMock.isInRole.yields(null, false)
         request(app)
             .get('/api')
             .expect(401)
@@ -78,8 +87,8 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
     });
 
     it('authentication should not pass when role for permission is not found', (done) => {
-        params.grant = 'read';
-        RoleMock.find = sinon.stub().yields(null, [])
+        pipe.insert({ grant: 'read' }, 0);
+        RoleMock.find.yields(null, [])
         request(app)
             .get('/api')
             .expect(401)
@@ -87,7 +96,7 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
     });
 
     it('authentication should not pass when user is not authorized', (done) => {
-        params.grant = 'read';
+        pipe.insert({ grant: 'read' }, 0);
         accessToken = undefined;
         request(app)
             .get('/api')
@@ -96,9 +105,9 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
     });
 
     it('authentication should not throw when database error', (done) => {
-        params.grant = 'read';
+        pipe.insert({ grant: 'read' }, 0);
         accessToken = { userId: 1 };
-        RoleMock.find = sinon.stub().yields(new Error(), null)
+        RoleMock.find.yields(new Error(), null)
         request(app)
             .get('/api')
             .expect(500)

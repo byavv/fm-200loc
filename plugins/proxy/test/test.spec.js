@@ -1,30 +1,25 @@
 /*jslint node: true, mocha:true*/
 "use strict";
-const loopback = require('loopback'),
+const express = require('express'),
     http = require("http"),
     chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect,
     request = require('supertest'),
-    ProxyPlugin = require('./'),
-    Pipe = require('../../gateway/src/components/route/pipe')
+    ProxyPlugin = require('../'),
+    Pipe = require('../../../gateway/src/components/route/pipe'),
+    PluginBase = require('../../../gateway/src/components/route/pluginBase'),
+    inherit = require("../../../lib/inherits")
     ;
 
 describe('PROXY PLUGIN TESTS', function () {
-    var app = loopback();
-    var fakeServer = loopback();
-    var pipe = new Pipe({})
-    var params = { target: 'http://localhost:3234', withPath: '/' }
+    var app = express();
+    var fakeServer = express();
+    inherit(ProxyPlugin, PluginBase)
+    var pipe = new Pipe();
 
     var httpServer;
-    before((done) => {
-        var plugin = new ProxyPlugin(app, params, pipe);
-        plugin.init()
-        app.use(plugin.handler.bind(plugin))
-        httpServer = http
-            .createServer(app)
-            .listen(3232, done);
-    })
+
     before((done) => {
         fakeServer.get('/api', function (req, res) {
             res.status(200).json({ name: 'potter' });
@@ -41,10 +36,25 @@ describe('PROXY PLUGIN TESTS', function () {
         fakeServer = fakeServer.listen(3234, done);
     })
 
-    after(function () {
-        fakeServer.close();
+    beforeEach((done) => {
+        var plugin = new ProxyPlugin(0, pipe, []);
+        pipe.insert({ target: 'http://localhost:3234', withPath: '/' }, 0);
+        plugin.init();
+        app.use(plugin.handler.bind(plugin));
+
+        httpServer = http
+            .createServer(app)
+            .listen(3232, done);
+    })
+    afterEach(() => {
         httpServer.close();
+        pipe.clean();
+    })
+
+    after(() => {
+        fakeServer.close();
     });
+
 
     it('should return 404 if route not found', (done) => {
         request(app)
@@ -68,7 +78,7 @@ describe('PROXY PLUGIN TESTS', function () {
     });
 
     it('should throw if target does not set', (done) => {
-        params.target = undefined;
+        pipe.insert({ target: undefined, withPath: '/' }, 0);
         request(app)
             .get('/fake2')
             .expect(502)

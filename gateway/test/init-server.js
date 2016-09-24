@@ -3,11 +3,17 @@ var loader = require('../../lib/loader')();
 var path = require('path');
 
 module.exports = function (done) {
-  loader
-    .loadComponents(path.resolve(__dirname, './fakePlugins'))
-    .then((plugins) => {
+  //loader
+  //  .loadComponents(path.resolve(__dirname, './fakePlugins'))
+  Promise.all([
+    loader
+      .loadComponents(path.resolve(__dirname, './fakePlugins')),
+    loader
+      .loadComponents(path.resolve(__dirname, './fakeDrivers'))
+  ])
+    .then((components) => {      
       const gateway = require('../src/server');
-      gateway.init(plugins).then(app => {
+      gateway.init(...components).then(app => {
         fakeData(app, () => {
           app.start(3009);
         })

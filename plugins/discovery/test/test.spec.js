@@ -8,24 +8,27 @@ const express = require('express'),
     request = require('supertest'),
     rewire = require('rewire'),
     Pipe = require('../../../gateway/src/components/route/pipe'),
-    PluginBase = require('../../../gateway/src/components/route/pluginBase'),
-    inherit = require("../../../lib/inherits")
+    Context = require('../../../gateway/src/components/route/context')
     ;
 
 describe('DISCOVERY PLUGIN TESTS', function () {
     let DiscoveryPlugin = require("../");
-    inherit(DiscoveryPlugin, PluginBase)
+
     var httpServer, pipe;
     describe('Discovery all ok', () => {
         const app = express();
         pipe = new Pipe();
         beforeEach((done) => {
-            var plugin = new DiscoveryPlugin(0, pipe, [{
-                findServiceByKey: function (param, clb) {
-                    expect(param).to.equal('test');
-                    clb(null, { url: 'localhost' })
+            let ctx = new Context(0, pipe, {
+                'etcd': {
+                    findServiceByKey: function (param, clb) {
+                        expect(param).to.equal('test');
+                        clb(null, { url: 'localhost' })
+                    }
                 }
-            }]);
+            });
+            var plugin = new DiscoveryPlugin(ctx);
+
             app.use(plugin.handler.bind(plugin));
             app.get('/api', function (req, res) {
                 res.status(200).json({ all: 'green' });
@@ -64,12 +67,15 @@ describe('DISCOVERY PLUGIN TESTS', function () {
         const app = express();
         before((done) => {
             pipe = new Pipe();
-            var plugin = new DiscoveryPlugin(0, pipe, [{
-                findServiceByKey: function (param, clb) {
-                    expect(param).to.equal('test');
-                    clb(null, null)
+            let ctx = new Context(0, pipe, {
+                'etcd': {
+                    findServiceByKey: function (param, clb) {
+                        expect(param).to.equal('test');
+                        clb(null, null)
+                    }
                 }
-            }]);
+            });
+            var plugin = new DiscoveryPlugin(ctx);
             app.use(plugin.handler.bind(plugin));
             app.get('/api', function (req, res) {
                 res.status(200).json({ all: 'green' });
@@ -99,12 +105,15 @@ describe('DISCOVERY PLUGIN TESTS', function () {
 
         before((done) => {
             pipe.insert({ mapTo: 'test' }, 0);
-            var plugin = new DiscoveryPlugin(0, pipe, [{
-                findServiceByKey: function (param, clb) {
-                    expect(param).to.equal('test');
-                    clb(new Error('some error'), null);
+            let ctx = new Context(0, pipe, {
+                'etcd': {
+                    findServiceByKey: function (param, clb) {
+                        expect(param).to.equal('test');
+                        clb(new Error('some error'), null);
+                    }
                 }
-            }]);
+            });
+            var plugin = new DiscoveryPlugin(ctx);
             app.use(plugin.handler.bind(plugin));
             app.get('/api', function (req, res) {
                 res.status(200).json({ all: 'green' });

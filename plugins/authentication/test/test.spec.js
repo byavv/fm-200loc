@@ -7,32 +7,32 @@ const express = require('express'),
     expect = chai.expect,
     request = require('supertest'),
     Pipe = require('../../../gateway/src/components/route/pipe'),
-    PluginBase = require('../../../gateway/src/components/route/pluginBase'),
-    inherit = require("../../../lib/inherits")
+    Context = require('../../../gateway/src/components/route/context') 
     ;
 
 describe('AUTHENTICATION PLUGIN TESTS', function () {
 
     var httpServer, pipe;
-    const app = express();   
-    let AuthPlugin = require("../");
-    inherit(AuthPlugin, PluginBase)
+    const app = express();
+    let AuthPlugin = require("../");  
     var accessToken = {
         userId: "1"
     }
 
     var RoleMock = {
-      //  find: sinon.stub().yields(null, [{ name: 'user' }, { name: 'admin' }]),
-      //  isInRole: sinon.stub().yields(null, true)
-         find: sinon.stub(),//.yields(null, [{ name: 'user' }, { name: 'admin' }]),
+        //  find: sinon.stub().yields(null, [{ name: 'user' }, { name: 'admin' }]),
+        //  isInRole: sinon.stub().yields(null, true)
+        find: sinon.stub(),//.yields(null, [{ name: 'user' }, { name: 'admin' }]),
         isInRole: sinon.stub()//.yields(null, true)
     }
     before(() => {
         app.models = { role: RoleMock, ACL: { USER: 1 } };
     })
-     pipe = new Pipe();
-    beforeEach((done) => {       
-        var plugin = new AuthPlugin(0, pipe, []);
+    pipe = new Pipe();
+    beforeEach((done) => {
+
+        let ctx = new Context(0, pipe, []);
+        var plugin = new AuthPlugin(ctx);
 
         app.use((req, res, next) => {
             req.app = app;

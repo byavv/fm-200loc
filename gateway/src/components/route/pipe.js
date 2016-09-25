@@ -13,11 +13,11 @@ module.exports = (function () {
     const DYNAMIC_CONFIG_PARAM = /\$\{(\w+)\}$/;
     const ENV_CONFIG_PARAM = /\env\{(\w+)\}$/;
     const prefix = 'plugin_';
-    const cls = function () {       
+    const cls = function () {
         this._storage = new Map();
     }
 
-    cls.prototype.insert = function (settings, index) {       
+    cls.prototype.insert = function (settings, index) {
         this._storage.set(`${prefix}:${index}`, settings);
     }
 
@@ -26,7 +26,7 @@ module.exports = (function () {
      * @param string  key  - key
      * @param string  id   - plugin identificator
      */
-    cls.prototype._get = function (key, id) {       
+    cls.prototype._get = function (key, id) {
         var requiredParam = this._storage.get(`${prefix}:${id}`);
         if (!requiredParam) throw new Error(`No config found ${id}: ${key}`);
 
@@ -73,10 +73,10 @@ module.exports = (function () {
      */
     cls.prototype.clean = function (pipeItemKey) {
         if (!pipeItemKey) {
-           this._storage.clear();
+            this._storage.clear();
         } else {
             this._storage.delete(pipeItemKey);
-        }        
+        }
     }
 
     return cls;

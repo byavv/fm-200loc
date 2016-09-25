@@ -4,8 +4,7 @@ var ErrorX = require("../../errorX");
 
 module.exports = (function () {
 
-    let cls = function () {
-        this.constructor.super.call(this, arguments);
+    let cls = function (ctx) {       
 
         this.init = function () {
         };

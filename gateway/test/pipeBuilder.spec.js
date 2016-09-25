@@ -26,7 +26,6 @@ describe('PIPE BUILDER TESTS', () => {
     });
 
     it('should inject dependencies', (done) => {
-
         request(app)
             .get('/test6')
             .expect(200, {

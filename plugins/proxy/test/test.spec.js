@@ -8,14 +8,12 @@ const express = require('express'),
     request = require('supertest'),
     ProxyPlugin = require('../'),
     Pipe = require('../../../gateway/src/components/route/pipe'),
-    PluginBase = require('../../../gateway/src/components/route/pluginBase'),
-    inherit = require("../../../lib/inherits")
+    Context = require('../../../gateway/src/components/route/context')
     ;
 
 describe('PROXY PLUGIN TESTS', function () {
     var app = express();
     var fakeServer = express();
-    inherit(ProxyPlugin, PluginBase)
     var pipe = new Pipe();
 
     var httpServer;
@@ -37,9 +35,11 @@ describe('PROXY PLUGIN TESTS', function () {
     })
 
     beforeEach((done) => {
-        var plugin = new ProxyPlugin(0, pipe, []);
+
+        let ctx = new Context(0, pipe, []);
+        var plugin = new ProxyPlugin(ctx);
+
         pipe.insert({ target: 'http://localhost:3234', withPath: '/' }, 0);
-        plugin.init();
         app.use(plugin.handler.bind(plugin));
 
         httpServer = http

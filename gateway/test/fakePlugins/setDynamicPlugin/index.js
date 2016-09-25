@@ -4,12 +4,11 @@ var ErrorX = require("../../errorX");
 
 module.exports = (function () {
 
-    let cls = function (app, settings, pipe) {
-        this.constructor.super.call(this, arguments);
+    let cls = function (ctx) {      
         this.init = function () {
         };
         this.handler = function (req, res, next) {
-            this.setParam('dynamic', "harry potter");
+            ctx.$param['dynamic'] = "harry potter";
             return next(null);
         }
     };

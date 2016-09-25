@@ -2,8 +2,9 @@
  * @module Route Component
  * @author Aksenchyk Viacheslav <https://github.com/byavv>
  * @description
- * Provides functionality for building drivers instances
+ * Provides functionality for building driver instances
  **/
+
 const async = require('async')
     , debug = require("debug")("gateway")
     , global = require('../../global');
@@ -11,7 +12,7 @@ const async = require('async')
 module.exports = function (app) {
     const DriverConfig = app.models.DriverConfig;
     return new Promise((resolve, reject) => {
-        DriverConfig.find({/* todo: where: {active: true} */ }, (err, driverConfigs) => {
+        DriverConfig.find({ /* todo: where: {active: true} */ }, (err, driverConfigs) => {
             try {
                 if (err) throw err;
                 (driverConfigs || []).forEach((driverConfig) => {
@@ -28,5 +29,5 @@ module.exports = function (app) {
                 reject(error);
             }
         });
-    })
+    });
 }

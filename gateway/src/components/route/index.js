@@ -13,14 +13,14 @@ const async = require("async"),
     compareFunction = require('./routeCompare'),
     registry = require('etcd-registry'),
     bootstrapDrivers = require('./driversBootstrap'),
-    buildPipe = require('./pipeBuilder'),
+    pipeBuilder = require('./pipeBuilder'),
     global = require('../../global')
     ;
 
 let superMiddlewareFactory = (options = {}) => {
     return function middleware(req, res, next) {
         debug(`Got route: ${req.originalUrl}, matched entry: ${options.routeName}`);
-        const handlers = (options.plugins || [])
+        const handlers = (options.pipe || [])
             .map(plugin => {
                 return plugin.handler.bind(plugin, req, res);
             });
@@ -43,26 +43,26 @@ module.exports = function (app, componentOptions = {}) {
         .then(() => {
             debug(`Drivers estableshed: ${global.driversStore.size}`);
             console.log(`Drivers estableshed: ${global.driversStore.size}`);
-            ApiConfig.find((err, apiConfigs) => {
+            ApiConfig.find((err, configs) => {
                 if (err) throw err;
-                apiConfigs
+                configs
                     .sort(compareFunction)
-                    .forEach(apiConfig => {
+                    .forEach((apiConfig) => {
                         try {
-                            let pluginsArray = buildPipe(apiConfig.plugins);
-                            const initP = pluginsArray.map(plugin => {
+                            let pipe = pipeBuilder.build(apiConfig.plugins);
+                            const initP = pipe.map(plugin => {
                                 if (_.isFunction(plugin.init)) {
                                     return plugin.init();
                                 }
                             });
                             Promise.all(initP).then(() => {
                                 app.middlewareFromConfig(superMiddlewareFactory, {
-                                    enabled: true,
+                                    enabled: true, // todo: enable/disable in config
                                     phase: 'routes',
                                     methods: apiConfig.methods,
                                     paths: [apiConfig.entry.toLowerCase()],
                                     params: {
-                                        plugins: pluginsArray,
+                                        pipe: pipe,
                                         routeName: apiConfig.name
                                     }
                                 });
@@ -78,5 +78,5 @@ module.exports = function (app, componentOptions = {}) {
             })
         }, (err) => {
             throw err;
-        })
+        });
 };

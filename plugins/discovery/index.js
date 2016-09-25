@@ -7,22 +7,21 @@ let registry = require('etcd-registry'),
     ;
 
 module.exports = (function () {
-    let cls = function () {
-        this.constructor.super.call(this, arguments);
+    let cls = function (ctx) {
 
-        this.etcdInst = this.dependencies[0];
+        const etcdInst = ctx.$inject['etcd'];
 
         this.handler = function (req, res, next) {
-            if (this.getParam('mapTo')) {
+            if (ctx.$param['mapTo']) {
                 new Promise((resolve, reject) => {
-                    debug(`Try to discover service: ${this.getParam('mapTo')}`);
+                    debug(`Try to discover service: ${ctx.$param['mapTo']}`);
                     try {
-                        this.etcdInst.findServiceByKey(this.getParam('mapTo'), (err, service) => {
+                        etcdInst.findServiceByKey(ctx.$param['mapTo'], (err, service) => {
                             if (err) {
                                 reject(new errors.err502(err));
                             } else {
                                 if (!service) {
-                                    reject(new errors.err404(`Service ${this.getParam('mapTo')} is not found`));
+                                    reject(new errors.err404(`Service ${ctx.$param['mapTo']} is not found`));
                                 } else {
                                     resolve(service);
                                 }
@@ -32,8 +31,8 @@ module.exports = (function () {
                         reject(error);
                     }
                 }).then(service => {
-                    this.setParam('target', service.url);
-                    debug(`Discovered: ["${this.getParam('mapTo')}"] \u2192 ${service.url}`);
+                    ctx.$param['target'] = service.url;
+                    debug(`Discovered: ["${ctx.$param['mapTo']}"] \u2192 ${service.url}`);
                     return next();
                 }).catch((err) => {
                     return next(err);

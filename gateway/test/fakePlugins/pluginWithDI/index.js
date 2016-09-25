@@ -4,11 +4,9 @@ var ErrorX = require("../../errorX");
 
 module.exports = (function () {
 
-    let cls = function () {
-        this.constructor.super.call(this, arguments);
-
+    let cls = function (ctx) {  
         this.handler = function (req, res, next) {
-            this.dependencies[0].testMethod('testString', (err, result) => {
+            ctx.$inject['testDriver'].testMethod('testString', (err, result) => {
                 console.log("-----------", result)
                 return res.status(200).send({ respond: result});
             });

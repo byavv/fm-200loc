@@ -1,21 +1,16 @@
 'use strict';
 /*jslint node: true */
 const debug = require('debug')('plugins:authentication'),
-    async = require('async'),
-    logger = require('../../lib/logger');
+    async = require('async')
+    , errors = require('../../lib/errors')
+    , logger = require('../../lib/logger')
+    ;
 
 module.exports = (function () {
-
-    let cls = function () {
-        this.constructor.super.call(this, arguments);
-        this.init = function () {
-            return new Promise((resolve, reject) => {
-                resolve();
-            })
-        }
+    let cls = function (ctx) {  
+                   
         this.handler = function (req, res, next) {
-
-            const grant = this.getParam('grant');
+            const grant = ctx.$param['grant'];
             if (grant === '*') {
                 return next(null);
             } else {
@@ -30,7 +25,7 @@ module.exports = (function () {
                     }, (err, roles) => {
                         if (err) throw err;
                         if (!roles || roles.length === 0) {
-                            return res.status(401).send("Permission can't be granted");
+                            return next(new errors.err401("Permission can't be granted"));
                         }
                         async.some(roles, (role, callback) => {
                             Role.isInRole(role.name, {
@@ -42,12 +37,14 @@ module.exports = (function () {
                             // propogate for inner usage
                             req.headers["X-PRINCIPLE"] = req.accessToken.userId;
                             // user is not in any appropriate role, which contains required permisison
-                            return !result ? res.status(401).send("User authorized, but doesn't have required permission. Verify that sufficient permissions have been granted") : next();
+                            return !result
+                                ? next(new errors.err401("User authorized, but doesn't have required permission. Verify that sufficient permissions have been granted"))
+                                : next();
                         });
                     });
                 } else {
                     debug(`Authorization failed for ${req.method} request on ${req.originalUrl}, access token is not defined`);
-                    return res.status(401).send(`Not authorized`);
+                    return next(new errors.err401(`Not authorized`));
                 }
             }
         }

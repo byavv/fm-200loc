@@ -1,9 +1,9 @@
 /**
-* @module Route Component
-* @author Aksenchyk Viacheslav <https://github.com/byavv>
-* @description
-* Compare function for routes ordering by specificity
-**/
+ * @module Route Component
+ * @author Aksenchyk Viacheslav <https://github.com/byavv>
+ * @description
+ * Compare function for routes ordering by specificity
+ **/
 "use strict";
 const path = require('path');
 module.exports = function (routeA, routeB) {

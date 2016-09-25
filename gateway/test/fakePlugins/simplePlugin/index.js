@@ -4,14 +4,13 @@ var ErrorX = require("../../errorX");
 
 module.exports = (function () {
 
-    let cls = function (app, settings) {
-       this.constructor.super.call(this, arguments);
+    let cls = function (ctx) {     
         this.init = function () {
         };
         this.handler = function (req, res, next) {
-            return this.getParam("dynamic")
-                ? res.status(200).send({ respond: this.getParam("dynamic") })
-                : res.status(200).send({ respond: this.getParam("env") })
+            return ctx.$param["dynamic"]
+                ? res.status(200).send({ respond: ctx.$param["dynamic"] })
+                : res.status(200).send({ respond: ctx.$param["env"] })
         }
     };
 

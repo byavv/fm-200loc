@@ -4,12 +4,12 @@ var ErrorX = require("../../errorX");
 
 module.exports = (function () {
 
-    let cls = function () {
-        this.constructor.super.call(this, arguments);
+    let cls = function (ctx) {
+
         this.init = function () {
         };
         this.handler = function (req, res, next) {
-            return next(this.getParam('throwError') ? new ErrorX(this.getParam('errorCode') || 404) : null);
+            return next(ctx.$param['throwError'] ? new ErrorX(ctx.$param['errorCode'] || 404) : null);
         }
     };
 

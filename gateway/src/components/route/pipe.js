@@ -35,11 +35,13 @@ module.exports = (function () {
         from global pipe object stored by another plugin above
         in the pipe:
 
-                e.g.:    ${param}
+                e.g.  
+                  
+                ${param}
 
         or from process environment: 
 
-                e.g.:    env{param}
+                        env{param}
 
         */
 

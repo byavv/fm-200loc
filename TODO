@@ -1,0 +1,5 @@
+- Separate servers
+- Activete/deactivate entries feature
+- Configure drivers from configuration file, leave folders support, 
+  but make possible to use npm packages 
+- Implement entry testing in entry manager

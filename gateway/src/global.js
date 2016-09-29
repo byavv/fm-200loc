@@ -1,6 +1,9 @@
+/** @global */
 var Global = {
     driversStore: new Map(),
     drivers: [],
-    plugins: []
+    plugins: [],
+    rules: {},
+    ready: false
 };
 module.exports = Global;

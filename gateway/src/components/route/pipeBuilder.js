@@ -1,9 +1,6 @@
 /**
- * @module Route Component
- * @author Aksenchyk Viacheslav <https://github.com/byavv>
- * @description
- * Provides core functionality to build entry pipe.
- **/
+ * @memberof gateway
+ */
 
 "use strict";
 const Pipe = require('./pipe')
@@ -15,8 +12,7 @@ module.exports = {
     /**
      * Builds plugins pipe for entry, creates dependencies for all plugins,
      * applies pre-configured settings to them.
-     * @method buildPipeFromPlugins
-     * @param {Array} plugins -  plugins to be added into the flow
+     * @param {Array}   plugins     plugins to be added into the entry flow
      */
     build: function (plugins) {
         const pipe = new Pipe({/* todo: defaults for all plugins */ });

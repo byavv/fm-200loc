@@ -32,10 +32,12 @@
   },
   "session": {},
   "auth": {},
-  "routes": {},
+  "routes": {
+    "./middleware/gateway": {}
+  },
   "proxies": {},
   "final": {
-    "loopback#urlNotFound": {}   
+    "loopback#urlNotFound": {}
   },
   "final:after": {
     "loopback#errorHandler": {}

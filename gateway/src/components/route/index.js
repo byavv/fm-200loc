@@ -1,8 +1,9 @@
 /**
- * @module Route Component
+ * @module Gateway table builder
  * @author Aksenchyk Viacheslav <https://github.com/byavv>
  * @description
- * Component provides drivers bootstrap, creating middleware and configuring entryes
+ * Module provides functionality to build gateway table
+ * @type {Promise}
  **/
 
 "use strict";
@@ -11,72 +12,44 @@ const async = require("async"),
     _ = require('lodash'),
     logger = require('../../../../lib/logger'),
     compareFunction = require('./routeCompare'),
-    registry = require('etcd-registry'),
     bootstrapDrivers = require('./driversBootstrap'),
     pipeBuilder = require('./pipeBuilder'),
-    global = require('../../global')
+    global = require('../../global'),
+    HttpProxyRules = require('http-proxy-rules')
     ;
 
-let superMiddlewareFactory = (options = {}) => {
-    return function middleware(req, res, next) {
-        debug(`Got route: ${req.originalUrl}, matched entry: ${options.routeName}`);
-        const handlers = (options.pipe || [])
-            .map(plugin => {
-                return plugin.handler.bind(plugin, req, res);
-            });
-        async.series(handlers, (err) => {
-            if (err) {
-                logger.warn(`Error processing ${req.originalUrl}, ${err}`);
-                return next(err);
-            }
-            next();
-        });
-    };
-};
-
-module.exports = function (app, componentOptions = {}) {
+/**
+ * Bootstrap drivers and configure rules for api table
+ * 
+ * @method buildGatewayTable
+ * @param   {Object}    app     Loopback application
+ * @returns {Promise}           Result
+ */
+module.exports = function buildGatewayTable(app) {
     const ApiConfig = app.models.ApiConfig;
     const plugins = global.plugins;
     const drivers = global.drivers;
-
-    bootstrapDrivers(app)
+    return bootstrapDrivers(app)
         .then(() => {
             debug(`Drivers estableshed: ${global.driversStore.size}`);
             console.log(`Drivers estableshed: ${global.driversStore.size}`);
-            ApiConfig.find((err, configs) => {
-                if (err) throw err;
-                configs
-                    .sort(compareFunction)
-                    .forEach((apiConfig) => {
-                        try {
-                            let pipe = pipeBuilder.build(apiConfig.plugins);
-                            const initP = pipe.map(plugin => {
-                                if (_.isFunction(plugin.init)) {
-                                    return plugin.init();
-                                }
-                            });
-                            Promise.all(initP).then(() => {
-                                app.middlewareFromConfig(superMiddlewareFactory, {
-                                    enabled: true, // todo: enable/disable in config
-                                    phase: 'routes',
-                                    methods: apiConfig.methods,
-                                    paths: [apiConfig.entry.toLowerCase()],
-                                    params: {
-                                        pipe: pipe,
-                                        routeName: apiConfig.name
-                                    }
-                                });
-                                debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
-                            }).catch(err => {
-                                throw err;
-                            });
-                        } catch (error) {
-                            logger.error(error);
-                            throw error;
-                        }
-                    });
-            })
-        }, (err) => {
-            throw err;
+            return ApiConfig
+                .find()
+                .then((configs) => {
+                    const rules = configs
+                        .sort(compareFunction)
+                        .reduce((rules, apiConfig, index) => {
+                            debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
+                            const pipe = pipeBuilder.build(apiConfig.plugins), rule = {};
+                            rule[apiConfig.entry.toLowerCase()] = {
+                                pipe: pipe,
+                                methods: apiConfig.methods,
+                                enabled: true,
+                                path: apiConfig.entry.toLowerCase()
+                            };
+                            return Object.assign(rules, rule);
+                        }, {});
+                    global.rules = new HttpProxyRules({ rules: rules });
+                });
         });
 };

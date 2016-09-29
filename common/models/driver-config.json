@@ -17,7 +17,8 @@
       "type": "object"
     },
     "driverId": {
-      "type": "string"
+      "type": "string",
+      "index": true
     }
   },
   "validations": [],

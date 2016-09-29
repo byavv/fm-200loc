@@ -2,6 +2,7 @@
   "name": "ApiConfig",
   "base": "PersistedModel",
   "idInjection": true,
+  "index": true,
   "options": {
     "validateUpsert": true
   },

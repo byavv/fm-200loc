@@ -1,7 +1,13 @@
 {
-  "db": {
-    "name": "db",
+  "db1": {
+    "name": "db1",
     "connector": "memory",
     "file": "gateway.json"
+  },
+  "db": {
+    "name": "db",
+    "host": "${redis_host}",  
+    "port": "6379",
+    "connector": "redis"
   }
 }

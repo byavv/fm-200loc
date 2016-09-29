@@ -1,49 +1,32 @@
 /*jslint node: true */
 'use strict';
 const path = require("path"),
-    async = require('async');
+    async = require('async'),
+    request = require('request')
+    ;
 
 module.exports = function (app) {
     var router = app.loopback.Router();
-    var ApiConfig = app.models.ApiConfig;
-    var DriverConfig = app.models.DriverConfig;
+    var ApiConfig = app.models.ApiConfig;   
 
     router.get('/api/configs', (req, res) => {
         ApiConfig.find((err, configs) => {
             res.send(configs);
         });
     });
-
-    router.get('/api/config/:id', (req, res) => {
-        ApiConfig.findById(req.params.id, (err, config) => {
-            res.send(config);
-        });
-    });
-
-    router.post('/api/config/:id', (req, res) => {
-        ApiConfig.findOrCreate({ where: { id: req.params.id } }, req.body, (err, config) => {
-            if (err) {
-                return res.status(err.statusCode).send(err.message);
+    
+    router.get('/api/plugins', (req, res, next) => {
+        request({
+            url: `http://${process.env.GATEWAY}/_private/plugins`,
+            method: 'GET'
+        }, function (err, responce, body) {
+            if (err) return next(err)
+            if (responce) {
+                return res.status(responce.statusCode).send(body)
+            } else {
+                return res.sendStatus(500)
             }
-            config.updateAttributes(req.body, (err, cf) => {
-                if (err) return res.sendStatus(500);
-                return res.status(200).send(cf);
-            });
         });
-    });
-    /**
-     * Get all installed plugins
-     */
-    router.get('/api/plugins', (req, res) => {
-        return res.send((req.app.plugins || []).map(plugin => {
-            return {
-                name: plugin._name,
-                description: plugin._description,
-                settingsTemplate: plugin.config,
-                dependenciesTemplate: plugin.dependencies,
-                value: {}
-            };
-        }));
     });
 
     router.delete('/api/config/:id', (req, res) => {
@@ -56,24 +39,33 @@ module.exports = function (app) {
      * Get all installed drivers
      */
     router.get('/api/drivers', (req, res) => {
-        return res.send((req.app.drivers || []).map(driver => {
-            return {
-                name: driver._name,
-                description: driver._description,
-                settings: driver.config
-            };
-        }));
+        request({
+            url: `http://${process.env.GATEWAY}/_private/drivers`,
+            method: 'GET'
+        }, function (err, responce, body) {
+            if (err) return next(err)
+            if (responce) {
+                return res.status(responce.statusCode).send(body)
+            } else {
+                return res.sendStatus(500)
+            }
+        });
     });
     /**
      * Get driver template by it's name'
      */
     router.get('/api/driver/config/:name', (req, res) => {
-        let driver = (req.app.drivers || [])
-            .find((d) => d._name == req.params['name']);
-        return res.send({
-            name: driver._name,
-            description: driver._description,
-            settings: driver.config
+        const name = req.params['name'];
+        request({
+            url: `http://${process.env.GATEWAY}/_private/driver/config/${name ? name : ''}`,
+            method: 'GET'
+        }, function (err, responce, body) {
+            if (err) return next(err)
+            if (responce) {
+                return res.status(responce.statusCode).send(body)
+            } else {
+                return res.sendStatus(500)
+            }
         });
     });
     app.use(router);

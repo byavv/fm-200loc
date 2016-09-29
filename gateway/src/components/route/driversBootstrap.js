@@ -1,15 +1,23 @@
 /**
- * @module Route Component
+ * @module Driver starter
  * @author Aksenchyk Viacheslav <https://github.com/byavv>
  * @description
- * Provides functionality for building driver instances
+ * Bootstrap drivers
+ * @type {Promise}
  **/
-
+"use strict";
 const async = require('async')
     , debug = require("debug")("gateway")
     , global = require('../../global');
 
-module.exports = function (app) {
+/**
+ * Read all drivers from config and build instances of active ones
+ * 
+ * @method bootstrapDrivers
+ * @param   {Object}    app     Loopback application
+ * @returns {Promise}           Result
+ */
+module.exports = function bootstrapDrivers(app) {
     const DriverConfig = app.models.DriverConfig;
     return new Promise((resolve, reject) => {
         DriverConfig.find({ /* todo: where: {active: true} */ }, (err, driverConfigs) => {

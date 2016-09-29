@@ -3,52 +3,48 @@
 const http = require('http'),
     path = require('path'),
     debug = require('debug')('gateway'),
-    minimist = require('minimist')
-    ;
+    minimist = require('minimist'),
+    redis = require('redis'),
+    _ = require('lodash'),
+    fork = require('child_process').fork;
+;
 
 const defaults = {
-    string: ['env', 'log'],
+    string: ['env', 'll', 'n', "p"],
     default: {
         env: process.env.NODE_ENV || 'development',
-        log: process.env.LOG_LEVEL || 'debug',
+        ll: process.env.LOG_LEVEL || 'debug',
+        n: process.env.NODE_NAME || `node-${Math.random().toString(36).substring(2, 7)}`,
+        p: process.env.HTTP_PORT || 3001
     }
 };
 const options = minimist(process.argv.slice(2), defaults);
 process.env.NODE_ENV = options.env;
-process.env.LOG_LEVEL = options.log;
+process.env.LOG_LEVEL = _.isArray(options.ll) ? [...options.ll].pop() : options.ll;
+process.env.NODE_NAME = _.isArray(options.n) ? [...options.n].pop() : options.n;
+process.env.HTTP_PORT = _.isArray(options.p) ? [...options.p].pop() : options.p;
 
-const logger = require('./lib/logger');
-const loader = require('./lib/loader')();
-//const driverLoader = require('./lib/driverLoader')();
+const gateway = fork(path.join(__dirname, 'gateway/src/server.js'), {
+    env: process.env, silent: false
+});
 
-const http_port_gate = process.env.GATE_HTTP_PORT || 3001,
-    http_port_exp = process.env.EXPLORER_HTTP_PORT || 5601;
+gateway.on("message", function (message) {
+    console.log(message)
+});
+process.once("SIGTERM", function () {
+    process.exit(0);
+});
+process.once("SIGINT", function () {
+    process.exit(0);
+});
+process.once("exit", function (code) {
+    console.log('Terminating by user...')
+    gateway.kill("SIGTERM");
+});
 
-if (!process.env.GATE_HTTP_PORT) logger.warn(`Gateway http port is not set, use default: ${http_port_gate}`)
-if (!process.env.EXPLORER_HTTP_PORT) logger.warn(`Explorer http port is not set, use default: ${http_port_exp}`)
-
-Promise.all([
-    loader
-        .loadComponents(path.resolve(__dirname, './plugins')),
-    loader
-        .loadComponents(path.resolve(__dirname, './drivers'))
-])
-    .then((components) => {       
-        logger.debug('Drivers and plugins loaded, init servers...');
-        const gateway = require('./gateway/src/server');
-        const explorer = require('./explorer/server/server');
-        return Promise.all([
-            explorer.init(components[0], components[1]),
-            gateway.init(components[0], components[1])
-        ])
-            .then(apps => {
-                logger.debug('Init complete, starting...')
-                apps[0].start(http_port_exp);
-                apps[1].start(http_port_gate);
-            });
-    })
-    .catch(err => {
-        //  logger.error(err)
-        console.log(err)
-        throw err;
-    });
+process.once("uncaughtException", function (error) {
+    if (process.listeners("uncaughtException").length === 0) {
+        gateway.kill();
+        throw error;
+    }
+});

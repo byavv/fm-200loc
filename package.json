@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "cross-env node ./src/server.js --log info --env production --n node1 --p 3001",
-    "test": "cross-env NODE_ENV=test DEBUG=test istanbul cover node_modules/mocha/bin/_mocha -- -t 5000 -R spec gateway/test/*.spec.js plugins/**/test/*.spec.js",
-    "test-cov": "cross-env NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec gateway/test/*.spec.js plugins/**/test/*.spec.js && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
+    "test": "cross-env NODE_ENV=test DEBUG=test istanbul cover node_modules/mocha/bin/_mocha -- -t 5000 -R spec test/*.spec.js plugins/**/test/*.spec.js",
+    "test-cov": "cross-env NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*.spec.js plugins/**/test/*.spec.js && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
     "dev": "cross-env DEBUG=gateway,plugins:* node ./src/server.js --ll debug --env development --n node1 --p 3001",
     "clean": "npm run clean:coverage && npm run clean:build",
     "clean:coverage": "rm -rf ./coverage",

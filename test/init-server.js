@@ -1,26 +1,31 @@
-var fakeData = require('./fakeEntries');
-var loader = require('../lib/loader')();
-var path = require('path');
+const seedData = require('./fakeEntries');
+const loader = require('../lib/loader')();
+const path = require('path');
+const global = require('../src/global');
+const buildGatewayTable = require('../src/components/route')
 
+const app = require('../src/server');
 module.exports = function (done) {
-  //loader
-  //  .loadComponents(path.resolve(__dirname, './fakePlugins'))
   Promise.all([
     loader
       .loadComponents(path.resolve(__dirname, './fakePlugins')),
     loader
       .loadComponents(path.resolve(__dirname, './fakeDrivers'))
   ])
-    .then((components) => {      
-      const gateway = require('../src/server');
-      gateway.init(...components).then(app => {
-        fakeData(app, () => {
-          app.start(3009);
-        })
-        app.once('started', () => {
+    .then(([plugins, drivers]) => {
+      global.plugins = plugins;
+      global.drivers = drivers;
+      global.ready = true;
+    })
+    .then(() => seedData(app))
+    .then(() => buildGatewayTable(app))
+    .then(() => {
+      /*  app.once('started', () => {
           done(app)
-        });
-      })
+        });*/
+      const server = app.listen(3009, () => {
+        done(null, server)
+      });
     }).catch(err => {
       done(err)
     });

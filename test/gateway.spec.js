@@ -11,7 +11,8 @@ describe('GATEWAY TESTS', () => {
     var app;
 
     before((done) => {
-        require('./init-server')((a) => {
+        require('./init-server')((err, a) => {
+            if (err) return done(err)
             app = a;
             done();
         })

@@ -9,7 +9,7 @@ const chai = require('chai'),
 describe('PIPE BUILDER TESTS', () => {
     let app, global;
     before((done) => {
-        require('./init-server')((a) => {
+        require('./init-server')((err, a) => {
             app = a;
             global = require('../src/global')
             done();

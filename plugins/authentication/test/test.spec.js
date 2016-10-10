@@ -6,8 +6,8 @@ const express = require('express'),
     sinon = require('sinon'),
     expect = chai.expect,
     request = require('supertest'),
-    Pipe = require('../../../gateway/src/components/route/pipe'),
-    Context = require('../../../gateway/src/components/route/context') 
+    Pipe = require('../../../src/components/route/pipe'),
+    Context = require('../../../src/components/route/context') 
     ;
 
 describe('AUTHENTICATION PLUGIN TESTS', function () {

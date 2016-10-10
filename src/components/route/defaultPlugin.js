@@ -3,7 +3,7 @@
  */
 
 "use strict";
-const errors = require("../../../../lib/errors");
+const errors = require("../../../lib/errors");
 
 module.exports = (function () {
     let cls = function (name) {

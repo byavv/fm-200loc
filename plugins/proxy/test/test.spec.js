@@ -7,8 +7,8 @@ const express = require('express'),
     expect = chai.expect,
     request = require('supertest'),
     ProxyPlugin = require('../'),
-    Pipe = require('../../../gateway/src/components/route/pipe'),
-    Context = require('../../../gateway/src/components/route/context')
+    Pipe = require('../../../src/components/route/pipe'),
+    Context = require('../../../src/components/route/context')
     ;
 
 describe('PROXY PLUGIN TESTS', function () {
@@ -35,11 +35,15 @@ describe('PROXY PLUGIN TESTS', function () {
     })
 
     beforeEach((done) => {
-
         let ctx = new Context(0, pipe, []);
+        // order matter
+        pipe.insert({
+            target: 'http://localhost:3234',
+            withPath: '/',
+            secure: false,
+            changeOrigin: false
+        }, 0);
         var plugin = new ProxyPlugin(ctx);
-
-        pipe.insert({ target: 'http://localhost:3234', withPath: '/' }, 0);
         app.use(plugin.handler.bind(plugin));
 
         httpServer = http
@@ -78,7 +82,12 @@ describe('PROXY PLUGIN TESTS', function () {
     });
 
     it('should throw if target does not set', (done) => {
-        pipe.insert({ target: undefined, withPath: '/' }, 0);
+        pipe.insert({
+            target: undefined,
+            withPath: '/',
+            secure: false,
+            changeOrigin: false
+        }, 0);
         request(app)
             .get('/fake2')
             .expect(502)

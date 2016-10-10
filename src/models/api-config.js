@@ -5,17 +5,19 @@ const async = require('async')
     , redis = require('redis')
 
 module.exports = function (ApiConfig) {
-    let app;
+    let app, publisher;
 
     ApiConfig.on('attached', function (a) {
         app = a;
-        const publisher = redis.createClient({
-            host: app.get('redis_host'),
-            port: 6379
-        });
+        if (process.env.NODE_ENV != 'test')
+            publisher = redis.createClient({
+                host: app.get('redis_host'),
+                port: 6379
+            });
     });
 
     ApiConfig.observe('after save', function (ctx, next) {
+        if (process.env.NODE_ENV != 'test')
         publisher.publish("cluster", JSON.stringify({ action: "update" }));
         next();
     });

@@ -10,12 +10,7 @@
       "reconnectTries": 100,
       "reconnectInterval": 2000
     }
-  },
-  "db1": {
-    "name": "db1",
-    "connector": "memory",
-    "file": "gateway.json"
-  },
+  }, 
   "db": {
     "name": "db",
     "host": "${redis_host}",

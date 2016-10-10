@@ -10,7 +10,7 @@
       "reconnectTries": 100,
       "reconnectInterval": 2000
     }
-  }, 
+  },
   "db": {
     "name": "db",
     "host": "${redis_host}",

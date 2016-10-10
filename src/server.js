@@ -69,22 +69,26 @@ app.disable('x-powered-by');
 
 const http_port = process.env.HTTP_PORT || 3001;
 
-const sub = redis.createClient({
-    host: app.get('redis_host'),
-    port: 6379
-});
-sub.on("message", function (channel, message) {
-    message = JSON.parse(message);
-    if (message.action == 'update') {
-        global.ready = false;
-        buildGatewayTable(app)
-            .then(() => {
-                global.ready = true;
-                debug(`Node ${app.get('node_name')} configuration updated`);
-            });
-    }
-});
-sub.subscribe("cluster");
+if (process.env.NODE_ENV != 'test') {
+    const sub = redis.createClient({
+        host: app.get('redis_host'),
+        port: 6379
+    });
+
+    sub.on("message", function (channel, message) {
+        message = JSON.parse(message);
+        if (message.action == 'update') {
+            global.ready = false;
+            buildGatewayTable(app)
+                .then(() => {
+                    global.ready = true;
+                    debug(`Node ${app.get('node_name')} configuration updated`);
+                });
+        }
+    });
+    sub.subscribe("cluster");
+}
+
 
 boot(app, __dirname, (err) => {
     if (err) throw err;

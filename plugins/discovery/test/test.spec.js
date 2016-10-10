@@ -5,10 +5,9 @@ const express = require('express'),
     chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect,
-    request = require('supertest'),
-    rewire = require('rewire'),
-    Pipe = require('../../../gateway/src/components/route/pipe'),
-    Context = require('../../../gateway/src/components/route/context')
+    request = require('supertest'),   
+    Pipe = require('../../../src/components/route/pipe'),
+    Context = require('../../../src/components/route/context')
     ;
 
 describe('DISCOVERY PLUGIN TESTS', function () {

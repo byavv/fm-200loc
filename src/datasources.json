@@ -1,0 +1,20 @@
+{
+  "dbAuth": {
+    "host": "${mongo_host}",
+    "port": 27017,
+    "database": "profile-db",
+    "name": "dbAuth",
+    "connector": "mongodb",
+    "server": {
+      "auto_reconnect": true,
+      "reconnectTries": 100,
+      "reconnectInterval": 2000
+    }
+  },
+  "db": {
+    "name": "db",
+    "host": "${redis_host}",
+    "port": "6379",
+    "connector": "redis"
+  }
+}

@@ -10,7 +10,7 @@
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(^|\\/|\\\\)_",
         "include": [
-            "./gateway/src"
+            "./src"
         ]
     },
     "plugins": [],

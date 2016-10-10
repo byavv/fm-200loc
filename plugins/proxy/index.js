@@ -7,13 +7,13 @@ const debug = require('debug')('plugins:proxy'),
     ;
 
 module.exports = (function () {
-
     let cls = function (ctx) {
-        const proxy = httpProxy.createProxyServer({});
+        const proxy = httpProxy.createProxyServer({ secure: ctx.$param['secure'] || false });
         this.handler = function (req, res, next) {
             if (ctx.$param['target']) {
                 proxy.web(req, res, {
-                    target: ctx.$param['target'] + (ctx.$param['withPath'] || '/')
+                    target: ctx.$param['target'] + (ctx.$param['withPath'] || '/'),
+                    changeOrigin: ctx.$param['changeOrigin'] || false
                 }, (err) => {
                     return next(err);
                 });
@@ -24,7 +24,6 @@ module.exports = (function () {
             }
         }
     };
-
     cls._name = 'proxy';
     cls._description = 'Simple proxying requests';
     return cls;

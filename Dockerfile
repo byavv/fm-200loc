@@ -13,9 +13,8 @@ RUN mkdir -p /usr/src/app
 COPY . /usr/src/app
 
 # Install dependencies and build client
-RUN \ 
-    npm install \   
-    && npm run build
+RUN npm install
+    
 
 RUN mkdir -p /coverage
 

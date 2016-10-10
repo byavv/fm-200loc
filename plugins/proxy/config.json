@@ -1,7 +1,7 @@
 {
     "config": {
         "target": {
-            "default": "localhost",
+            "default": "localhost:80",
             "required": true,
             "label": "Target",
             "help": "Proxy target"
@@ -11,6 +11,40 @@
             "required": true,
             "label": "Path",
             "help": "Path to be added to target api url"
+        },
+        "secure": {
+            "default": false,
+            "type": "select",
+            "required": true,
+            "label": "Verify the SSL Certs",
+            "help": "Secure",
+            "options": [
+                {
+                    "key": "Yes",
+                    "value": true
+                },
+                {
+                    "key": "No",
+                    "value": false
+                }
+            ]
+        },
+        "changeOrigin": {
+            "default": false,
+            "required": false,
+            "type": "select",
+            "label": "Change origin",
+            "help": "Change the origin of the host header to the target URL",
+            "options": [
+                {
+                    "key": "Yes",
+                    "value": true
+                },
+                {
+                    "key": "No",
+                    "value": false
+                }
+            ]
         }
     },
     "require": []

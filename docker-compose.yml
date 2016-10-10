@@ -4,22 +4,20 @@ services:
     image: aksenchyk/fm-200loc:build
     environment:      
       - REDIS_HOST=redis
-      - HTTP_PORT=3001   
-      - MONGO_HOST=mongo      
+      - MONGO_HOST=mongo       
     depends_on:      
-      - redis
-      - mongo    
-    entrypoint: ./wait-for-it.sh redis:6379 mongo:27017 dashboard:5601 -s -- npm start 
-    ports:
-    - '80:3001'   
+      - redis 
+      - mongo   
+ entrypoint: ./wait-for-it.sh redis:6379 mongo:27017 dashboard:5601 -s -- npm start -- --p 80
   dashboard:
-    image: aksenchyk/fm-dashboard:build
+    image: aksenchyk/200loc-dashboard:build
     environment: 
-      - REDIS_HOST=redis
-    command: npm start -- p 5601 --link gateway:3001
-    ports:  
-    - '5601:5601'
+      - REDIS_HOST=redis      
+    entrypoint: ./wait-for-it.sh redis:6379 -s -- npm start -- p 5601 --link gateway:80  
+    depends_on:      
+      - gateway 
+      - redis    
   redis:    
     image: redis:latest 
-  mongo:    
+  mongo:
     image: mongo:latest

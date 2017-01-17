@@ -34,11 +34,11 @@ module.exports = function buildGatewayTable(app) {
             debug(`Drivers estableshed: ${global.driversStore.size}`);
             console.log(`Drivers estableshed: ${global.driversStore.size}`);
             return ApiConfig
-                .find()
+                .find() // find all configurations
                 .then((configs) => {
                     const rules = configs
-                        .sort(compareFunction)
-                        .reduce((rules, apiConfig, index) => {
+                        .sort(compareFunction) // sort them by entry path
+                        .reduce((rules, apiConfig, index) => { 
                             debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
                             const pipe = pipeBuilder.build(apiConfig.plugins), rule = {};
                             rule[apiConfig.entry.toLowerCase()] = {

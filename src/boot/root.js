@@ -67,8 +67,7 @@ module.exports = function (app) {
                 });
             async.series(handlers, (err) => {
                 if (err) {
-                    logger.warn(`Error processing ${req.originalUrl}, ${err}`);
-                    // return res.status(500).send({ error: err });
+                    logger.warn(`Error processing ${req.originalUrl}, ${err}`);                    
                     return next(err);
                 }
                 return res.status(200).send({ result: 'ok' });

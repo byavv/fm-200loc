@@ -9,7 +9,7 @@ module.exports = function middlewareFactory() {
         if (global.ready) {
             const target = global.rules.match(req);
             if (target) {
-                debug(`Got route: ${req.originalUrl}, matched entry: ${target.path}`);
+                debug(`Processing: ${req.originalUrl}, matched entry: ${target.path}`);
                 const handlers = (target.pipe || [])
                     .map(plugin => {
                         return plugin.handler.bind(plugin, req, res);

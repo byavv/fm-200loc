@@ -13,7 +13,7 @@
     "clean:build": "rm -rf ./explorer/build/*",
     "clean:hard": "npm run clean:build && npm run clean:coverage && rm -rf node_modules",
     "docker:build": "docker build -t aksenchyk/fm-200loc:build .",
-    "jsdoc": "cross-env ./node_modules/.bin/jsdoc -r -c ./jsdoc.conf.json"
+    "jsdoc": "cross-env ./node_modules/.bin/jsdoc -r -c jsdoc.conf.json"
   },
   "engines": {
     "node": ">= 6"

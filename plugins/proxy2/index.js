@@ -15,8 +15,8 @@ module.exports = (function () {
                 proxyInst.proxyRequest(req, res, ctx.$param['target'] + (ctx.$param['withPath'] || '/'), (err) => {
                     if (err) {
                         logger.error(new Error('Proxy service error'))
-                       //return next(err);
-                        return res.status(err.status || 502).send(err.message);
+                        return next(err);
+                      //  return res.status(err.status || 502).send(err.message);
                     }
                 })
                 debug(`Proxy ${req.method}: ${req.originalUrl} \u2192 ${ctx.$param['target']}${ctx.$param['withPath']}`);

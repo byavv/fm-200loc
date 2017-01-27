@@ -65,6 +65,9 @@ app.set("redis_host", redis_host);
 app.set("etcd_host", etcd_host);
 app.set("node_name", node_name);
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
 app.disable('x-powered-by');
 
 const http_port = process.env.HTTP_PORT || 3001;

@@ -6,6 +6,7 @@ const global = require('../../global')
 
 module.exports = function middlewareFactory() {
     return function handler(req, res, next) {
+        const isXhr = req.headers.accept && req.headers.accept.includes('json');
         if (global.ready) {
             const target = global.rules.match(req);
             if (target) {
@@ -17,12 +18,18 @@ module.exports = function middlewareFactory() {
                 async.series(handlers, (err) => {
                     if (err) {
                         logger.warn(`Error processing ${req.originalUrl}, ${err}`);
-                        return next(err);
+                        return isXhr
+                            ? res.status(err.status || 500).send({
+                                error: err
+                            })
+                            : res.render("serverError", {
+                                error: err
+                            });
                     }
-                    next();
+                    return next();
                 });
             } else {
-                next();
+                return next();
             }
         } else {
             debug(`Gateway node is not ready to process request`);

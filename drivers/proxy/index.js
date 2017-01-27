@@ -16,7 +16,7 @@ module.exports = (function () {
         this.proxyRequest = function (req, res, target, clb) {
             debug(`Performing proxy request to ${target}`)
             if (!target.startsWith('http://') || !target.startsWith('https://')) {
-                return clb(new errors.err422('Target format is wrong, no protocol defined'));
+                return clb(new errors.err422('Target format is wrong, no protocol defined', 'Proxy service'));
             }
             proxy.web(req, res, {
                 target: target

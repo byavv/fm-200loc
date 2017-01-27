@@ -68,19 +68,7 @@ module.exports = function (app) {
             async.series(handlers, (err) => {
                 if (err) {
                     logger.warn(`Error processing test request ${req.originalUrl}, Error:  ${err}`);
-                    const errorStr = {
-                        error: {
-                            statusCode: err.status,
-                            name: err.name,
-                            message: err.message
-                        }
-                    }
-                    return tRes.status(200).send({                       
-                        response: {
-                            statusCode: err.status,
-                            body: errorStr
-                        }
-                    });
+                    return tRes.status(200).send({ error: err });
                 }
                 return tRes.status(200).send({ result: 'ok' });
             });

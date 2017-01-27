@@ -7,28 +7,30 @@ const chai = require('chai'),
 describe('ROUTE ORDERING TESTS', () => {
 
     it('should order routes', () => {
-        var routesUnsorted = [
+        var fakeEntryConfigs = [
             { entry: '/' },
             { entry: '/super/route' },
             { entry: '/super/puper/route' },
-            { entry: '/super' }
+            { entry: '/super' },
+            { entry: '/super/puper/route/*' },
         ]
-        routesUnsorted.sort((a, b) => comparator(a, b));
-        expect(routesUnsorted.length).to.be.equal(4);
-        expect(routesUnsorted[0].entry).to.be.equal('/super/puper/route');
-        expect(routesUnsorted[1].entry).to.be.equal('/super/route');
-        expect(routesUnsorted[2].entry).to.be.equal('/super');
-        expect(routesUnsorted[3].entry).to.be.equal('/');
+        fakeEntryConfigs.sort(comparator);       
+        expect(fakeEntryConfigs.length).to.be.equal(5);
+        expect(fakeEntryConfigs[0].entry).to.be.equal('/super/puper/route/*');
+        expect(fakeEntryConfigs[1].entry).to.be.equal('/super/puper/route');
+        expect(fakeEntryConfigs[2].entry).to.be.equal('/super/route');
+        expect(fakeEntryConfigs[3].entry).to.be.equal('/super');
+        expect(fakeEntryConfigs[4].entry).to.be.equal('/');
     })
 
     it('should order routes without separator', () => {
-        var routesUnsorted = [
+        var fakeEntryConfigs = [
             { entry: '' },
             { entry: 'super/route' },
             { entry: 'super/puper/route' }
         ]
-        routesUnsorted.sort((a, b) => comparator(a, b));
-        expect(routesUnsorted.length).to.be.equal(3);
-        expect(routesUnsorted[0].entry).to.be.equal('super/puper/route');
+        fakeEntryConfigs.sort(comparator);
+        expect(fakeEntryConfigs.length).to.be.equal(3);
+        expect(fakeEntryConfigs[0].entry).to.be.equal('super/puper/route');
     })
 })

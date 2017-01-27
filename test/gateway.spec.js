@@ -29,6 +29,7 @@ describe('GATEWAY TESTS', () => {
     it('throw 500 if plugin is not defined', (done) => {
         request(app)
             .get('/pluginnotexists')
+            .set('Accept', 'application/json')
             .expect(500)
             .end(done);
     });
@@ -43,6 +44,7 @@ describe('GATEWAY TESTS', () => {
     it('should return error when plugin returns fail', (done) => {
         request(app)
             .get('/test')
+            .set('Accept', 'application/json')
             .expect(404)
             .end(done);
     });
@@ -50,6 +52,7 @@ describe('GATEWAY TESTS', () => {
     it('should pipe plugin req', (done) => {
         request(app)
             .get('/test2')
+            .set('Accept', 'application/json')
             .expect(500)
             .end(done);
     });
@@ -57,6 +60,7 @@ describe('GATEWAY TESTS', () => {
     it('should pass if plugin does not call next callback', (done) => {
         request(app)
             .get('/testnotreturn')
+            .set('Accept', 'application/json')
             .expect(200, {
                 respond: 'ok'
             })
@@ -91,13 +95,25 @@ describe('GATEWAY TESTS', () => {
             .end(done);
     });
 
-      it('should use default plugin when no exist', (done) => {
-       
+    it('should use default plugin when no exist', (done) => {
+
         request(app)
             .get('/pluginnotexists')
-           // .expect(500)
-            .end((err)=>{
+            .end((err) => {
                 console.log(err);
+                done(err)
+            });
+    });
+
+    it('should return 200 if simple browser request', (done) => {
+        request(app)
+            .get('/pluginnotexists')
+            .expect(function (res) {
+                expect(res.text.includes('Error')).to.be.equal(true);
+                expect(res.text.includes('500')).to.be.equal(true);
+            })
+            .expect(200)
+            .end((err) => {
                 done(err)
             });
     });

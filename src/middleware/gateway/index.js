@@ -16,7 +16,7 @@ module.exports = function middlewareFactory() {
                         return plugin.handler.bind(plugin, req, res);
                     });
                 async.series(handlers, (err) => {
-                    if (err) {
+                    if (err) {                        
                         logger.warn(`Error processing ${req.originalUrl}, ${err}`);
                         return isXhr
                             ? res.status(err.status || 500).send({

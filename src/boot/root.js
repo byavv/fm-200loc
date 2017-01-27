@@ -59,7 +59,7 @@ module.exports = function (app) {
     router.post('/_private/entry/test', (req, res) => {
         const app = express();
         app.use((tReq, tRes, next) => {
-            let plugins = req.body.plugins;         
+            let plugins = req.body.plugins;
             const pipe = pipeBuilder.build(plugins);
             const handlers = (pipe || [])
                 .map(plugin => {
@@ -67,16 +67,33 @@ module.exports = function (app) {
                 });
             async.series(handlers, (err) => {
                 if (err) {
-                    logger.warn(`Error processing ${req.originalUrl}, ${err}`);                    
-                    return next(err);
+                    logger.warn(`Error processing test request ${req.originalUrl}, Error:  ${err}`);
+                    const errorStr = {
+                        error: {
+                            statusCode: err.status,
+                            name: err.name,
+                            message: err.message
+                        }
+                    }
+                    return tRes.status(200).send({                       
+                        response: {
+                            statusCode: err.status,
+                            body: errorStr
+                        }
+                    });
                 }
-                return res.status(200).send({ result: 'ok' });
+                return tRes.status(200).send({ result: 'ok' });
             });
         });
         const testServer = http.createServer(app).listen();
-        const port = testServer.address().port;     
+        const port = testServer.address().port;
         killable(testServer);
-        const headers = req.body.headers;
+
+        const headers = (req.body.headers || [])
+            .reduce(function (acc, cur, i) {
+                acc[cur.key] = cur.value;
+                return acc;
+            }, {});
         const method = req.body.method;
         const body = req.body.body;
         // todo: const params = req.body.params
@@ -86,7 +103,7 @@ module.exports = function (app) {
             method: method
         };
         if (body && method == 'POST') options.json = body;
-        request(options, (error, response, body) => {          
+        request(options, (error, response, body) => {
             testServer.kill(() => {
                 debug(`Test server on port ${port} killed`);
                 res.status(200).send({ error, response, body });

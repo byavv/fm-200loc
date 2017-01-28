@@ -8,22 +8,25 @@ const chai = require('chai'),
     ;
 
 describe('GATEWAY TESTS', () => {
-    var app;
+    var app, ApiConfig;
 
     before((done) => {
         require('./init-server')((err, a) => {
             if (err) return done(err)
             app = a;
+            ApiConfig = app.models.ApiConfig;           
             done();
-        })
+        });
     });
 
     after((done) => {
-        app.close(done);
+        ApiConfig.destroyAll(() => {
+            app.close(done);
+        });
     });
 
     it('should load plugins', () => {
-        expect(global.plugins.length).to.be.equal(5);
+        expect(global.plugins.length).to.be.equal(6);
     });
 
     it('throw 500 if plugin is not defined', (done) => {

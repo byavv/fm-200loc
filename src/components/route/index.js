@@ -29,6 +29,7 @@ module.exports = function buildGatewayTable(app) {
     const ApiConfig = app.models.ApiConfig;
     const plugins = global.plugins;
     const drivers = global.drivers;
+    global.driversStore.clear();
     return bootstrapDrivers(app)
         .then(() => {
             debug(`Drivers estableshed: ${global.driversStore.size}`);
@@ -36,11 +37,36 @@ module.exports = function buildGatewayTable(app) {
             return ApiConfig
                 .find() // find all configurations
                 .then((configs) => {
+                    return new Promise((resolve, reject) => {
+                        const activeConfigs = configs.filter(config => {
+                            let errors = pipeBuilder.test(config.plugins);
+                            console.log(errors)
+                            console.log(config)
+                            if (errors.length > 0 && !_.isEqual(errors, config.errors)) {
+                                config.errors = errors;
+                                config.active = false;
+                                config.save();
+                                console.log(config);                              
+                            } else {
+                                if (errors.length == 0 && config.errors.length > 0) {
+                                    config.errors = [];
+                                    config.active = false;
+                                    config.save();
+                                    console.log(config);                                 
+                                }
+                            }
+                            return config.active;
+                        });
+                        resolve(activeConfigs);
+                    });
+                })
+                .then((configs) => {
                     const rules = configs
-                        .sort(compareFunction) // sort them by entry path
-                        .reduce((rules, apiConfig, index) => { 
+                        .sort(compareFunction)
+                        .reduce((rules, apiConfig, index) => {
+                            const rule = {};
                             debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
-                            const pipe = pipeBuilder.build(apiConfig.plugins), rule = {};
+                            const pipe = pipeBuilder.build(apiConfig.plugins);
                             rule[apiConfig.entry.toLowerCase()] = {
                                 pipe: pipe,
                                 methods: apiConfig.methods,

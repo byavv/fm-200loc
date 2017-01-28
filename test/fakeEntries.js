@@ -127,8 +127,21 @@ module.exports = function seedTestData(app) {
                             },
                             dependencies: { testDriver: config.id.toString() }
                         }
-                    ],
-
+                    ]
+                },
+                {
+                    name: 'route7',
+                    entry: '/test7',
+                    methods: ['GET'],
+                    plugins: [
+                        {
+                            name: "unexpectedDependencyPlugin",
+                            settings: {
+                                some: "param",
+                            },
+                            dependencies: { testDriver: 'noSuchDriver' }
+                        }
+                    ]
                 }
             ], (err, configs) => {
                 if (err)

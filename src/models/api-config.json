@@ -16,6 +16,16 @@
       "required": true,
       "default": true
     },
+    "active": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "errors": {
+      "type": [
+        "object"
+      ]
+    },
     "description": {
       "type": "string"
     },

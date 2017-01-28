@@ -18,7 +18,7 @@ const async = require('async')
  * @returns {Promise}           Result
  */
 module.exports = function bootstrapDrivers(app) {
-    const DriverConfig = app.models.DriverConfig;
+    const DriverConfig = app.models.DriverConfig;    
     return new Promise((resolve, reject) => {
         DriverConfig.find({ /* todo: where: {active: true} */ }, (err, driverConfigs) => {
             try {
@@ -29,7 +29,11 @@ module.exports = function bootstrapDrivers(app) {
                     if (!Driver) throw new Error(`Driver ${driverConfig.driverId} is not defined`)
                     if (!global.driversStore.has(driverConfig.id)) {
                         debug(`Instansiate plugin: ${driverConfig.driverId}`);
-                        global.driversStore.set(driverConfig.id.toString(), new Driver(app, driverSettings));
+                        global.driversStore.set(driverConfig.id.toString(), {
+                            name: Driver._name,
+                            version: Driver._version,
+                            instance: new Driver(app, driverSettings)
+                        });
                     }
                 });
                 resolve();

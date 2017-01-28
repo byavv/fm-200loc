@@ -1,4 +1,3 @@
-
 "use strict"
 const async = require('async')
     , debug = require('debug')('gateway, explorer')
@@ -18,7 +17,13 @@ module.exports = function (ApiConfig) {
 
     ApiConfig.observe('after save', function (ctx, next) {
         if (process.env.NODE_ENV != 'test')
-        publisher.publish("cluster", JSON.stringify({ action: "update" }));
+            publisher.publish("cluster", JSON.stringify({ action: "update" }));
+        next();
+    });
+
+    ApiConfig.observe('after delete', function (ctx, next) {
+        if (process.env.NODE_ENV != 'test')
+            publisher.publish("cluster", JSON.stringify({ action: "update" }));
         next();
     });
 }

@@ -15,18 +15,22 @@ module.exports = function (done) {
     .then(([plugins, drivers]) => {
       global.plugins = plugins;
       global.drivers = drivers;
-      global.ready = true;
+      global.ready = true;     
     })
     .then(() => seedData(app))
     .then(() => buildGatewayTable(app))
-    .then(() => {
-      /*  app.once('started', () => {
-          done(app)
-        });*/
+    .then(() => {     
+      app.close = function (clb) {
+        global.driversStore.clear();
+        server.close(clb);
+      }
       const server = app.listen(3009, () => {
-        done(null, server)
+        done(null, app)
       });
+    }, (err)=>{
+       
     }).catch(err => {
+     
       done(err)
     });
 };

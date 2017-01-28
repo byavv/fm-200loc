@@ -53,6 +53,57 @@ module.exports = function (app) {
             settings: driver.config
         });
     });
+
+    /**
+     * Get driver template by it's name'
+     */
+    router.get('/_private/service/status/:serviceId', (req, res) => {
+        const requiredService = req.params['serviceId'];
+        if (requiredService == 'all') {
+            const statusArrP = [];
+            for (let key of global.driversStore.keys()) {
+                statusArrP.push(_getServiceStatus(key));
+            }
+            Promise
+                .all(statusArrP)
+                .then((results) => {
+                    return res.send(results);
+                });
+        } else {
+            return res.send(_getServiceStatus(requiredService)
+                .then((result) => {
+                    statusArr.push(result);
+                }));
+        }
+    });
+
+    function _getServiceStatus(id) {
+        let service = global.driversStore.get(id);
+        console.log(service._name)
+        if (!!service && (typeof service.instance.check == 'function')) {
+            return service.instance
+                .check()
+                .then(result => {
+                    return Object.assign({
+                        name: service.name,
+                        version: service.version,
+                        id: id
+                    }, result);
+                });
+        } else {
+            return new Promise((resolve, reject) => {
+                resolve({
+                    name: service._name,
+                    version: service._version,
+                    status: "N/A",
+                    message: "",
+                    error: "",
+                    id: id
+                });
+            });
+        }
+    }
+
     /**
      * Test entry
      */

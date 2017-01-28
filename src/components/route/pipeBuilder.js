@@ -22,9 +22,9 @@ module.exports = {
             let deps = {};
             for (let key in dependencies) {
                 if (global.driversStore.has(dependencies[key])) {
-                    deps[key] = global.driversStore.get(dependencies[key]);
+                    deps[key] = global.driversStore.get(dependencies[key]).instance;
                 } else {
-                    throw new Error('Driver is not defined');
+                    throw new Error('Service dependency is not defined');
                 }
             }
             let Plugin = global.plugins.find((p) => p._name === plugin.name);
@@ -39,5 +39,26 @@ module.exports = {
             }
             return pluginsArray;
         }, []);
+    },
+    /**
+     * Tests for errors in required pipe and constructs erro object to be saved in persisted.
+     * Used for notifying of wrong configuration in entry list
+     * @param {Array}   plugins     plugins to be tested
+     */
+    test: function (plugins) {
+        let errors = [];
+        (plugins || []).forEach((plugin) => {
+            const dependencies = Object.assign({}, plugin.dependencies);
+            for (let key in dependencies) {
+                if (!global.driversStore.has(dependencies[key])) {
+                    let e = {};
+                    e[key] = {
+                        massage: `Service dependency ${key} is not defined`
+                    }
+                    errors.push(e);
+                }
+            }
+        });
+        return errors;
     }
 }

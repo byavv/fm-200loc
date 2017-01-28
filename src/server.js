@@ -81,15 +81,19 @@ if (process.env.NODE_ENV != 'test') {
     sub.on("message", function (channel, message) {
         message = JSON.parse(message);
         if (message.action == 'update') {
-            global.ready = false;
-            buildGatewayTable(app)
-                .then(() => {
-                    global.ready = true;
-                    debug(`Node ${app.get('node_name')} configuration updated`);
-                });
+            restart();
         }
     });
     sub.subscribe("cluster");
+}
+
+function restart() {
+    global.ready = false;
+    buildGatewayTable(app)
+        .then(() => {
+            global.ready = true;
+            debug(`Node ${app.get('node_name')} configuration updated`);
+        });
 }
 
 
@@ -125,7 +129,7 @@ boot(app, __dirname, (err) => {
                     });
             }).catch((err) => {
                 logger.error(err);
-                throw err;
+                process.exit(-1);
             });
     };
 

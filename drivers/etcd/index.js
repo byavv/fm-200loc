@@ -21,9 +21,8 @@ module.exports = (function () {
                 console.log(`${driverConfig['connection_string']}/version`)
                 request(`http://${driverConfig['connection_string']}/version`, function (error, response, body) {
                     resolve({
-                        status: !error && response.statusCode == 200 ? "OK" : "ERR",
-                        message: !error && response.statusCode == 200 ? `Etcd server version: ${body}` : "",
-                        error: error ? 'Error establishing connection' : "",
+                        message: !error && response.statusCode == 200 ? `Etcd server version: ${body}` : `Can't instantiate connection with remote service on ${driverConfig['connection_string']}`,
+                        error: error,
                     });
                 })
             });

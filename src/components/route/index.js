@@ -40,19 +40,20 @@ module.exports = function buildGatewayTable(app) {
                     return new Promise((resolve, reject) => {
                         const activeConfigs = configs.filter(config => {
                             let errors = pipeBuilder.test(config.plugins);
-                            console.log(errors)
-                            console.log(config)
                             if (errors.length > 0 && !_.isEqual(errors, config.errors)) {
                                 config.errors = errors;
                                 config.active = false;
+                                logger.error(`Wrong configuration found in ${config.name}, deactivating entry`, errors);
+                                logger.warn(`Deactivating entry ${config.name}`);
                                 config.save();
-                                console.log(config);                              
+                                logger.log(`Restarting...`);
                             } else {
                                 if (errors.length == 0 && config.errors.length > 0) {
                                     config.errors = [];
                                     config.active = false;
+                                    logger.warn(`Configuration issue fixed in ${config.name}`);
                                     config.save();
-                                    console.log(config);                                 
+                                    logger.log(`Restaring...`);
                                 }
                             }
                             return config.active;

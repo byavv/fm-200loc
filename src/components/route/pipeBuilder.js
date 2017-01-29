@@ -51,11 +51,10 @@ module.exports = {
             const dependencies = Object.assign({}, plugin.dependencies);
             for (let key in dependencies) {
                 if (!global.driversStore.has(dependencies[key])) {
-                    let e = {};
-                    e[key] = {
-                        massage: `Service dependency ${key} is not defined`
-                    }
-                    errors.push(e);
+                    errors.push({
+                        name: key,
+                        message: `Service dependency ${key} is not defined`
+                    });
                 }
             }
         });

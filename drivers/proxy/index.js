@@ -28,9 +28,8 @@ module.exports = (function () {
         this.check = function () {
             return new Promise((resolve, reject) => {
                 resolve({
-                    status: "OK",
-                    message: "All works fine",
-                    error: ""
+                    error: false,
+                    message: "All works fine",                    
                 })
             });
         }

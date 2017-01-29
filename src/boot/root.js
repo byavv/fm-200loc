@@ -79,7 +79,6 @@ module.exports = function (app) {
 
     function _getServiceStatus(id) {
         let service = global.driversStore.get(id);
-        console.log(service._name)
         if (!!service && (typeof service.instance.check == 'function')) {
             return service.instance
                 .check()
@@ -91,15 +90,13 @@ module.exports = function (app) {
                     }, result);
                 });
         } else {
-            return new Promise((resolve, reject) => {
-                resolve({
-                    name: service._name,
-                    version: service._version,
-                    status: "N/A",
-                    message: "",
-                    error: "",
-                    id: id
-                });
+            return Promise.resolve({
+                name: service.name,
+                version: service.version,
+                status: "N/A",
+                message: "Service doesn't provide status checking",
+                error: false,
+                id: id
             });
         }
     }

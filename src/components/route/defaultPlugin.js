@@ -11,6 +11,6 @@ module.exports = (function () {
             return next(new errors.err500(`[${name}] is not implemented`));
         }
     };
-    cls._name = 'defaultPlugin';    
+    cls._name = 'defaultPlugin';
     return cls;
 })();

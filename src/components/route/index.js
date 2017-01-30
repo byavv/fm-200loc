@@ -33,7 +33,8 @@ module.exports = function buildGatewayTable(app) {
     return bootstrapDrivers(app)
         .then(() => {
             debug(`Drivers estableshed: ${global.driversStore.size}`);
-            console.log(`Drivers estableshed: ${global.driversStore.size}`);
+            logger.info(`Service instanses estableshed: ${global.driversStore.size}`);
+
             return ApiConfig
                 .find() // find all configurations
                 .then((configs) => {
@@ -43,7 +44,7 @@ module.exports = function buildGatewayTable(app) {
                             if (errors.length > 0 && !_.isEqual(errors, config.errors)) {
                                 config.errors = errors;
                                 config.active = false;
-                                logger.error(`Wrong configuration found in ${config.name}, deactivating entry`, errors);
+                                logger.error(`Wrong configuration found in ${config.name}`);
                                 logger.warn(`Deactivating entry ${config.name}`);
                                 config.save();
                                 logger.log(`Restarting...`);
@@ -78,5 +79,6 @@ module.exports = function buildGatewayTable(app) {
                         }, {});
                     global.rules = new HttpProxyRules({ rules: rules });
                 });
+
         });
 };

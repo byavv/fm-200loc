@@ -6,7 +6,7 @@ module.exports = (function () {
     /** @constructs Context */
     var cls = function (id, pipe, dependencies) {
         Object.assign(this, { id, pipe, dependencies });
-        
+
         /**
          * Get/set parameters to/from entry pipe       
          * @param {string} key  pipe value key

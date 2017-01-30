@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 const _ = require('lodash');
 
 /**
@@ -42,7 +42,7 @@ module.exports = (function () {
      * @returns {Object}            Stored object (pipe or plugin related)
      */
     cls.prototype._get = function (key, id) {
-       // console.log(this._storage)
+        // console.log(this._storage)
         var requiredParam = this._storage.get(`${prefix}:${id}`);
         if (!requiredParam) throw new Error(`No config found ${id}: ${key}`);
         const matchDynamic = requiredParam[key] && _.isString(requiredParam[key])

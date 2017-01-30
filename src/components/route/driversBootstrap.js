@@ -8,6 +8,7 @@
 "use strict";
 const async = require('async')
     , debug = require("debug")("gateway")
+    , logger = require('../../../lib/logger')
     , global = require('../../global');
 
 /**
@@ -18,7 +19,7 @@ const async = require('async')
  * @returns {Promise}           Result
  */
 module.exports = function bootstrapDrivers(app) {
-    const DriverConfig = app.models.DriverConfig;    
+    const DriverConfig = app.models.DriverConfig;
     return new Promise((resolve, reject) => {
         DriverConfig.find({ /* todo: where: {active: true} */ }, (err, driverConfigs) => {
             try {
@@ -29,10 +30,11 @@ module.exports = function bootstrapDrivers(app) {
                     if (!Driver) throw new Error(`Driver ${driverConfig.driverId} is not defined`)
                     if (!global.driversStore.has(driverConfig.id)) {
                         debug(`Instansiate plugin: ${driverConfig.driverId}`);
+                        let driverInstance = new Driver(app, driverSettings);
                         global.driversStore.set(driverConfig.id.toString(), {
                             name: Driver._name,
                             version: Driver._version,
-                            instance: new Driver(app, driverSettings)
+                            instance: driverInstance
                         });
                     }
                 });
@@ -40,6 +42,25 @@ module.exports = function bootstrapDrivers(app) {
             } catch (error) {
                 reject(error);
             }
-        });
+        })
+    }).then(() => {
+        return Promise.all(Array.from(global.driversStore.values())
+            .map((v) => typeof v.instance.check == 'function' ? v.instance.check() : () => {
+                return {
+                    error: true,
+                    message: `Status check method for ${v.name} service is not implemented`
+                }
+            }))
+            .then((result) => {
+                result.forEach(r => {
+                    const diagnosticMessage = `Diagnostic: ${r.message}`;
+                    if (r.error) {
+                        logger.error(diagnosticMessage);
+                    } else {
+                        logger.info(diagnosticMessage);
+                    }
+                });
+
+            });
     });
 }

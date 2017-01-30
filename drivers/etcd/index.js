@@ -9,13 +9,15 @@ let registry = require('etcd-registry'),
 
 module.exports = (function () {
     let cls = function (app, driverConfig) {
+        //this.name = cls._name;
+      //  this.version = cls._version;
         debug(`Try to instansiate connection to etcd with connection string: ${driverConfig['connection_string']}`)
-        // let services = registry(`${driverConfig['connection_string']}`)
-        //  this.findServiceByKey = (key, clb) => {
-        //      services.lookup(key, function (err, service) {
-        //          clb(err, service)
-        //      });
-        //  }
+        let services = registry(`${driverConfig['connection_string']}`)
+        this.findServiceByKey = (key, clb) => {
+            services.lookup(key, function (err, service) {
+                clb(err, service)
+            });
+        }
         this.check = function () {
             return new Promise((resolve, reject) => {
                 console.log(`${driverConfig['connection_string']}/version`)

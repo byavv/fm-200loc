@@ -1,15 +1,15 @@
 const debug = require('debug')('test')
 module.exports = function seedTestData(app) {
     let ApiConfig = app.models.ApiConfig;
-    let DriverConfig = app.models.DriverConfig;
+    let ServiceConfig = app.models.ServiceConfig;
     return new Promise((resolve, reject) => {
-        DriverConfig.create({
+        ServiceConfig.create({
             name: 'test',
             description: 'test',
             settings: {
                 param: 'test'
             },
-            driverId: 'testDriver'
+            serviceId: 'testService'
         }, (err, config) => {
             ApiConfig.create([
                 {
@@ -125,7 +125,7 @@ module.exports = function seedTestData(app) {
                             settings: {
                                 some: "param",
                             },
-                            dependencies: { testDriver: config.id.toString() }
+                            dependencies: { testService: config.id.toString() }
                         }
                     ]
                 },
@@ -139,7 +139,7 @@ module.exports = function seedTestData(app) {
                             settings: {
                                 some: "param",
                             },
-                            dependencies: { testDriver: 'noSuchDriver' }
+                            dependencies: { testService: 'noSuchService' }
                         }
                     ]
                 }

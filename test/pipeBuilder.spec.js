@@ -33,8 +33,8 @@ describe('PIPE BUILDER TESTS', () => {
         });
     });
 
-    it('should init drivers, plugins and build global object', () => {
-        expect(global.drivers.length).to.be.equal(1);
+    it('should init services, plugins and build global object', () => {
+        expect(global.services.length).to.be.equal(1);
         expect(global.plugins.length).to.be.equal(6);
     });
 

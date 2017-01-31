@@ -107,9 +107,9 @@ boot(app, __dirname, (err) => {
             loader // todo: load from configuration file
                 .loadComponents(path.resolve(__dirname, '../drivers'))
         ])
-            .then(([plugins, drivers]) => {
+            .then(([plugins, services]) => {
                 global.plugins = plugins;
-                global.drivers = drivers;
+                global.services = services;
                 global.ready = true;
             })
             .then(() => buildGatewayTable(app))

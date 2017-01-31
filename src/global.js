@@ -1,7 +1,7 @@
 /** @global */
 var Global = {
-    driversStore: new Map(),
-    drivers: [],
+    servicesStore: new Map(),
+    services: [],
     plugins: [],
     rules: {},
     ready: false

@@ -12,16 +12,16 @@ module.exports = function (done) {
     loader
       .loadComponents(path.resolve(__dirname, './fakeDrivers'))
   ])
-    .then(([plugins, drivers]) => {
+    .then(([plugins, services]) => {
       global.plugins = plugins;
-      global.drivers = drivers;
+      global.services = services;
       global.ready = true;     
     })
     .then(() => seedData(app))
     .then(() => buildGatewayTable(app))
     .then(() => {     
       app.close = function (clb) {
-        global.driversStore.clear();
+        global.servicesStore.clear();
         server.close(clb);
       }
       const server = app.listen(3009, () => {

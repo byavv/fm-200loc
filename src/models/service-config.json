@@ -1,5 +1,5 @@
 {
-  "name": "DriverConfig",
+  "name": "ServiceConfig",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -16,7 +16,7 @@
     "settings": {
       "type": "object"
     },
-    "driverId": {
+    "serviceId": {
       "type": "string",
       "index": true
     }

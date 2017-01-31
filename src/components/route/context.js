@@ -29,13 +29,13 @@ module.exports = (function () {
 
         /**
          * Get plugins preconfigured dependencies      
-         * @param {string} id  driverId
+         * @param {string} id  serviceId
          * @example
          * 
-         * let myDriverInst = ctx.$inject['myDriver']; // get injected driver instance         *          
+         * let myServiceInst = ctx.$inject['myService']; // get injected service instance         *          
          * 
          * @readonly
-         * @returns {Object}    Driver instance
+         * @returns {Object}    Service instance
          */
         this.$inject = new Proxy({}, {
             get: (target, key) => {

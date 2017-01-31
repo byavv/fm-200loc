@@ -21,8 +21,8 @@ module.exports = {
             pipe.insert(plugin.settings, index);
             let deps = {};
             for (let key in dependencies) {
-                if (global.driversStore.has(dependencies[key])) {
-                    deps[key] = global.driversStore.get(dependencies[key]).instance;
+                if (global.servicesStore.has(dependencies[key])) {
+                    deps[key] = global.servicesStore.get(dependencies[key]).instance;
                 } else {
                     throw new Error('Service dependency is not defined');
                 }
@@ -50,7 +50,7 @@ module.exports = {
         (plugins || []).forEach((plugin) => {
             const dependencies = Object.assign({}, plugin.dependencies);
             for (let key in dependencies) {
-                if (!global.driversStore.has(dependencies[key])) {
+                if (!global.servicesStore.has(dependencies[key])) {
                     errors.push({
                         name: key,
                         message: `Service dependency ${key} is not defined`

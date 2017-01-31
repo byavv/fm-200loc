@@ -1,5 +1,5 @@
-- Separate servers
-- Activete/deactivate entries feature
-- Configure drivers from configuration file, leave folders support, 
+- Separate servers (done)
+- Activete/deactivate entries feature (done)
+- Configure services from configuration file, leave folders support, 
   but make possible to use npm packages 
-- Implement entry testing in entry manager
+- Implement entry testing in entry manager (done)

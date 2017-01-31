@@ -8,11 +8,9 @@ let registry = require('etcd-registry'),
     ;
 
 module.exports = (function () {
-    let cls = function (app, driverConfig) {
-        //this.name = cls._name;
-      //  this.version = cls._version;
-        debug(`Try to instansiate connection to etcd with connection string: ${driverConfig['connection_string']}`)
-        let services = registry(`${driverConfig['connection_string']}`)
+    let cls = function (app, serviceConfig) {       
+        debug(`Try to instansiate connection to etcd with connection string: ${serviceConfig['connection_string']}`)
+        let services = registry(`${serviceConfig['connection_string']}`)
         this.findServiceByKey = (key, clb) => {
             services.lookup(key, function (err, service) {
                 clb(err, service)
@@ -20,11 +18,12 @@ module.exports = (function () {
         }
         this.check = function () {
             return new Promise((resolve, reject) => {
-                console.log(`${driverConfig['connection_string']}/version`)
-                request(`http://${driverConfig['connection_string']}/version`, function (error, response, body) {
+                console.log(`${serviceConfig['connection_string']}/version`)
+                request(`http://${serviceConfig['connection_string']}/version`, function (error, response, body) {
                     resolve({
-                        message: !error && response.statusCode == 200 ? `Etcd server version: ${body}` : `Can't instantiate connection with remote service on ${driverConfig['connection_string']}`,
+                        message: !error && response.statusCode == 200 ? `Etcd server version: ${body}` : `Can't instantiate connection with remote service on ${serviceConfig['connection_string']}`,
                         error: error,
+                        name: 'Etcd v0.0.1'
                     });
                 })
             });

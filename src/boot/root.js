@@ -30,38 +30,38 @@ module.exports = function (app) {
     });
 
     /**
-     * Get all installed drivers
+     * Get all installed services
      */
-    router.get('/_private/drivers', (req, res) => {
-        return res.send((global.drivers || []).map(driver => {
+    router.get('/_private/services', (req, res) => {
+        return res.send((global.services || []).map(service => {
             return {
-                name: driver._name,
-                description: driver._description,
-                settings: driver.config
+                name: service._name,
+                description: service._description,
+                settings: service.config
             };
         }));
     });
     /**
-     * Get driver template by it's name'
+     * Get service template by it's name'
      */
-    router.get('/_private/driver/config/:name', (req, res) => {
-        let driver = (global.drivers || [])
+    router.get('/_private/service/config/:name', (req, res) => {
+        let service = (global.services || [])
             .find((d) => d._name == req.params['name']);
         return res.send({
-            name: driver._name,
-            description: driver._description,
-            settings: driver.config
+            name: service._name,
+            description: service._description,
+            settings: service.config
         });
     });
 
     /**
-     * Get driver template by it's name'
+     * Get service template by it's name'
      */
     router.get('/_private/service/status/:serviceId', (req, res) => {
         const requiredService = req.params['serviceId'];
         if (requiredService == 'all') {
             const statusArrP = [];
-            for (let key of global.driversStore.keys()) {
+            for (let key of global.servicesStore.keys()) {
                 statusArrP.push(_getServiceStatus(key));
             }
             Promise
@@ -78,7 +78,7 @@ module.exports = function (app) {
     });
 
     function _getServiceStatus(id) {
-        let service = global.driversStore.get(id);
+        let service = global.servicesStore.get(id);
         if (!!service && (typeof service.instance.check == 'function')) {
             return service.instance
                 .check()

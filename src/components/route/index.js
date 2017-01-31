@@ -12,14 +12,14 @@ const async = require("async"),
     _ = require('lodash'),
     logger = require('../../../lib/logger'),
     compareFunction = require('./routeCompare'),
-    bootstrapDrivers = require('./driversBootstrap'),
+    bootstrapServices = require('./servicesBootstrap'),
     pipeBuilder = require('./pipeBuilder'),
     global = require('../../global'),
     HttpProxyRules = require('http-proxy-rules')
     ;
 
 /**
- * Bootstrap drivers and configure rules for api table
+ * Bootstrap services and configure rules for api table
  * 
  * @method buildGatewayTable
  * @param   {Object}    app     Loopback application
@@ -28,12 +28,13 @@ const async = require("async"),
 module.exports = function buildGatewayTable(app) {
     const ApiConfig = app.models.ApiConfig;
     const plugins = global.plugins;
-    const drivers = global.drivers;
-    global.driversStore.clear();
-    return bootstrapDrivers(app)
+    const services = global.services;
+    global.servicesStore.clear();
+    return bootstrapServices(app)
         .then(() => {
-            debug(`Drivers estableshed: ${global.driversStore.size}`);
-            logger.info(`Service instanses estableshed: ${global.driversStore.size}`);
+                       
+            debug(`Total serivces storage size: ${global.servicesStore.size}`);
+            console.log('\n', '**********', '\n');
 
             return ApiConfig
                 .find() // find all configurations

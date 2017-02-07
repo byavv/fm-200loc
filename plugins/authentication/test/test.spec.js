@@ -7,23 +7,21 @@ const express = require('express'),
     expect = chai.expect,
     request = require('supertest'),
     Pipe = require('../../../src/components/route/pipe'),
-    Context = require('../../../src/components/route/context') 
+    Context = require('../../../src/components/route/context')
     ;
 
 describe('AUTHENTICATION PLUGIN TESTS', function () {
 
     var httpServer, pipe;
     const app = express();
-    let AuthPlugin = require("../");  
+    let AuthPlugin = require("../");
     var accessToken = {
         userId: "1"
     }
 
     var RoleMock = {
-        //  find: sinon.stub().yields(null, [{ name: 'user' }, { name: 'admin' }]),
-        //  isInRole: sinon.stub().yields(null, true)
-        find: sinon.stub(),//.yields(null, [{ name: 'user' }, { name: 'admin' }]),
-        isInRole: sinon.stub()//.yields(null, true)
+        find: sinon.stub(),
+        isInRole: sinon.stub()
     }
     before(() => {
         app.models = { role: RoleMock, ACL: { USER: 1 } };
@@ -39,6 +37,7 @@ describe('AUTHENTICATION PLUGIN TESTS', function () {
             req.accessToken = accessToken;
             next()
         });
+        
         app.use(plugin.handler.bind(plugin));
 
         app.get('/api', function (req, res) {

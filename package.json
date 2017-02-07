@@ -1,13 +1,13 @@
 {
   "name": "200loc-gate",
-  "version": "1.0.0",
+  "version": "0.1.3",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env node ./src/server.js --log info --env production --n node1 --p 3001",
+    "start": "cross-env node ./src/server.js -l info -e production -n node1 -p 3001",
     "test": "cross-env NODE_ENV=test DEBUG=test istanbul cover node_modules/mocha/bin/_mocha -- -t 5000 -R spec test/*.spec.js plugins/**/test/*.spec.js",
     "test-cov": "cross-env NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*.spec.js plugins/**/test/*.spec.js && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
-    "dev": "cross-env DEBUG=gateway,plugins:* node ./src/server.js --ll debug --env development --n node1 --p 3001",
+    "dev": "cross-env DEBUG=gateway,plugins:* node ./src/server.js -p 3001",
     "clean": "npm run clean:coverage && npm run clean:build",
     "clean:coverage": "rm -rf ./coverage",
     "clean:build": "rm -rf ./explorer/build/*",
@@ -24,6 +24,7 @@
   "dependencies": {
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
+    "commander": "^2.9.0",
     "compression": "^1.0.3",
     "core-js": "^2.4.1",
     "cors": "^2.5.2",

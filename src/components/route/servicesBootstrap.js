@@ -36,7 +36,6 @@ module.exports = function bootstrapServices(app) {
                         Service.prototype = Object.create(ServiceBase.prototype);
                         Service.prototype.constructor = Service;
                         let serviceInstance = new Service(app, serviceSettings);
-                        console.log(serviceInstance.hasOwnProperty('check'))
                         global.servicesStore.set(serviceConfig.id.toString(), {
                             name: Service._name,
                             version: Service._version,

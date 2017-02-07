@@ -16,7 +16,7 @@ module.exports = (function () {
                 clb(err, service)
             });
         }
-        this.check111 = function () {
+        this.check = function () {
             return new Promise((resolve, reject) => {
                 console.log(`${serviceConfig['connection_string']}/version`)
                 request(`http://${serviceConfig['connection_string']}/version`, function (error, response, body) {
@@ -27,7 +27,6 @@ module.exports = (function () {
                 })
             });
         }
-
         this.summary = function () {
             return new Promise((resolve, reject) => {
                 request(`http://${serviceConfig['connection_string']}/version`, function (error, response, body) {

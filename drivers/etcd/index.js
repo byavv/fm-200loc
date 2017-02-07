@@ -8,7 +8,7 @@ let registry = require('etcd-registry'),
     ;
 
 module.exports = (function () {
-    let cls = function (app, serviceConfig) {       
+    let cls = function (app, serviceConfig) {
         debug(`Try to instansiate connection to etcd with connection string: ${serviceConfig['connection_string']}`)
         let services = registry(`${serviceConfig['connection_string']}`)
         this.findServiceByKey = (key, clb) => {
@@ -16,14 +16,25 @@ module.exports = (function () {
                 clb(err, service)
             });
         }
-        this.check = function () {
+        this.check111 = function () {
             return new Promise((resolve, reject) => {
                 console.log(`${serviceConfig['connection_string']}/version`)
                 request(`http://${serviceConfig['connection_string']}/version`, function (error, response, body) {
                     resolve({
                         message: !error && response.statusCode == 200 ? `Etcd server version: ${body}` : `Can't instantiate connection with remote service on ${serviceConfig['connection_string']}`,
+                        error: error
+                    });
+                })
+            });
+        }
+
+        this.summary = function () {
+            return new Promise((resolve, reject) => {
+                request(`http://${serviceConfig['connection_string']}/version`, function (error, response, body) {
+                    resolve({
+                        message: !error && response.statusCode == 200 ? `Etcd server version: ${body}` : `Can't instantiate connection with remote service on ${serviceConfig['connection_string']}`,
                         error: error,
-                        name: 'Etcd v0.0.1'
+                        data: { 'some': 'data' }
                     });
                 })
             });

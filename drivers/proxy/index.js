@@ -33,6 +33,16 @@ module.exports = (function () {
                 })
             });
         }
+
+        this.summary = function () {
+            return new Promise((resolve, reject) => {
+                resolve({
+                    error: false,
+                    message: "Proxy server is up and running",
+                    name: 'Http-proxy'
+                })
+            });
+        }
     };
 
     cls._name = 'proxy';

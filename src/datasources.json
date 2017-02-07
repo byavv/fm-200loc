@@ -11,10 +11,14 @@
       "reconnectInterval": 2000
     }
   },
-  "db": {
-    "name": "db",
+  "db1": {    
     "host": "${redis_host}",
     "port": "6379",
     "connector": "redis"
+  },
+  "db": {
+    "name": "db",   
+    "connector": "loopback-connector-mongodb",
+    "url": "mongodb://admin:admin@ds135049.mlab.com:35049/200loc"
   }
 }

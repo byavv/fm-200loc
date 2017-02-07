@@ -14,6 +14,7 @@ const path = require("path"),
 
 module.exports = function (app) {
     var router = app.loopback.Router();
+    var ApiConfig = app.models.ApiConfig;
     /**
      * Get all installed plugins
      */
@@ -57,8 +58,8 @@ module.exports = function (app) {
     /**
      * Get service template by it's name'
      */
-    router.get('/_private/service/status/:serviceId', (req, res) => {
-        const requiredService = req.params['serviceId'];
+    router.get('/_private/service/status/:forId', (req, res) => {
+        const requiredService = req.params['forId'];
         if (requiredService == 'all') {
             const statusArrP = [];
             for (let key of global.servicesStore.keys()) {
@@ -70,16 +71,61 @@ module.exports = function (app) {
                     return res.send(results);
                 });
         } else {
-            return res.send(_getServiceStatus(requiredService)
-                .then((result) => {
-                    statusArr.push(result);
-                }));
+            let requiredServices = [];
+            ApiConfig.findById(requiredService)
+                .then((config) => {
+                    config.plugins.forEach(pl => {
+                        if (pl.dependencies) {
+                            Object.keys(pl.dependencies)
+                                .forEach(key => {
+                                    requiredServices.push(pl.dependencies[key]);
+                                })
+                        }
+                    })
+
+                    return requiredServices;
+
+                }).then(required => {
+                    const statusArrP = [];
+                    for (let key of required) {
+                        statusArrP.push(_getServiceStatus(key));
+                    }
+                    Promise
+                        .all(statusArrP)
+                        .then((results) => {
+                            return res.send(results);
+                        }, (err) => {
+                            return res.status(500).send(results);
+                        });
+                });
         }
     });
 
+    router.get('/_private/service/summary/:id', (req, res) => {
+        const id = req.params['id'];
+        let service = global.servicesStore.get(id);
+        if (!!service && service.instance) {
+            service.instance
+                .summary()
+                .then(result => {
+                    return res.send(Object.assign({
+                        name: service.name,
+                        version: service.version,
+                        id: id
+                    }, result));
+                });
+        } else {
+            return res.send({
+                name: service.name,
+                version: service.version,
+                id: id
+            });
+        }
+    })
+
     function _getServiceStatus(id) {
         let service = global.servicesStore.get(id);
-        if (!!service && (typeof service.instance.check == 'function')) {
+        if (service && service.instance) {
             return service.instance
                 .check()
                 .then(result => {
@@ -90,14 +136,7 @@ module.exports = function (app) {
                     }, result);
                 });
         } else {
-            return Promise.resolve({
-                name: service.name,
-                version: service.version,
-                status: "N/A",
-                message: "Service doesn't provide status checking",
-                error: false,
-                id: id
-            });
+            return Promise.reject('No service found');
         }
     }
 

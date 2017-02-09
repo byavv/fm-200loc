@@ -2,13 +2,15 @@
 const boot = require('loopback-boot')
     , http = require('http')
     , loopback = require('loopback')
-    , minimist = require('minimist')
     , buildGatewayTable = require('./components/route')
     , debug = require('debug')('gateway')
     , redis = require('redis')
     , path = require('path')
     , program = require('commander')
     , _ = require('lodash')
+    , cluster = require('cluster')
+    , numCPUs = require('os').cpus().length
+    , fs = require('fs')
     ;
 
 const app = module.exports = loopback();
@@ -22,7 +24,7 @@ const loader = require('../lib/loader')();
 const global = require('./global');
 
 program
-    .version('1.21.0')
+    .version('0.0.1-alpha')
     .option('-p, --port [value]', 'Select Port', parseInt, 3001)
     .option('-l, --log [value]', 'Specify log level', 'debug')
     .option('-n, --node [value]', 'Set Node name', `node-${Math.random().toString(36).substring(2, 7)}`)
@@ -75,7 +77,6 @@ function restart() {
         });
 }
 
-
 boot(app, __dirname, (err) => {
     if (err) throw err;
     app.start = function () {
@@ -83,7 +84,7 @@ boot(app, __dirname, (err) => {
         Promise.all([
             loader // todo: load from configuration file
                 .loadComponents(path.resolve(__dirname, '../plugins')),
-            loader // todo: load from configuration file
+            loader // todo: load from configuration file https://github.com/c9/architect/tree/master/demos/calculator
                 .loadComponents(path.resolve(__dirname, '../drivers'))
         ])
             .then(([plugins, services]) => {
@@ -93,25 +94,30 @@ boot(app, __dirname, (err) => {
             })
             .then(() => buildGatewayTable(app))
             .then(() => {
-                const httpServer = http.createServer(app)
-                    .listen(http_port, () => {
-                        app.emit('started');
-                        app.close = (done) => {
-                            app.removeAllListeners('started');
-                            app.removeAllListeners('loaded');
-                            httpServer.close(done);
-                        };
-                        process.once("SIGTERM", () => {
-                            app.close(() => { process.exit(0); });
+                // if (cluster.isMaster) {
+                //     for (var i = 0; i < numCPUs; i++) {
+                //         cluster.fork();
+                //     }
+                // } else {
+                    const httpServer = http.createServer(app)
+                        .listen(http_port, () => {
+                            app.emit('started');
+                            app.close = (done) => {
+                                app.removeAllListeners('started');
+                                app.removeAllListeners('loaded');
+                                httpServer.close(done);
+                            };
+                            process.once("SIGTERM", () => {
+                                app.close(() => { process.exit(0); });
+                            });
+                            logger.info(`Gateway node ${app.get('node_name')} started on ${http_port}`)
                         });
-                        logger.info(`Gateway node ${app.get('node_name')} started on ${http_port}`)
-                    });
+              //  }
             }).catch((err) => {
                 logger.error(err);
                 process.exit(-1);
             });
     };
-
     if (require.main === module)
         app.start();
     app.loaded = true;

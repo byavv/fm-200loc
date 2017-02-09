@@ -2,6 +2,7 @@
 const global = require('../../global')
     , debug = require("debug")("gateway")
     , async = require('async')
+    , errors = require('../../../lib/errors')
     , logger = require('../../../lib/logger');
 
 module.exports = function middlewareFactory() {
@@ -16,7 +17,7 @@ module.exports = function middlewareFactory() {
                         return plugin.handler.bind(plugin, req, res);
                     });
                 async.series(handlers, (err) => {
-                    if (err) {                        
+                    if (err) {
                         logger.warn(`Error processing ${req.originalUrl}, ${err}`);
                         return isXhr
                             ? res.status(err.status || 500).send({
@@ -33,7 +34,8 @@ module.exports = function middlewareFactory() {
             }
         } else {
             debug(`Gateway node is not ready to process request`);
-            next();
+            res.set('Retry-After', 5);
+            res.status(503).end();
         }
     };
 };

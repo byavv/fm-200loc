@@ -2,7 +2,7 @@
 /*jslint node: true */
 let registry = require('etcd-registry'),
     errors = require('../../lib/errors'),
-    debug = require('debug')('drivers:etcd'),
+    debug = require('debug')('services:etcd'),
     logger = require('../../lib/logger'),
     request = require('request')
     ;
@@ -10,12 +10,13 @@ let registry = require('etcd-registry'),
 module.exports = (function () {
     let cls = function (app, serviceConfig) {
         debug(`Try to instansiate connection to etcd with connection string: ${serviceConfig['connection_string']}`)
-        let services = registry(`${serviceConfig['connection_string']}`)
+        let _services = registry(`${serviceConfig['connection_string']}`)
         this.findServiceByKey = (key, clb) => {
-            services.lookup(key, function (err, service) {
+            _services.lookup(key, function (err, service) {
                 clb(err, service)
             });
         }
+        // try to reject
         this.check = function () {
             return new Promise((resolve, reject) => {
                 console.log(`${serviceConfig['connection_string']}/version`)

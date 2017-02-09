@@ -1,7 +1,11 @@
 'use strict';
 
 module.exports = (function () {
-    let ServiceBase = function () { }
+    let ServiceBase = function () {
+        if (this.constructor === ServiceBase) {
+            throw new Error("Can't instantiate");
+        }
+    }
     ServiceBase.prototype.check = function () {
         return Promise.resolve({
             status: "N/A",

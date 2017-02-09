@@ -2,7 +2,7 @@
 /*jslint node: true */
 let httpProxy = require('http-proxy'),
     errors = require('../../lib/errors'),
-    debug = require('debug')('gateway'),
+    debug = require('debug')('services:proxy'),
     logger = require('../../lib/logger')
     ;
 

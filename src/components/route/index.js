@@ -32,7 +32,7 @@ module.exports = function buildGatewayTable(app) {
     global.servicesStore.clear();
     return bootstrapServices(app)
         .then(() => {
-                       
+
             debug(`Total serivces storage size: ${global.servicesStore.size}`);
             console.log('\n', '**********', '\n');
 
@@ -80,6 +80,5 @@ module.exports = function buildGatewayTable(app) {
                         }, {});
                     global.rules = new HttpProxyRules({ rules: rules });
                 });
-
         });
 };

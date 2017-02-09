@@ -10,6 +10,7 @@ const async = require('async')
     , debug = require("debug")("gateway")
     , logger = require('../../../lib/logger')
     , global = require('../../global')
+    , util = require('util')
     , ServiceBase = require('./serviceBase');
 
 
@@ -33,8 +34,13 @@ module.exports = function bootstrapServices(app) {
                     if (!Service) throw new Error(`Service ${serviceConfig.serviceId} is not defined`)
                     if (!global.servicesStore.has(serviceConfig.id)) {
                         debug(`Instansiate service: ${serviceConfig.serviceId}`);
-                        Service.prototype = Object.create(ServiceBase.prototype);
-                        Service.prototype.constructor = Service;
+                        let proto = Object.create(ServiceBase.prototype, {
+                            some: {
+                                value: "large",
+                                enumerable: true
+                            }
+                        });
+                        util.inherits(Service, ServiceBase);
                         let serviceInstance = new Service(app, serviceSettings);
                         global.servicesStore.set(serviceConfig.id.toString(), {
                             name: Service._name,

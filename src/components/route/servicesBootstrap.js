@@ -54,15 +54,26 @@ module.exports = function bootstrapServices(app) {
         console.log('\n', '**********  Services Health Check  *****', '\n');
         return Promise.all(Array.from(global.servicesStore.values())
             .map((v) => {
-                return v.instance.hasOwnProperty('check') ? v.instance.check() : Promise.resolve({
-                    error: true,
-                    name: v.name,
-                    message: `Status check method for ${v.name} service is not implemented`
-                })
+                if (v.instance.hasOwnProperty('check')) {
+                    return v.instance.check()
+                        .then((result) => {
+                            return {
+                                name: v.name,
+                                error: result.error,
+                                message: (typeof result.message == 'string') ? result.message : JSON.stringify(result.message)
+                            }
+                        })
+                } else {
+                    return Promise.resolve({
+                        error: true,
+                        name: v.name,
+                        message: `Status check method for ${v.name} service is not implemented`
+                    });
+                }
             }))
             .then((result) => {
                 result.forEach(r => {
-                    const diagnosticMessage = `Diagnostic [${r.name}]: ${r.message}`;
+                    const diagnosticMessage = `Diagnostic [${r.name}][${r.error ? 'ERROR' : 'OK'}]: ${r.message}`;
                     if (r.error) {
                         logger.error(diagnosticMessage);
                     } else {

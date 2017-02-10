@@ -23,7 +23,10 @@ module.exports = (function () {
             return new Promise((resolve, reject) => {
                 this.client.version((err, result) => {
                     if (err) reject(err);
-                    resolve(result)
+                    resolve({
+                        message: result[0],
+                        error: false
+                    })
                 })
             });
         }

@@ -30,21 +30,17 @@ module.exports = function bootstrapServices(app) {
                 if (err) throw err;
                 (serviceConfigs || []).forEach((serviceConfig) => {
                     const serviceSettings = serviceConfig.settings;
-                    const Service = global.services.find((d) => d._name === serviceConfig.serviceId);
-                    if (!Service) throw new Error(`Service ${serviceConfig.serviceId} is not defined`)
+                    const serviceDefinition = global.services.find((d) => d.name === serviceConfig.serviceId);
+                    if (!serviceDefinition) throw new Error(`Service ${serviceConfig.serviceId} is not defined`)
                     if (!global.servicesStore.has(serviceConfig.id)) {
                         debug(`Instansiate service: ${serviceConfig.serviceId}`);
-                        let proto = Object.create(ServiceBase.prototype, {
-                            some: {
-                                value: "large",
-                                enumerable: true
-                            }
-                        });
+                        const Service = serviceDefinition.ctr;
                         util.inherits(Service, ServiceBase);
                         let serviceInstance = new Service(app, serviceSettings);
                         global.servicesStore.set(serviceConfig.id.toString(), {
-                            name: Service._name,
-                            version: Service._version,
+                            name: serviceDefinition.name,
+                            version: serviceDefinition.version,
+                            description: serviceDefinition.description,
                             instance: serviceInstance
                         });
                     }
@@ -53,7 +49,7 @@ module.exports = function bootstrapServices(app) {
             } catch (error) {
                 reject(error);
             }
-        })
+        });
     }).then(() => {
         console.log('\n', '**********  Services Health Check  *****', '\n');
         return Promise.all(Array.from(global.servicesStore.values())

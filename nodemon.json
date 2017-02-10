@@ -8,7 +8,7 @@
     "restartable": "rs",
     "ignore": [
         ".git",
-        "node_modules/**/node_modules",       
+        "node_modules/**/node_modules",
         "/.vscode/*.*",
         "/test/*.*",
         "*.spec.*",
@@ -23,7 +23,8 @@
     "watch": [
         "src/**/*.js",
         "drivers/**/*.js",
-        "plugins/**/*js", 
-        "lib/**/*js"          
+        "plugins/**/*js",
+        "lib/**/*js",
+        "src/**/*.json"
     ]
 }

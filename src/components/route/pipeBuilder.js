@@ -6,6 +6,7 @@
 const Pipe = require('./pipe')
     , global = require('../../global')
     , Context = require('./context')
+    , PluginBase = require('./pluginBase')
     ;
 
 module.exports = {
@@ -27,16 +28,18 @@ module.exports = {
                     throw new Error('Service dependency is not defined');
                 }
             }
-            let Plugin = global.plugins.find((p) => p._name === plugin.name);
-            if (!Plugin) {
-                const DefaultPlugin = require('./defaultPlugin');
-                pluginsArray.push(new DefaultPlugin(plugin.name));
-            } else {
-                // provides methods to work with pipe and dependencies               
-                let ctx = new Context(index, pipe, deps)
-                let plugin = new Plugin(ctx);
-                pluginsArray.push(plugin);
+            let pluginDefinition = global.plugins.find((p) => p.name === plugin.name);
+            if (!pluginDefinition) {
+                throw new Error(`Plugin ${plugin.name} is not found`);
+                // todo. Scenario, when user deletes plugin from config should be notified in UI
             }
+            // provides methods to work with pipe and dependencies    
+            const Plugin = pluginDefinition.ctr;
+            Plugin.prototype = Object.create(PluginBase.prototype);
+            Plugin.prototype.constructor = Plugin;
+            let ctx = new Context(index, pipe, deps)
+            let pluginInstance = new Plugin(ctx);
+            pluginsArray.push(pluginInstance);
             return pluginsArray;
         }, []);
     },

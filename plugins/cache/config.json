@@ -1,0 +1,10 @@
+{
+    "config": {
+        "forCaching": {
+            "default": "get:/",
+            "required": true,
+            "label": "Cache path",
+            "help": "Cached data for request"
+        }
+    }
+}

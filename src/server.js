@@ -2,7 +2,7 @@
 const boot = require('loopback-boot')
     , http = require('http')
     , loopback = require('loopback')
-    , buildGatewayTable = require('./components/route')
+    , buildApiTable = require('./components/route')
     , debug = require('debug')('gateway')
     , redis = require('redis')
     , path = require('path')
@@ -32,6 +32,7 @@ program
     .option('-x, --password [value]', 'Set Password')
     .option('-e, --environment [value]', 'Define environment', /^(development|production|test)$/i, 'development')
     .option('-c, --config [value]', 'Specify Config Filepath', process.cwd())
+    .option('-m, --multithread [value]', 'Run in cluster mode', false)
     .parse(process.argv);
 
 let node_name;
@@ -55,8 +56,10 @@ const http_port = process.env.HTTP_PORT;
 
 if (process.env.NODE_ENV != 'test') {
     const sub = redis.createClient({
-        host: app.get('redis_host'),
-        port: 6379
+        // host: app.get('redis_host'),
+        // port: 6379
+        host: `redis-11757.c10.us-east-1-2.ec2.cloud.redislabs.com`,
+        port: '11757'
     });
 
     sub.on("message", function (channel, message) {
@@ -70,7 +73,7 @@ if (process.env.NODE_ENV != 'test') {
 
 function restart() {
     global.ready = false;
-    buildGatewayTable(app)
+    buildApiTable(app)
         .then(() => {
             global.ready = true;
             debug(`Node ${app.get('node_name')} configuration updated`);
@@ -81,24 +84,40 @@ boot(app, __dirname, (err) => {
     if (err) throw err;
     app.start = function () {
         logger.info('Gateway starting...');
+        console.log(path.resolve(program.config, 'LocConfig.json'))
+        if (!fs.existsSync(path.resolve(program.config, 'LocConfig.json'))) {
+            return exitWithError('No configuration file found');
+        };
+        let config = require('../LocConfig.json');
+        if ((!config.services || !Array.isArray(config.services))) {
+            return exitWithError('Configuration has wrong format');
+        }
+        if ((!config.plugins || !Array.isArray(config.plugins))) {
+            return exitWithError('Configuration has wrong format');
+        }
+        let services = config.services;
+        let plugins = config.plugins;
         Promise.all([
-            loader // todo: load from configuration file
-                .loadComponents(path.resolve(__dirname, '../plugins')),
-            loader // todo: load from configuration file https://github.com/c9/architect/tree/master/demos/calculator
-                .loadComponents(path.resolve(__dirname, '../drivers'))
+            Promise.all(plugins.map((pluginLoadingConfig) => {
+                return loader.loadComponentFromPath(path.resolve(process.cwd(), pluginLoadingConfig.path));
+            })),
+            Promise.all(services.map((serviceLoadingConfig) => {
+                return loader.loadComponentFromPath(path.resolve(process.cwd(), serviceLoadingConfig.path));
+            }))
         ])
             .then(([plugins, services]) => {
+                console.log(plugins, services)
                 global.plugins = plugins;
                 global.services = services;
                 global.ready = true;
             })
-            .then(() => buildGatewayTable(app))
+            .then(() => buildApiTable(app))
             .then(() => {
-                // if (cluster.isMaster) {
-                //     for (var i = 0; i < numCPUs; i++) {
-                //         cluster.fork();
-                //     }
-                // } else {
+                if (cluster.isMaster && program.multithread) {
+                    for (var i = 0; i < numCPUs; i++) {
+                        cluster.fork();
+                    }
+                } else {
                     const httpServer = http.createServer(app)
                         .listen(http_port, () => {
                             app.emit('started');
@@ -112,14 +131,20 @@ boot(app, __dirname, (err) => {
                             });
                             logger.info(`Gateway node ${app.get('node_name')} started on ${http_port}`)
                         });
-              //  }
+                }
             }).catch((err) => {
-                logger.error(err);
-                process.exit(-1);
-            });
+                exitWithError(err, -1)
+            })
+
     };
     if (require.main === module)
         app.start();
     app.loaded = true;
     app.emit('loaded');
 });
+
+
+function exitWithError(message, code = 0) {
+    logger.error(message);
+    process.exit(code);
+}

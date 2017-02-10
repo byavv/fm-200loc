@@ -11,11 +11,6 @@
       "reconnectInterval": 2000
     }
   },
-  "db1": {    
-    "host": "${redis_host}",
-    "port": "6379",
-    "connector": "redis"
-  },
   "db": {
     "name": "db",   
     "connector": "loopback-connector-mongodb",

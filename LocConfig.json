@@ -1,13 +1,14 @@
 {
     "services": [
         {
-            "name": "etcd",
-            "path": "./drivers/etcd/"
-        },
-        {
-            "name": "proxy",
-            "path": "./drivers/proxy"
+            "name": "cache",
+            "path": "./drivers/cache"
         }
     ],
-    "plugins": []
+    "plugins": [
+        {
+            "name": "cache",
+            "path": "./plugins/cache"
+        }
+    ]
 }

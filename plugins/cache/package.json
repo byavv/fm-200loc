@@ -1,0 +1,17 @@
+{
+    "name": "cache",
+    "version": "0.0.1",
+    "description": "Memcache caching plugin",
+    "main": "./index.js",
+    "$require": [
+        "cache"
+    ],
+    "uiConfig": {
+        "forCaching": {
+            "default": "get:/",
+            "required": true,
+            "label": "Cache path",
+            "help": "Cached data for request"
+        }
+    }
+}

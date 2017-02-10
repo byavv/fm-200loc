@@ -21,8 +21,8 @@ module.exports = function (app) {
     router.get('/_private/plugins', (req, res) => {
         return res.send((global.plugins || []).map(plugin => {
             return {
-                name: plugin._name,
-                description: plugin._description,
+                name: plugin.name,
+                description: plugin.description,
                 settingsTemplate: plugin.config,
                 dependenciesTemplate: plugin.dependencies,
                 value: {}
@@ -36,8 +36,8 @@ module.exports = function (app) {
     router.get('/_private/services', (req, res) => {
         return res.send((global.services || []).map(service => {
             return {
-                name: service._name,
-                description: service._description,
+                name: service.name,
+                description: service.description,
                 settings: service.config
             };
         }));
@@ -47,10 +47,10 @@ module.exports = function (app) {
      */
     router.get('/_private/service/config/:name', (req, res) => {
         let service = (global.services || [])
-            .find((d) => d._name == req.params['name']);
+            .find((d) => d.name == req.params['name']);
         return res.send({
-            name: service._name,
-            description: service._description,
+            name: service.name,
+            description: service.description,
             settings: service.config
         });
     });

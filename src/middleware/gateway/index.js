@@ -1,5 +1,5 @@
 "use strict"
-const global = require('../../global')
+const state = require('../../state')
     , debug = require("debug")("gateway")
     , async = require('async')
     , errors = require('../../../lib/errors')
@@ -7,8 +7,8 @@ const global = require('../../global')
 
 module.exports = function middlewareFactory() {
     return function handler(req, res, next) {
-        if (global.ready) {
-            const target = global.rules.match(req);
+        if (state.ready) {
+            const target = state.rules.match(req);
             if (target) {
                 debug(`Processing: ${req.originalUrl}, matched entry: ${target.path}`);
                 const handlers = (target.pipe || [])

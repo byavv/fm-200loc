@@ -14,7 +14,7 @@ const async = require("async"),
     compareFunction = require('./routeCompare'),
     bootstrapServices = require('./servicesBootstrap'),
     pipeBuilder = require('./pipeBuilder'),
-    global = require('../../global'),
+    state = require('../../state'),
     HttpProxyRules = require('http-proxy-rules')
     ;
 
@@ -27,13 +27,13 @@ const async = require("async"),
  */
 module.exports = function buildGatewayTable(app) {
     const ApiConfig = app.models.ApiConfig;
-    const plugins = global.plugins;
-    const services = global.services;
-    global.servicesStore.clear();
+    const plugins = state.plugins;
+    const services = state.services;
+    state.servicesStore.clear();
     return bootstrapServices(app)
         .then(() => {
 
-            debug(`Total serivces storage size: ${global.servicesStore.size}`);
+            debug(`Total serivces storage size: ${state.servicesStore.size}`);
             console.log('\n', '*********************************************', '\n');
 
             return ApiConfig
@@ -78,7 +78,7 @@ module.exports = function buildGatewayTable(app) {
                             };
                             return Object.assign(rules, rule);
                         }, {});
-                    global.rules = new HttpProxyRules({ rules: rules });
+                    state.rules = new HttpProxyRules({ rules: rules });
 
                 });
         });

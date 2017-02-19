@@ -1,9 +1,6 @@
 "use strict";
 const path = require('path');
-/**
- * @function compare
- * @desctiption express route compare function to sort enties by specifity
- */
+
 module.exports = function compare(routeA, routeB) {
     routeA = routeA.entry || '';
     routeB = routeB.entry || '';

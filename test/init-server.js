@@ -1,7 +1,7 @@
 const seedData = require('./fakeEntries');
 const loader = require('../lib/loader')();
 const path = require('path');
-const global = require('../src/global');
+const state = require('../src/state');
 const fs = require('fs');
 const buildApiTable = require('../src/components/route')
 
@@ -30,16 +30,15 @@ module.exports = function (done) {
     }))
   ])
     .then(([plugins, services]) => {
-      global.plugins = plugins;
-      global.services = services;
-      global.ready = true;     
+      state.plugins = plugins;
+      state.services = services;
+      state.ready = true;     
     })
     .then(() => seedData(app))
     .then(() => buildApiTable(app))
-    .then(() => {
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    .then(() => {     
       app.close = function (clb) {
-        global.servicesStore.clear();
+        state.servicesStore.clear();
         server.close(clb);
       }
       const server = app.listen(3009, () => {

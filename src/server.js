@@ -21,7 +21,7 @@ const etcd_host = process.env.ETCD_HOST || "localhost";
 
 const logger = require('../lib/logger');
 const loader = require('../lib/loader')();
-const global = require('./global');
+const state = require('./state');
 
 program
     .version('0.0.1-alpha')
@@ -72,10 +72,10 @@ if (process.env.NODE_ENV != 'test') {
 }
 
 function restart() {
-    global.ready = false;
+    state.ready = false;
     buildApiTable(app)
         .then(() => {
-            global.ready = true;
+            state.ready = true;
             debug(`Node ${app.get('node_name')} configuration updated`);
         });
 }
@@ -106,9 +106,9 @@ boot(app, __dirname, (err) => {
             }))
         ])
             .then(([plugins, services]) => {
-                global.plugins = plugins;
-                global.services = services;
-                global.ready = true;
+                state.plugins = plugins;
+                state.services = services;
+                state.ready = true;
             })
             .then(() => buildApiTable(app))
             .then(() => {

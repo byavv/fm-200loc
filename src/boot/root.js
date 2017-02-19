@@ -5,7 +5,7 @@ const path = require("path"),
     pipeBuilder = require('../components/route/pipeBuilder'),
     logger = require('../../lib/logger'),
     debug = require('debug')('gateway'),
-    global = require('../global'),
+    state = require('../state'),
     http = require('http'),
     express = require('express'),
     request = require('request'),
@@ -19,7 +19,7 @@ module.exports = function (app) {
      * Get all installed plugins
      */
     router.get('/_private/plugins', (req, res) => {
-        return res.send((global.plugins || []).map(plugin => {
+        return res.send((state.plugins || []).map(plugin => {
             return {
                 name: plugin.name,
                 description: plugin.description,
@@ -34,7 +34,7 @@ module.exports = function (app) {
      * Get all installed services
      */
     router.get('/_private/services', (req, res) => {
-        return res.send((global.services || []).map(service => {
+        return res.send((state.services || []).map(service => {
             return {
                 name: service.name,
                 description: service.description,
@@ -46,7 +46,7 @@ module.exports = function (app) {
      * Get service template by it's name'
      */
     router.get('/_private/service/config/:name', (req, res) => {
-        let service = (global.services || [])
+        let service = (state.services || [])
             .find((d) => d.name == req.params['name']);
         return res.send({
             name: service.name,
@@ -62,7 +62,7 @@ module.exports = function (app) {
         const requiredService = req.params['forId'];
         if (requiredService == 'all') {
             const statusArrP = [];
-            for (let key of global.servicesStore.keys()) {
+            for (let key of state.servicesStore.keys()) {
                 statusArrP.push(_getServiceStatus(key));
             }
             Promise
@@ -103,7 +103,7 @@ module.exports = function (app) {
 
     router.get('/_private/service/summary/:id', (req, res) => {
         const id = req.params['id'];
-        let service = global.servicesStore.get(id);
+        let service = state.servicesStore.get(id);
         if (!!service && service.instance) {
             service.instance
                 .summary()
@@ -124,7 +124,7 @@ module.exports = function (app) {
     })
 
     function _getServiceStatus(id) {
-        let service = global.servicesStore.get(id);
+        let service = state.servicesStore.get(id);
         if (service && service.instance) {
             return service.instance
                 .check()

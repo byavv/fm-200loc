@@ -8,7 +8,7 @@ const chai = require('chai'),
 
 
 describe('PIPE BUILDER TESTS', () => {
-    var app, global;
+    var app, state;
     let ApiConfig;
 
     before((done) => {
@@ -16,7 +16,7 @@ describe('PIPE BUILDER TESTS', () => {
             if (err) return done(err)
             app = a;
             ApiConfig = app.models.ApiConfig;
-            global = require('../src/global');
+            state = require('../src/state');
             done();
         });
     });
@@ -33,9 +33,9 @@ describe('PIPE BUILDER TESTS', () => {
         });
     });
 
-    it('should init services, plugins and build global object', () => {
-        expect(global.services.length).to.be.equal(1);
-        expect(global.plugins.length).to.be.equal(6);
+    it('should init services, plugins and build state object', () => {
+        expect(state.services.length).to.be.equal(1);
+        expect(state.plugins.length).to.be.equal(6);
     });
 
     it('should inject dependencies', (done) => {

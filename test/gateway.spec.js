@@ -4,7 +4,7 @@ const chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect,
     request = require('supertest'),
-    global = require('../src/global')
+    state = require('../src/state')
     ;
 
 describe('GATEWAY TESTS', () => {
@@ -27,7 +27,7 @@ describe('GATEWAY TESTS', () => {
     });
 
     it('should load plugins', () => {
-        expect(global.plugins.length).to.be.equal(6);
+        expect(state.plugins.length).to.be.equal(6);
     });
 
     it('should ignore entry if one of plugins is not defined', (done) => {

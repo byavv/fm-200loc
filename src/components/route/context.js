@@ -1,89 +1,29 @@
+/**
+ * @module Plugin context
+ */
+/** 
+ * @typedef Context
+ * @type {Function}
+ * 
+ */
 "use strict";
 /**
- * Represents a pipe context object to be injected into plugins.  
+ * Creates a new context object to be injected to required plugin.
+ * @function contextFactory
+ * @returns {Context}
  */
-// module.exports = (function () {
-//     /** @constructs Context */
-//     var cls = function (id, pipe, dependencies) {
-//         Object.assign(this, { id, pipe, dependencies });
-
-//         /**
-//          * Get/set parameters to/from entry pipe       
-//          * @param {string} key  pipe value key
-//          * @example
-//          * 
-//          * let param = ctx.$param['myParam'];      // get param from pipe
-//          * ctx.$param['myParam']='myValue'         // save new value in pipe parameter      
-//          * 
-//          * @returns {Object}    Stored in pipe value
-//          */
-//         this.$param = new Proxy({}, {
-//             get: (target, key) => {
-//                 return pipe._get(key, id);
-//             },
-//             set: (target, key, value) => {
-//                 pipe._set(key, value);
-//                 return true;
-//             }
-//         });
-
-//         /**
-//          * Get plugins preconfigured dependencies      
-//          * @param {string} id  serviceId
-//          * @example
-//          * 
-//          * let myServiceInst = ctx.$inject['myService']; // get injected service instance         *          
-//          * 
-//          * @readonly
-//          * @returns {Object}    Service instance
-//          */
-//         this.$inject = new Proxy({}, {
-//             get: (target, key) => {
-//                 return dependencies[key];
-//             }
-//         });
-//     };
-//     return cls;
-// })();
-// usage: ctx('$inject:cache')
-// ctx('$get:myParam')
-// ctx('$put:myParam',value)
-// function Context(id, pipe, dependencies) {
-//     Object.assign(this, { id, pipe, dependencies });
-
-//     new Proxy(this, {
-//         apply: function (target, thisArg, argumentsList) {
-//             const operation = argumentsList[0].split(':');
-//             const operationType = operation[0], operationKey = operation[1], operationItem = argumentsList[1];
-
-//             switch (operationType) {
-//                 case '$inject':
-//                     return this.dependencies[operationKey];
-//                     break;
-//                 case '$get': {
-//                     return this.pipe._get(operationKey, this.id);
-//                     break;
-//                 }
-//                 case '$put': {
-//                     pipe._set(operationKey, operationItem);
-//                     return true;
-//                     break;
-//                 }
-//                 default:
-//                     throw new Error('Wrong format of context invocation, $inject and $param allowed only')
-//                     break;
-//             }
-//         }
-//     });
-// };
-
-// return Context;
-
-
-
-
 function contextFactory(id, pipe, deps) {
 
+    /**
+     * Default operation if not defined to throw an error
+     * @function contextOperation
+     * @description Returns funtion for access to injected dependencies and pipe parameters
+     * @example
+     * const myRequiredParam = ctx("$get:myParamKey")
+     * ctx("$get:myParamKey", myValue)
+     * const myDepependencyInstance = ctx("$inject:myDependencyKey")
+     * @returns {Object} as result of Map operations
+     */
     function contextOperation() {
         throw new Error('Wrong format of context invocation, $inject, $put, $get allowed only')
     }

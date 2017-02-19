@@ -7,8 +7,8 @@ const debug = require('debug')('plugins:cache'),
 
 module.exports = (function () {
     let cls = function (ctx) {
-     //   let memcacheInst = ctx.$inject['cache'];
-    //    let forCaching = ctx.$param['forCaching'];
+        let memcacheInst = ctx('$inject:cache');
+        let forCaching = ctx('$get:forCaching');
         let ttl = 60;
         let HEADER_KEY = 'Cache-Control'
         let NO_CACHE_KEY = 'no-cache'
@@ -50,7 +50,7 @@ module.exports = (function () {
             var origWrite = res.write;
             res.end = function (data) {
                 appendCache(res, data)
-                var cacheObject = { statusCode: res.statusCode, content: res._responseBody ? res._responseBody.toString("base64") : '', headers: res._headers }               
+                var cacheObject = { statusCode: res.statusCode, content: res._responseBody ? res._responseBody.toString("base64") : '', headers: res._headers }
                 if (ttl > 0) {
                     memcacheInst.set(key, cacheObject, realTtl, function (err) {
                         if (err) {
@@ -79,7 +79,7 @@ module.exports = (function () {
                 return next();
             }
 
-            var staleKey = key + ".loc"
+            var staleKey = key + ".loc";
             var realTtl = 60;
             memcacheInst.get(key, function (err, cacheObject) {
                 if (err) {
@@ -98,4 +98,4 @@ module.exports = (function () {
         }
     };
     return cls;
-})()
+}());

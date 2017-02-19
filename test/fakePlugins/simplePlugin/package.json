@@ -1,0 +1,21 @@
+{
+    "name": "simplePlugin",
+    "version": "0.0.1",
+    "description": "Memcache caching plugin",
+    "main": "./index.js",
+    "$require": [],
+    "uiConfig": {
+        "dynamic": {
+            "default": "test",
+            "required": true,
+            "label": "***",
+            "help": "****"
+        },
+        "env": {
+            "default": "test",
+            "required": true,
+            "label": "***",
+            "help": "****"
+        }
+    }
+}

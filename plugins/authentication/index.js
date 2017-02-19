@@ -7,10 +7,10 @@ const debug = require('debug')('plugins:authentication'),
     ;
 
 module.exports = (function () {
-    let cls = function (ctx) {  
-                   
+    let cls = function (ctx) {
+
         this.handler = function (req, res, next) {
-            const grant = ctx.$param['grant'];
+            const grant = ctx('$get:grant');
             if (grant === '*') {
                 return next(null);
             } else {
@@ -49,8 +49,5 @@ module.exports = (function () {
             }
         }
     };
-
-    cls._name = 'authentication';
-    cls._description = 'Loopback-based authentication middleware';
     return cls;
 })();

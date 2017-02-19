@@ -1,0 +1,10 @@
+{
+    "name": "pluginWithDI",
+    "version": "0.0.1",
+    "description": "Memcache caching plugin",
+    "main": "./index.js",
+    "$require": [
+        "testService"
+    ],
+    "uiConfig": {}
+}

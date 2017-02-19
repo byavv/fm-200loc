@@ -1,0 +1,34 @@
+{
+    "services": [
+        {
+            "name": "cache",
+            "path": "./fakeDrivers/testDriver"
+        }
+    ],
+    "plugins": [
+        {
+            "name": "errPlugin",
+            "path": "./fakePlugins/errPlugin"
+        },
+        {
+            "name": "notReturnAnythingPlugin",
+            "path": "./fakePlugins/notReturnAnythingPlugin"
+        },
+        {
+            "name": "pluginWithDI",
+            "path": "./fakePlugins/pluginWithDI"
+        },
+        {
+            "name": "setDynamicPlugin",
+            "path": "./fakePlugins/setDynamicPlugin"
+        },
+        {
+            "name": "simplePlugin",
+            "path": "./fakePlugins/simplePlugin"
+        },
+        {
+            "name": "unexpectedDependencyPlugin",
+            "path": "./fakePlugins/unexpectedDependencyPlugin"
+        }
+    ]
+}

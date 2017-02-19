@@ -9,19 +9,19 @@ let registry = require('etcd-registry'),
 module.exports = (function () {
     let cls = function (ctx) {
 
-        const etcdInst = ctx.$inject['etcd'];
+        const etcdInst = ctx('$inject:etcd');
 
         this.handler = function (req, res, next) {
-            if (ctx.$param['mapTo']) {
+            if (ctx('$get:mapTo')) {
                 new Promise((resolve, reject) => {
-                    debug(`Try to discover service: ${ctx.$param['mapTo']}`);
+                    debug(`Try to discover service: ${ctx('$get:mapTo')}`);
                     try {
-                        etcdInst.findServiceByKey(ctx.$param['mapTo'], (err, service) => {
+                        etcdInst.findServiceByKey(ctx('$get:mapTo'), (err, service) => {
                             if (err) {
                                 reject(new errors.err502(err));
                             } else {
                                 if (!service) {
-                                    reject(new errors.err404(`Service ${ctx.$param['mapTo']} is not found`));
+                                    reject(new errors.err404(`Service ${ctx('$get:mapTo')} is not found`));
                                 } else {
                                     resolve(service);
                                 }
@@ -31,8 +31,8 @@ module.exports = (function () {
                         reject(error);
                     }
                 }).then(service => {
-                    ctx.$param['target'] = service.url;
-                    debug(`Discovered: ["${ctx.$param['mapTo']}"] \u2192 ${service.url}`);
+                    ctx('$put:target', service.url);
+                    debug(`Discovered: ["${ctx('$get:mapTo')}"] \u2192 ${service.url}`);
                     return next();
                 }).catch((err) => {
                     return next(err);
@@ -42,7 +42,5 @@ module.exports = (function () {
             }
         };
     }
-    cls._name = 'discovery';
-    cls._description = 'Etcd discovery plugin, search service url in the etcd registry by key';
     return cls;
 })();

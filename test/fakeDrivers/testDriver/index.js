@@ -7,9 +7,6 @@ module.exports = (function () {
         this.testMethod = (param, clb) => {           
             clb(null, param.toString());
         }
-    };
-
-    cls._name = 'testService';
-    cls._description = '';
+    };    
     return cls;
 })();

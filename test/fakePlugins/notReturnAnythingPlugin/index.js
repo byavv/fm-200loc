@@ -12,7 +12,6 @@ module.exports = (function () {
             return res.status(200).send({ respond: 'ok' });
         }
     };
-    cls._name = 'notReturnAnythingPlugin';
-    cls._description = 'test plugin';
+   
     return cls;
 })();

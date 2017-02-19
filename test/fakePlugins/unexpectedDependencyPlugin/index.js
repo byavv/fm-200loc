@@ -6,14 +6,12 @@ module.exports = (function () {
 
     let cls = function (ctx) {
         this.handler = function (req, res, next) {
-            ctx.$inject['testService'].testMethod('testString', (err, result) => {
+            ctx('$inject:testService').testMethod('testString', (err, result) => {
                 console.log("+++++++++++++", result)
                 return res.status(200).send({ respond: result });
             });
         }
     };
 
-    cls._name = 'unexpectedDependencyPlugin';
-    cls._description = 'unexpectedDependencyPlugin';
     return cls;
 })()

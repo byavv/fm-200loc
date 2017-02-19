@@ -8,16 +8,16 @@ const debug = require('debug')('plugins:proxy'),
 
 module.exports = (function () {
     let cls = function (ctx) {
-        const proxy = httpProxy.createProxyServer({ secure: ctx.$param['secure'] || false });
+        const proxy = httpProxy.createProxyServer({ secure: ctx('$get:secure') || false });
         this.handler = function (req, res, next) {
-            if (ctx.$param['target']) {
+            if (ctx('$get:target')) {
                 proxy.web(req, res, {
-                    target: ctx.$param['target'] + (ctx.$param['withPath'] || '/'),
-                    changeOrigin: ctx.$param['changeOrigin'] || false
+                    target: ctx('$get:target') + (ctx('$get:withPath') || '/'),
+                    changeOrigin: ctx('$get:changeOrigin') || false
                 }, (err) => {
                     return next(err);
                 });
-                debug(`Proxy ${req.method}: ${req.originalUrl} \u2192 ${ctx.$param['target']}${ctx.$param['withPath']}`);
+                debug(`Proxy ${req.method}: ${req.originalUrl} \u2192 ${ctx('$get:target')}${ctx('$get:withPath')}`);
             } else {
                 logger.error(new Error('Configuration error. Target for request not set'))
                 return next(new errors.err502());

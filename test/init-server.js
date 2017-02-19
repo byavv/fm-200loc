@@ -2,15 +2,32 @@ const seedData = require('./fakeEntries');
 const loader = require('../lib/loader')();
 const path = require('path');
 const global = require('../src/global');
-const buildGatewayTable = require('../src/components/route')
+const fs = require('fs');
+const buildApiTable = require('../src/components/route')
 
 const app = require('../src/server');
 module.exports = function (done) {
+  const configPath = path.resolve(__dirname, 'testConfig.json');
+  if (!fs.existsSync(configPath)) {
+    throw 'No configuration file found';
+  };
+  let config = require(configPath);
+  if ((!config.services || !Array.isArray(config.services))) {
+    throw new Error('Configuration has wrong format')
+  }
+  if ((!config.plugins || !Array.isArray(config.plugins))) {
+    throw new Error('Configuration has wrong format');
+  }
+  let services = config.services;
+  let plugins = config.plugins;
+
   Promise.all([
-    loader
-      .loadComponents(path.resolve(__dirname, './fakePlugins')),
-    loader
-      .loadComponents(path.resolve(__dirname, './fakeDrivers'))
+    Promise.all(plugins.map((pluginLoadingConfig) => {
+      return loader.loadComponentFromPath(path.resolve(__dirname, pluginLoadingConfig.path));
+    })),
+    Promise.all(services.map((serviceLoadingConfig) => {
+      return loader.loadComponentFromPath(path.resolve(__dirname, serviceLoadingConfig.path));
+    }))
   ])
     .then(([plugins, services]) => {
       global.plugins = plugins;
@@ -18,8 +35,9 @@ module.exports = function (done) {
       global.ready = true;     
     })
     .then(() => seedData(app))
-    .then(() => buildGatewayTable(app))
-    .then(() => {     
+    .then(() => buildApiTable(app))
+    .then(() => {
+      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!')
       app.close = function (clb) {
         global.servicesStore.clear();
         server.close(clb);
@@ -27,10 +45,11 @@ module.exports = function (done) {
       const server = app.listen(3009, () => {
         done(null, app)
       });
-    }, (err)=>{
-       
+    }, (err) => {
+
     }).catch(err => {
-     
+      console.error(err)
+
       done(err)
     });
 };

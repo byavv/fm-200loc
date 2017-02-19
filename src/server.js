@@ -9,7 +9,7 @@ const boot = require('loopback-boot')
     , program = require('commander')
     , _ = require('lodash')
     , cluster = require('cluster')
-    , numCPUs = require('os').cpus().length
+    , os = require('os')
     , fs = require('fs')
     ;
 
@@ -83,18 +83,18 @@ function restart() {
 boot(app, __dirname, (err) => {
     if (err) throw err;
     app.start = function () {
-        logger.info('Gateway starting...');
-        console.log(path.resolve(program.config, 'LocConfig.json'))
-        if (!fs.existsSync(path.resolve(program.config, 'LocConfig.json'))) {
+        const configPath = path.resolve(program.config, 'LocConfig.json');
+        if (!fs.existsSync(configPath)) {
             return exitWithError('No configuration file found');
         };
-        let config = require('../LocConfig.json');
+        let config = require(configPath);
         if ((!config.services || !Array.isArray(config.services))) {
             return exitWithError('Configuration has wrong format');
         }
         if ((!config.plugins || !Array.isArray(config.plugins))) {
             return exitWithError('Configuration has wrong format');
         }
+        logger.info(`Gateway is starting with ${configPath}.`);
         let services = config.services;
         let plugins = config.plugins;
         Promise.all([
@@ -106,7 +106,6 @@ boot(app, __dirname, (err) => {
             }))
         ])
             .then(([plugins, services]) => {
-                console.log(plugins, services)
                 global.plugins = plugins;
                 global.services = services;
                 global.ready = true;
@@ -114,6 +113,7 @@ boot(app, __dirname, (err) => {
             .then(() => buildApiTable(app))
             .then(() => {
                 if (cluster.isMaster && program.multithread) {
+                    const numCPUs = os.cpus().length;
                     for (var i = 0; i < numCPUs; i++) {
                         cluster.fork();
                     }

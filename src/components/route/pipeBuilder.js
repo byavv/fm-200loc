@@ -3,10 +3,13 @@
  */
 
 "use strict";
-const Pipe = require('./pipe')
+const pipeFactory = require('./pipe')
+    // Pipe = require('./pipe')
     , global = require('../../global')
-    , Context = require('./context')
+    // , Context = require('./context')
+    , contextFactory = require('./context')
     , PluginBase = require('./pluginBase')
+    , util = require('util')
     ;
 
 module.exports = {
@@ -16,32 +19,39 @@ module.exports = {
      * @param {Array}   plugins     plugins to be added into the entry flow
      */
     build: function (plugins) {
-        const pipe = new Pipe({/* todo: defaults for all plugins */ });
-        return plugins.reduce((pluginsArray, plugin, index) => {
-            const dependencies = Object.assign({}, plugin.dependencies);
-            pipe.insert(plugin.settings, index);
-            let deps = {};
-            for (let key in dependencies) {
-                if (global.servicesStore.has(dependencies[key])) {
-                    deps[key] = global.servicesStore.get(dependencies[key]).instance;
-                } else {
-                    throw new Error('Service dependency is not defined');
+        // const pipe = new Pipe({/* todo: defaults for all plugins in the pipe*/ });
+        try {
+            const pipe = pipeFactory();
+            return plugins.reduce((pluginsArray, plugin, index) => {
+                const dependencies = Object.assign({}, plugin.dependencies);
+                pipe.insert(plugin.settings, index);
+                let deps = {};
+                for (let key in dependencies) {
+                    if (global.servicesStore.has(dependencies[key])) {
+                        deps[key] = global.servicesStore.get(dependencies[key]).instance;
+                    } else {
+                        throw new Error('Service dependency is not defined');
+                    }
                 }
-            }
-            let pluginDefinition = global.plugins.find((p) => p.name === plugin.name);
-            if (!pluginDefinition) {
-                throw new Error(`Plugin ${plugin.name} is not found`);
-                // todo. Scenario, when user deletes plugin from config should be notified in UI
-            }
-            // provides methods to work with pipe and dependencies    
-            const Plugin = pluginDefinition.ctr;
-            Plugin.prototype = Object.create(PluginBase.prototype);
-            Plugin.prototype.constructor = Plugin;
-            let ctx = new Context(index, pipe, deps)
-            let pluginInstance = new Plugin(ctx);
-            pluginsArray.push(pluginInstance);
-            return pluginsArray;
-        }, []);
+                let pluginDefinition = global.plugins.find((p) => p.name === plugin.name);
+                if (!pluginDefinition) {
+                    throw new Error(`Plugin ${plugin.name} is not found`);
+                    // todo. Scenario, when user deletes plugin from config should be notified in UI
+                }
+                // provides methods to work with pipe and dependencies    
+                const Plugin = pluginDefinition.ctr;
+                util.inherits(Plugin, PluginBase);
+                // let pluginContext = new Context(index, pipe, deps);
+                let pluginContext = contextFactory(index, pipe, deps);
+                console.log(pluginContext)
+                let pluginInstance = new Plugin(pluginContext);
+                pluginsArray.push(pluginInstance);
+                return pluginsArray;
+            }, []);
+        } catch (error) {
+            console.log('333333333333333333333333333333333333333', error)
+        }
+
     },
     /**
      * Tests for errors in required pipe and constructs erro object to be saved in persisted.

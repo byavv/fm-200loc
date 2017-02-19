@@ -51,7 +51,7 @@ module.exports = function bootstrapServices(app) {
             }
         });
     }).then(() => {
-        console.log('\n', '**********  Services Health Check  *****', '\n');
+        console.log('\n', `**********  Services Health Check  **********`, '\n');
         return Promise.all(Array.from(global.servicesStore.values())
             .map((v) => {
                 if (v.instance.hasOwnProperty('check')) {

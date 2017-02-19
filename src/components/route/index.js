@@ -34,10 +34,10 @@ module.exports = function buildGatewayTable(app) {
         .then(() => {
 
             debug(`Total serivces storage size: ${global.servicesStore.size}`);
-            console.log('\n', '**********', '\n');
+            console.log('\n', '*********************************************', '\n');
 
             return ApiConfig
-                .find() // find all configurations
+                .find()
                 .then((configs) => {
                     return new Promise((resolve, reject) => {
                         const activeConfigs = configs.filter(config => {
@@ -79,6 +79,7 @@ module.exports = function buildGatewayTable(app) {
                             return Object.assign(rules, rule);
                         }, {});
                     global.rules = new HttpProxyRules({ rules: rules });
+
                 });
         });
 };

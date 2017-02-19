@@ -7,7 +7,7 @@ const global = require('../../global')
 
 module.exports = function middlewareFactory() {
     return function handler(req, res, next) {
-        const isXhr = req.headers.accept && req.headers.accept.includes('json');
+        const isXhr = req.xhr;
         if (global.ready) {
             const target = global.rules.match(req);
             if (target) {
@@ -19,13 +19,18 @@ module.exports = function middlewareFactory() {
                 async.series(handlers, (err) => {
                     if (err) {
                         logger.warn(`Error processing ${req.originalUrl}, ${err}`);
+                        // return isXhr
+                        //     ? res.status(err.status || 500).send({
+                        //         error: err
+                        //     })
+                        //     : res.render("serverError", {
+                        //         error: err
+                        //     });
                         return isXhr
-                            ? res.status(err.status || 500).send({
+                            ? next(err)
+                            : res.status(err.status || 500).send(res.render("serverError", {
                                 error: err
-                            })
-                            : res.render("serverError", {
-                                error: err
-                            });
+                            }));
                     }
                     return next();
                 });

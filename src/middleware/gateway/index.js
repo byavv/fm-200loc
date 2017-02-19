@@ -7,7 +7,6 @@ const global = require('../../global')
 
 module.exports = function middlewareFactory() {
     return function handler(req, res, next) {
-        const isXhr = req.xhr;
         if (global.ready) {
             const target = global.rules.match(req);
             if (target) {
@@ -17,6 +16,7 @@ module.exports = function middlewareFactory() {
                         return plugin.handler.bind(plugin, req, res);
                     });
                 async.series(handlers, (err) => {
+                    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', err)
                     if (err) {
                         logger.warn(`Error processing ${req.originalUrl}, ${err}`);
                         // return isXhr
@@ -26,8 +26,11 @@ module.exports = function middlewareFactory() {
                         //     : res.render("serverError", {
                         //         error: err
                         //     });
-                        return isXhr
-                            ? next(err)
+                        console.log(req.xhr)
+                        return req.xhr
+                            ? res.status(500).send({
+                                error: err
+                            })
                             : res.status(err.status || 500).send(res.render("serverError", {
                                 error: err
                             }));

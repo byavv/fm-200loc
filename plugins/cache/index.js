@@ -70,7 +70,7 @@ module.exports = (function () {
             }
         }
 
-        this.handler = function (req, res, next) {
+        this.handler = function (req, res, next) {         
 
             let cachingKey = forCaching.split(":")[1];
             var key = genCacheKey(req);

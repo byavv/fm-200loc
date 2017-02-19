@@ -1,0 +1,6 @@
+instrumentation:
+    root: .
+    extensions:
+        - .js
+    default-excludes: true
+    excludes: ['lib/errors/**', src/boot/root.js]

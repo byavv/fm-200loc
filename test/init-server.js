@@ -34,9 +34,9 @@ module.exports = function (done) {
       state.services = services;
       state.ready = true;     
     })
-    .then(() => seedData(app))
+    .then(() => seedData(app))    
     .then(() => buildApiTable(app))
-    .then(() => {     
+    .then(() => {        
       app.close = function (clb) {
         state.servicesStore.clear();
         server.close(clb);

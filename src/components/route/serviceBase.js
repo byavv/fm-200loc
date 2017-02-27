@@ -24,6 +24,15 @@ ServiceBase.prototype.check = function () {
     })
 }
 /**
+ * Run service
+ * @memberof ServiceBase.prototype
+ * @function check
+ * @returns {Promise}
+ */
+ServiceBase.prototype.run = function () {
+    console.log('Run method is not implemented');
+}
+/**
  * Gain service summary data
  * @memberof ServiceBase.prototype
  * @function summary

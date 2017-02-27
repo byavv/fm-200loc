@@ -23,6 +23,9 @@ module.exports = (function () {
                 return clb(err);
             });
         }
+        this.run = function () {
+
+        }
         // ping your service or whatever, use this method for checking external servivce or api availability
         this.check = function () {
             return new Promise((resolve, reject) => {
@@ -43,6 +46,6 @@ module.exports = (function () {
                 })
             });
         }
-    }; 
+    };
     return cls;
 })();

@@ -7,17 +7,17 @@
  **/
 
 "use strict";
-const async = require("async"),
-    debug = require("debug")("gateway"),
-    _ = require('lodash'),
-    logger = require('../../../lib/logger'),
-    comparatorFn = require('./routeCompare'),
-    bootstrapServices = require('./servicesBootstrap'),
-    pipeBuilder = require('./pipeBuilder'),
-    state = require('../../state'),
-    HttpProxyRules = require('http-proxy-rules'),
-    loaderUtils = require('./loader.utils')(),
-    R = require('ramda')
+const async = require("async")
+    , debug = require("debug")("gateway")
+    , _ = require('lodash')
+    , logger = require('../../../lib/logger')
+    , comparatorFn = require('./routeCompare')
+    , bootstrapServices = require('./servicesBootstrap')
+    , pipeBuilder = require('./pipeBuilder')
+    , state = require('../../state')
+    , HttpProxyRules = require('http-proxy-rules')
+    , loaderUtils = require('./utils/loader.utils')()
+    , R = require('ramda')
     ;
 
 /**
@@ -41,7 +41,7 @@ module.exports = function buildGatewayTable(app) {
     }
 
     let fixEntry = (inst) => {
-        logger.info(`Configuration for entry ${inst.name} become valid, can be activated manually`);
+        logger.info(`Configuration for entry ${inst.name} is valid now, entry can be activated manually`);
         inst.active = false;
         inst.errors = [];
         return inst.save();
@@ -68,7 +68,8 @@ module.exports = function buildGatewayTable(app) {
             debug(`Total services running: ${state.servicesStore.size}`);
             console.log('\n', '************** Build proxy table ***************', '\n');
 
-            return loaderUtils.getBrokenEntries(ApiConfig)
+            return loaderUtils
+                .getBrokenEntries(ApiConfig)
                 .then((brokenEntries) => {
                     const p_Arr = [];
                     brokenEntries.forEach(brokenEntry => {

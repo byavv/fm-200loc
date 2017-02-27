@@ -11,13 +11,13 @@ const async = require("async"),
     debug = require("debug")("gateway"),
     _ = require('lodash'),
     logger = require('../../../lib/logger'),
-    compareFunction = require('./routeCompare'),
+    comparatorFn = require('./routeCompare'),
     bootstrapServices = require('./servicesBootstrap'),
     pipeBuilder = require('./pipeBuilder'),
     state = require('../../state'),
     HttpProxyRules = require('http-proxy-rules'),
-    loaderUtils = require('./loader.utils')()
-
+    loaderUtils = require('./loader.utils')(),
+    R = require('ramda')
     ;
 
 /**
@@ -32,66 +32,66 @@ module.exports = function buildGatewayTable(app) {
     const plugins = state.plugins;
     const services = state.services;
     state.servicesStore.clear();
+
+    let deactivateBrokenEntry = (errors, inst) => {
+        logger.warn(`Configuration for entry ${inst.name} is not valid, entry is being deactivated`);
+        inst.active = false;
+        inst.errors = errors;
+        return inst.save()
+    }
+
+    let fixEntry = (inst) => {
+        logger.info(`Configuration for entry ${inst.name} become valid, can be activated manually`);
+        inst.active = false;
+        inst.errors = [];
+        return inst.save();
+    }
+
+    let buildRule = (rule, entry) => {
+        debug(`Handle path: ${entry.entry} \t\u2192\t ${entry.methods}, apply [${entry.plugins.map((plugin => plugin.name))}]`);
+        const pipe = pipeBuilder.build(entry.plugins);
+        rule[entry.entry.toLowerCase()] = {
+            pipe: pipe,
+            methods: entry.methods,
+            enabled: true,
+            path: entry.entry.toLowerCase()
+        };
+        return rule;
+    }
+
     return bootstrapServices(app)
         .then(() => {
-            // 1. Get all broken entries and set errors to them
-            // 2. Get all entries that was fixed and change them
-            // 3. Get all clean entries and  
-            debug(`Total serivces storage size: ${state.servicesStore.size}`);
-            console.log('\n', '*********************************************', '\n');
+            console.log('\n', '************************************************', '\n');
+            // 1. Get all broken entries and block them
+            // 2. Get all entries that was fixed in dashboard and change their status to unblocked by removing all errors
+            // 3. Get all clean entries and  start handling
+            debug(`Total services running: ${state.servicesStore.size}`);
+            console.log('\n', '************** Build proxy table ***************', '\n');
 
-            loaderUtils.getBrokenEntries(ApiConfig)
-                .then(() => { /* Set error data */ })
-                .then(() => loaderUtils.getEntriesToBeFixed(ApiConfig))
-                .then(() => { /* Fix them */ })
-                .then(() => loaderUtils.getEntriesToHandle(ApiConfig))
-                .then((res) => {
-
-                });
-            return ApiConfig
-                .find()
-                .then((configs) => {
-                    return new Promise((resolve, reject) => {
-                        const activeConfigs = configs.filter(config => {
-                            let errors = pipeBuilder.test(config.plugins);
-                            if (errors.length > 0 && !_.isEqual(errors, config.errors)) {
-                                config.errors = errors;
-                                config.active = false;
-                                logger.error(`Wrong configuration found in ${config.name}`);
-                                logger.warn(`Deactivating entry ${config.name}`);
-                                config.save();
-                                logger.log(`Restarting...`);
-                            } else {
-                                if (errors.length == 0 && config.errors.length > 0) {
-                                    config.errors = [];
-                                    config.active = false;
-                                    logger.warn(`Configuration issue fixed in ${config.name}`);
-                                    config.save();
-                                    logger.log(`Restaring...`);
-                                }
-                            }
-                            return config.active;
-                        });
-                        resolve(activeConfigs);
+            return loaderUtils.getBrokenEntries(ApiConfig)
+                .then((brokenEntries) => {
+                    const p_Arr = [];
+                    brokenEntries.forEach(brokenEntry => {
+                        p_Arr.push(
+                            R.pipeP(ApiConfig.findById.bind(ApiConfig),
+                                R.curry(deactivateBrokenEntry)(brokenEntry.errors))(brokenEntry.id));
                     });
+                    return Promise.all(p_Arr);
                 })
-                .then((configs) => {
-                    const rules = configs
-                        .sort(compareFunction)
-                        .reduce((rules, apiConfig, index) => {
-                            const rule = {};
-                            debug(`Handle path: ${apiConfig.entry} \t\u2192\t ${apiConfig.methods}, apply [${apiConfig.plugins.map((plugin => plugin.name))}]`);
-                            const pipe = pipeBuilder.build(apiConfig.plugins);
-                            rule[apiConfig.entry.toLowerCase()] = {
-                                pipe: pipe,
-                                methods: apiConfig.methods,
-                                enabled: true,
-                                path: apiConfig.entry.toLowerCase()
-                            };
-                            return Object.assign(rules, rule);
-                        }, {});
+                .then(() => loaderUtils.getEntriesToBeFixed(ApiConfig))
+                .then((entriesToBeFixed) => {
+                    const p_Arr = [];
+                    (entriesToBeFixed || []).forEach(entryToBeFixed => {
+                        p_Arr.push(R.pipeP(ApiConfig.findById.bind(ApiConfig), fixEntry)(entryToBeFixed.id));
+                    });
+                    return Promise.all(p_Arr);
+                })
+                .then(() => loaderUtils.getEntriesToHandle(ApiConfig))
+                .then((entries) => R.sort(comparatorFn, entries))
+                .then((entries) => R.reduce(buildRule, {/* Defaults could be set here */ }, entries))
+                .then(rules => {
                     state.rules = new HttpProxyRules({ rules: rules });
-
+                    console.log('\n', '************************************************', '\n');
                 });
         });
 };

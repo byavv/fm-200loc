@@ -5,15 +5,8 @@ const R = require('ramda')
     ;
 
 module.exports = function () {
-    // (p, fn) => p.then(fn) - функция агрегатор, кооторая запускается на каждом 
-    // reduce waits for a binary function, the first argument being the accumulated value and the second one the element currently evaluated.
-    let _pipePromise = R.reduce((p, fn) => p.then(fn))
-    //const pipePromise2 = R.curry((list, acc) => list.reduce((acc, fn) => acc.then(fn), Promise.resolve(acc)));
-
-    let _findAll = (model) => {
-        let models = model.find();
-        return models;
-    }
+    let _pipePromise = R.reduce((p, fn) => p.then(fn));
+    let _findAll = (model) => model.find();
     let _testEntryForErrors = R.curry(pipeBuilder.test);
     /** Entry became broken after deleting any required services */
     let _isNotBroken = (entry) => {
@@ -21,9 +14,14 @@ module.exports = function () {
         return !(errors.length > 0 && !R.equals(errors, entry.errors));
     };
     /** Entry became broken after deleting any required services */
-    let _isBroken = (entry) => {
+    let _markBroken = (entry) => {
         let errors = _testEntryForErrors(entry.plugins);
-        return (errors.length > 0 && !R.equals(errors, entry.errors));
+        if (errors.length > 0 && !R.equals(errors, entry.errors)) {
+            return {
+                id: entry.id,
+                errors: errors
+            }
+        }
     };
     /** Entry became fixed after changing configuration */
     let _isFixed = (entry) => {
@@ -46,26 +44,24 @@ module.exports = function () {
      */
 
     function getEntriesToHandle(Entity) {
-        // also works
+        // also works fine
         // _findAll(model).then((models) => {
         //     const mArr = R.filter(isReadyToStart, models)
         // })
-
-        return _pipePromise(_findAll(Entity), [_allReadyToStartList]) // _allReadyToStartList - это та функция, которую мы запускаем после промиса
+        return _pipePromise(_findAll(Entity), [_allReadyToStartList]);
     }
 
     function getBrokenEntries(Entity) {
-        return _pipePromise(_findAll(Entity), [(models) => R.filter(_isBroken, models)])
+        return _pipePromise(_findAll(Entity), [(models) => R.filter(R.identity, R.map(_markBroken, models))]);
     }
 
     function getEntriesToBeFixed(Entity) {
-        return _pipePromise(_findAll(Entity), [(models) => R.filter(_isNeedToBeFixed, models)])
+        return _pipePromise(_findAll(Entity), [(models) => R.filter(_isNeedToBeFixed, models)]);
     }
 
     return {
         getEntriesToHandle,
         getBrokenEntries,
         getEntriesToBeFixed
-    }
-
+    };
 }

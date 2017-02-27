@@ -48,8 +48,8 @@ module.exports = function bootstrapServices(app) {
                 reject(error);
             }
         });
-    }).then(() => {
-        console.log('\n', `**********  Services Health Check  **********`, '\n');
+    }).then(() => {      
+        console.log('\n', '************ Services Health Check *************', '\n');      
         return Promise.all(Array.from(state.servicesStore.values())
             .map((v) => {
                 if (v.instance.hasOwnProperty('check')) {

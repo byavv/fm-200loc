@@ -15,7 +15,9 @@ const async = require("async"),
     bootstrapServices = require('./servicesBootstrap'),
     pipeBuilder = require('./pipeBuilder'),
     state = require('../../state'),
-    HttpProxyRules = require('http-proxy-rules')
+    HttpProxyRules = require('http-proxy-rules'),
+    loaderUtils = require('./loader.utils')()
+
     ;
 
 /**
@@ -32,10 +34,20 @@ module.exports = function buildGatewayTable(app) {
     state.servicesStore.clear();
     return bootstrapServices(app)
         .then(() => {
-
+            // 1. Get all broken entries and set errors to them
+            // 2. Get all entries that was fixed and change them
+            // 3. Get all clean entries and  
             debug(`Total serivces storage size: ${state.servicesStore.size}`);
             console.log('\n', '*********************************************', '\n');
 
+            loaderUtils.getBrokenEntries(ApiConfig)
+                .then(() => { /* Set error data */ })
+                .then(() => loaderUtils.getEntriesToBeFixed(ApiConfig))
+                .then(() => { /* Fix them */ })
+                .then(() => loaderUtils.getEntriesToHandle(ApiConfig))
+                .then((res) => {
+
+                });
             return ApiConfig
                 .find()
                 .then((configs) => {

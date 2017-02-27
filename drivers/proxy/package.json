@@ -1,5 +1,9 @@
 {
-    "config": {
+    "name": "proxy",
+    "version": "0.0.1",
+    "description": "Proxy service",
+    "main": "./index.js",
+    "uiConfig": {
         "secure": {
             "default": false,
             "type": "select",
@@ -35,5 +39,5 @@
             ]
         }
     },
-    "serviceCheck": true
+    "$require": []
 }

@@ -43,10 +43,6 @@ module.exports = (function () {
                 })
             });
         }
-    };
-
-    cls._name = 'proxy';
-    cls._version = '1.16.2';
-    cls._description = 'Simple http proxy';
+    }; 
     return cls;
 })();

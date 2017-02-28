@@ -41,8 +41,7 @@ const getCheckMessage = (metadata, resultFromService) => ({
     message: (typeof resultFromService.message == 'string') ? resultFromService.message : JSON.stringify(resultFromService.message)
 })
 
-const getStatusInfoFrom = (services) => []
-const getStatusInfoFrom1 = (services) => R.reduce((aggr, metadata) => {
+const getStatusInfoFrom = (services) => R.reduce((aggr, metadata) => {
     if (metadata.instance.hasOwnProperty('check')) {
         aggr.push(loaderUtils.pipePromise(metadata.instance.check(), [R.curry(getCheckMessage)(metadata)]));
     } else {
@@ -77,15 +76,15 @@ module.exports = function bootstrapServices(app) {
             return Promise.all(p_Arr);
         })
         .then(() => console.log('\n', '************ Services Health Check *************', '\n'))
-        .then(() => Promise.all([...getStatusInfoFrom(state.servicesStore.values())]))
-        .then((result) => {
-            result.forEach(r => {
-                const diagnosticMessage = `Diagnostic [${r.name}][${r.error ? 'ERROR' : 'OK'}]: ${r.message}`;
-                if (r.error) {
-                    logger.error(diagnosticMessage);
-                } else {
-                    logger.info(diagnosticMessage);
-                }
-            });
-        });
+        // .then(() => Promise.all(getStatusInfoFrom(state.servicesStore.values())))
+        // .then((result) => {
+        //     result.forEach(r => {
+        //         const diagnosticMessage = `Diagnostic [${r.name}][${r.error ? 'ERROR' : 'OK'}]: ${r.message}`;
+        //         if (r.error) {
+        //             logger.error(diagnosticMessage);
+        //         } else {
+        //             logger.info(diagnosticMessage);
+        //         }
+        //     });
+        // });
 }

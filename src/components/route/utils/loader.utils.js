@@ -1,13 +1,13 @@
 const R = require('ramda')
     , debug = require("debug")("gateway")
     , logger = require('../../../../lib/logger')
-    , pipeBuilder = require('../pipeBuilder')
+    , pipeBuilder = require('../pipeBuilder')()  
     ;
 
 module.exports = function () {
     let pipePromise = R.reduce((p, fn) => p.then(fn));
     let findAll = (model) => model.find();
-    let _testEntryForErrors = R.curry(pipeBuilder.test);
+    let _testEntryForErrors = R.curry(pipeBuilder.test);   
     /** Entry became broken after deleting any required services */
     let _isNotBroken = (entry) => {
         let errors = _testEntryForErrors(entry.plugins);
@@ -59,6 +59,6 @@ module.exports = function () {
         getEntriesToHandle,
         getBrokenEntries,
         getEntriesToBeFixed,
-        pipePromise
+        pipePromise        
     };
 }

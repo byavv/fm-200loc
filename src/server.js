@@ -2,7 +2,7 @@
 const boot = require('loopback-boot')
     , http = require('http')
     , loopback = require('loopback')
-    , buildApiTable = require('./components/route')
+    , buildApiTable = require('./components/route/tableBuilder')
     , debug = require('debug')('gateway')
     , redis = require('redis')
     , path = require('path')

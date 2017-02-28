@@ -13,7 +13,7 @@ const async = require("async")
     , logger = require('../../../lib/logger')
     , comparatorFn = require('./routeCompare')
     , bootstrapServices = require('./servicesBootstrap')
-    , pipeBuilder = require('./pipeBuilder')
+    , pipeBuilder = require('./pipeBuilder')()
     , state = require('../../state')
     , HttpProxyRules = require('http-proxy-rules')
     , loaderUtils = require('./utils/loader.utils')()
@@ -37,7 +37,7 @@ module.exports = function buildGatewayTable(app) {
         logger.warn(`Configuration for entry ${inst.name} is not valid, entry is being deactivated`);
         inst.active = false;
         inst.errors = errors;
-        return inst.save()
+        return inst.save();
     }
 
     let fixEntry = (inst) => {
@@ -64,7 +64,7 @@ module.exports = function buildGatewayTable(app) {
             console.log('\n', '************************************************', '\n');
             // 1. Get all broken entries and block them
             // 2. Get all entries that was fixed in dashboard and change their status to unblocked by removing all errors
-            // 3. Get all clean entries and  start handling
+            // 3. Get all clean entries and  add them to rule set for handling
             debug(`Total services running: ${state.servicesStore.size}`);
             console.log('\n', '************** Build proxy table ***************', '\n');
 

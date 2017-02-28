@@ -3,7 +3,7 @@ const loader = require('../lib/loader')();
 const path = require('path');
 const state = require('../src/state');
 const fs = require('fs');
-const buildApiTable = require('../src/components/route')
+const buildApiTable = require('../src/components/route/tableBuilder')
 
 const app = require('../src/server');
 module.exports = function (done) {

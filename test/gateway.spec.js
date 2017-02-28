@@ -90,6 +90,7 @@ describe('GATEWAY TESTS', () => {
                 respond: 'harry potter'
             })
             .end((err, res)=>{
+                console.log(res)
                 done(err)
             });
     });

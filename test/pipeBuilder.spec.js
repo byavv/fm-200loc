@@ -3,7 +3,7 @@
 const chai = require('chai'),
     expect = chai.expect,
     request = require('supertest'),
-    pipeBuilder = require('../src/components/route/pipeBuilder'),
+    pipeBuilder = require('../src/components/route/pipeBuilder')(),
     Pipe = require('../src/components/route/pipe');
 
 

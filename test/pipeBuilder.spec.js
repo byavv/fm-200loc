@@ -35,7 +35,7 @@ describe('PIPE BUILDER TESTS', () => {
 
     it('should init services, plugins and build state object', () => {
         expect(state.services.length).to.be.equal(1);
-        expect(state.plugins.length).to.be.equal(6);
+        expect(state.plugins.length).to.be.equal(7);
     });
 
     it('should inject dependencies', (done) => {

@@ -29,6 +29,10 @@
         {
             "name": "unexpectedDependencyPlugin",
             "path": "./fakePlugins/unexpectedDependencyPlugin"
+        },
+        {
+            "name": "pluginwithouthandler",
+            "path": "./fakePlugins/pluginwithouthandler"
         }
     ]
 }

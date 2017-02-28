@@ -28,27 +28,28 @@ function contextFactory(id, pipe, deps) {
         throw new Error('Wrong format of context invocation, $inject, $put, $get allowed only')
     }
     return new Proxy(contextOperation, {
+
         apply: function (target, thisArg, argumentsList) {
             const operation = argumentsList[0].split(':');
             const operationType = operation[0], operationKey = operation[1], operationItem = argumentsList[1];
-
+            let result;
             switch (operationType) {
                 case '$inject':
-                    return deps[operationKey];
+                    result = deps[operationKey];
                     break;
                 case '$get': {
-                    return pipe.getItem(operationKey, id);
+                    result = pipe.getItem(operationKey, id);
                     break;
                 }
                 case '$put': {
-                    return pipe.setItem(operationKey, operationItem);
-                    return true;
+                    result = pipe.setItem(operationKey, operationItem);
                     break;
                 }
                 default:
-                    return Reflect.apply(target, thisArg, argumentsList);
+                    result = Reflect.apply(target, thisArg, argumentsList);
                     break;
             }
+            return result;
         }
     });
 }

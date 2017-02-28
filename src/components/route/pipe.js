@@ -45,7 +45,7 @@ module.exports = (function () {
          * @returns {string}    normalized key    
          */
         normalize(keyStr) {
-            return keyStr.toLowerCase();
+            return keyStr//.toLowerCase();
         },
         /**
          * Check if pattern match to any of key patterns
@@ -66,7 +66,7 @@ module.exports = (function () {
     }
     function pipeFactory() {
         const pipe = {
-            getItem(key, id) {
+            getItem(key, id) {               
                 var requiredParam = this._get(`${prefix}:${id}`);
                 if (!requiredParam) throw new Error(`No config found ${id}: ${key}`);
                 let paramType = this.match(requiredParam[key]);

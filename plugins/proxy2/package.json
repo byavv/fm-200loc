@@ -1,0 +1,23 @@
+{
+    "name": "proxy",
+    "version": "0.0.1",
+    "description": "Proxy plugin",
+    "main": "./index.js",
+    "$require": [
+        "proxy"
+    ],
+    "uiConfig": {
+         "target": {
+            "default": "localhost:80",
+            "required": true,
+            "label": "Target",
+            "help": "Proxy target"
+        },
+        "withPath": {
+            "default": "/",
+            "required": true,
+            "label": "Path",
+            "help": "Path to be added to target api url"
+        }
+    }
+}

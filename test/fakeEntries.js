@@ -143,7 +143,7 @@ module.exports = function seedTestData(app) {
                         }
                     ]
                 }
-            ], (err, configs) => {          
+            ], (err, configs) => {
                 if (err)
                     reject(err);
                 resolve(configs);

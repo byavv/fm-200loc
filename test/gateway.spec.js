@@ -27,7 +27,7 @@ describe('GATEWAY TESTS', () => {
     });
 
     it('should load plugins', () => {
-        expect(state.plugins.length).to.be.equal(6);
+        expect(state.plugins.length).to.be.equal(7);
     });
 
     it('should ignore entry if one of plugins is not defined', (done) => {
@@ -89,7 +89,7 @@ describe('GATEWAY TESTS', () => {
             .expect(200, {
                 respond: 'harry potter'
             })
-            .end((err, res)=>{
+            .end((err, res)=>{               
                 done(err)
             });
     });
@@ -105,12 +105,18 @@ describe('GATEWAY TESTS', () => {
     });
 
     it('should use default plugin when no exist', (done) => {
-
         request(app)
             .get('/pluginnotexists')
-            .end((err) => {
-                console.log(err);
+            .end((err) => {               
                 done(err)
             });
     });    
+      it('should pass request if plugin doesnt have handler', (done) => {
+        request(app)
+            .get('/pluginwithouthandler')
+            .expect(404)
+            .end((err) => {              
+                done(err)
+            });
+    });  
 });

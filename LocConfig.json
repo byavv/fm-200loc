@@ -3,12 +3,20 @@
         {
             "name": "cache",
             "path": "./drivers/cache"
+        },
+        {
+            "name": "proxy",
+            "path": "./drivers/proxy"
         }
     ],
     "plugins": [
         {
             "name": "cache",
             "path": "./plugins/cache"
+        },
+        {
+            "name": "proxy",
+            "path": "./plugins/proxy2"
         }
     ]
 }

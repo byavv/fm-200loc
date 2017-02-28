@@ -11,7 +11,48 @@ const async = require('async')
     , logger = require('../../../lib/logger')
     , state = require('../../state')
     , util = require('util')
-    , ServiceBase = require('./serviceBase');
+    , ServiceBase = require('./serviceBase')
+    , R = require('ramda')
+    , loaderUtils = require('./utils/loader.utils')()
+    ;
+
+
+const buildServiceMetadata = (app, servicesCrs, serviceMetadataAggr, serviceConfig) => {
+    const serviceSettings = serviceConfig.settings;
+    const serviceDefinition = servicesCrs.find((d) => d.name === serviceConfig.serviceId);
+    if (!serviceDefinition) throw new Error(`Service ${serviceConfig.serviceId} is not defined`)
+    if (!serviceMetadataAggr.has(serviceConfig.id)) {
+        debug(`Instansiate service: ${serviceConfig.serviceId}`);
+        const Service = serviceDefinition.ctr;
+        util.inherits(Service, ServiceBase);
+        let serviceInstance = new Service(app, serviceSettings);
+        serviceMetadataAggr.set('' + serviceConfig.id, {
+            name: serviceDefinition.name,
+            version: serviceDefinition.version,
+            description: serviceDefinition.description,
+            instance: serviceInstance
+        });
+        return serviceMetadataAggr;
+    }
+}
+const getCheckMessage = (metadata, resultFromService) => ({
+    name: metadata.name,
+    error: resultFromService.error,
+    message: (typeof resultFromService.message == 'string') ? resultFromService.message : JSON.stringify(resultFromService.message)
+})
+
+const getStatusInfoFrom = (services) => R.reduce((aggr, metadata) => {
+    if (metadata.instance.hasOwnProperty('check')) {
+        aggr.push(loaderUtils.pipePromise(metadata.instance.check(), [R.curry(getCheckMessage)(metadata)]));
+    } else {
+        aggr.push(Promise.resolve({
+            error: true,
+            name: metadata.name,
+            message: `Status check method for ${v.name} service is not implemented`
+        }))
+    }
+    return aggr;
+}, [], services);
 
 /**
  * Read all services from config and build instances of active ones
@@ -22,62 +63,28 @@ const async = require('async')
  */
 module.exports = function bootstrapServices(app) {
     const ServiceConfig = app.models.ServiceConfig;
-    return new Promise((resolve, reject) => {
-        ServiceConfig.find({ /* todo: where: {active: true} */ }, (err, serviceConfigs) => {
-            try {
-                if (err) throw err;
-                (serviceConfigs || []).forEach((serviceConfig) => {
-                    const serviceSettings = serviceConfig.settings;
-                    const serviceDefinition = state.services.find((d) => d.name === serviceConfig.serviceId);
-                    if (!serviceDefinition) throw new Error(`Service ${serviceConfig.serviceId} is not defined`)
-                    if (!state.servicesStore.has(serviceConfig.id)) {
-                        debug(`Instansiate service: ${serviceConfig.serviceId}`);
-                        const Service = serviceDefinition.ctr;
-                        util.inherits(Service, ServiceBase);
-                        let serviceInstance = new Service(app, serviceSettings);
-                        state.servicesStore.set(serviceConfig.id.toString(), {
-                            name: serviceDefinition.name,
-                            version: serviceDefinition.version,
-                            description: serviceDefinition.description,
-                            instance: serviceInstance
-                        });
-                    }
-                });
-                resolve();
-            } catch (error) {
-                reject(error);
+
+    return ServiceConfig
+        .find()
+        .then((serviceConfigs) => {
+            console.log('\n', '************** Services Running ****************', '\n')
+            const p_Arr = [];
+            state.servicesStore = R.reduce(R.curry(buildServiceMetadata)(app, state.services), new Map(), serviceConfigs);
+            for (let metadata of state.servicesStore.values()) {
+                p_Arr.push(metadata.instance.run());
             }
-        });
-    }).then(() => {
-        console.log('\n', `**********  Services Health Check  **********`, '\n');
-        return Promise.all(Array.from(state.servicesStore.values())
-            .map((v) => {
-                if (v.instance.hasOwnProperty('check')) {
-                    return v.instance.check()
-                        .then((result) => {
-                            return {
-                                name: v.name,
-                                error: result.error,
-                                message: (typeof result.message == 'string') ? result.message : JSON.stringify(result.message)
-                            }
-                        })
-                } else {
-                    return Promise.resolve({
-                        error: true,
-                        name: v.name,
-                        message: `Status check method for ${v.name} service is not implemented`
-                    });
-                }
-            }))
-            .then((result) => {
-                result.forEach(r => {
-                    const diagnosticMessage = `Diagnostic [${r.name}][${r.error ? 'ERROR' : 'OK'}]: ${r.message}`;
-                    if (r.error) {
-                        logger.error(diagnosticMessage);
-                    } else {
-                        logger.info(diagnosticMessage);
-                    }
-                });
-            });
-    });
+            return Promise.all(p_Arr);
+        })
+        .then(() => console.log('\n', '************ Services Health Check *************', '\n'))
+        // .then(() => Promise.all(getStatusInfoFrom(state.servicesStore.values())))
+        // .then((result) => {
+        //     result.forEach(r => {
+        //         const diagnosticMessage = `Diagnostic [${r.name}][${r.error ? 'ERROR' : 'OK'}]: ${r.message}`;
+        //         if (r.error) {
+        //             logger.error(diagnosticMessage);
+        //         } else {
+        //             logger.info(diagnosticMessage);
+        //         }
+        //     });
+        // });
 }

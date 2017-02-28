@@ -2,7 +2,7 @@
 'use strict';
 const path = require("path"),
     async = require('async'),
-    pipeBuilder = require('../components/route/pipeBuilder'),
+    pipeBuilder = require('../components/route/pipeBuilder')(),
     logger = require('../../lib/logger'),
     debug = require('debug')('gateway'),
     state = require('../state'),

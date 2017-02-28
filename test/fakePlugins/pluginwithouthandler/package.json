@@ -1,0 +1,10 @@
+{
+    "name": "pluginwithouthandler",
+    "version": "0.0.1",
+    "description": "",
+    "main": "./index.js",
+    "$require": [
+        "testService"
+    ],
+    "uiConfig": {}
+}
